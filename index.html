@@ -807,8 +807,8 @@
     }
     .hero-eyebrow .live-dot {
         width: 8px; height: 8px; border-radius: 50%;
-        background: var(--green);
-        box-shadow: 0 0 12px var(--green);
+        background: var(--red);
+        box-shadow: 0 0 12px var(--red);
         animation: pulse 1.5s infinite;
     }
     .hero h1 {
@@ -854,7 +854,7 @@
         transform: translateY(-2px);
         box-shadow:
             0 22px 40px rgba(0,0,0,0.55),
-            0 0 0 2px rgba(0,217,111,0.5);
+            0 0 0 2px rgba(255,45,58,0.5);
     }
     .browse-map-btn:hover::before { transform: translateX(120%); }
     .browse-map-btn:active { transform: translateY(0) scale(0.98); }
@@ -863,10 +863,11 @@
         display: inline-grid; place-items: center;
         width: 42px; height: 42px;
         border-radius: 50%;
-        background: var(--green); color: #0e0f11;
+        background: linear-gradient(135deg, #ff2d3a, #ff7a1a);
+        color: white;
         font-size: 18px; font-weight: 900;
         line-height: 1;
-        box-shadow: 0 4px 12px rgba(0,217,111,0.5);
+        box-shadow: 0 4px 12px rgba(255,45,58,0.5);
         transition: transform 0.25s cubic-bezier(.2,.7,.2,1);
     }
     .browse-map-btn:hover .browse-map-arrow { transform: translateX(3px) rotate(-8deg); }
@@ -1533,13 +1534,15 @@
     }
     body.worldcup-mode .countries-flagrow .country .flag { background: white; }
 
-    /* Bottom borough banner with lock chips */
+    /* Bottom borough banner with lock chips — sits below the split */
     .borough-foot {
         position: relative;
         background: #0e0f11;
         color: white;
         padding: 14px 24px;
         border-top: 1px solid rgba(255,255,255,0.06);
+        min-height: 70px;
+        box-sizing: border-box;
     }
     .borough-foot-inner {
         max-width: 1280px; margin: 0 auto;
@@ -1812,6 +1815,21 @@
         color: transparent;
         -webkit-text-fill-color: transparent;
     }
+    .wc-fanhub-cta {
+        display: inline-flex; align-items: center; gap: 8px;
+        background: #0e0f11; color: white;
+        border: none;
+        padding: 11px 18px;
+        border-radius: 999px;
+        font: inherit; font-size: 13px; font-weight: 800;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        margin-top: 16px;
+        box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+        transition: transform 0.2s cubic-bezier(.2,.7,.2,1);
+    }
+    .wc-fanhub-cta:hover { transform: translateY(-2px); }
+
     .worldcup-sub {
         font-size: 15px; color: rgba(14,15,17,0.7);
         max-width: 540px;
@@ -2056,7 +2074,7 @@
         display: grid;
         grid-template-columns: minmax(380px, 480px) 1fr;
         gap: 0;
-        height: calc(100vh - 64px);
+        height: calc(100vh - 64px - 70px);
         margin-top: 0;
     }
     @media (max-width: 900px) {
@@ -2118,22 +2136,31 @@
         display: grid;
         grid-template-columns: 120px 1fr;
         gap: 14px;
-        background: #ffffff;
-        color: #0e0f11;
-        border: 1px solid rgba(14,15,17,0.08);
+        background: rgba(255,255,255,0.05);
+        backdrop-filter: blur(14px);
+        color: var(--text);
+        border: 1px solid rgba(255,255,255,0.08);
         border-radius: 16px;
         overflow: hidden;
         cursor: pointer;
         position: relative;
         transition: border-color 0.25s cubic-bezier(.2,.7,.2,1),
                     transform 0.25s cubic-bezier(.2,.7,.2,1),
-                    box-shadow 0.3s cubic-bezier(.2,.7,.2,1);
+                    box-shadow 0.3s cubic-bezier(.2,.7,.2,1),
+                    background 0.2s;
     }
-    .mini-card .mini-card-venue { color: #0e0f11; }
-    .mini-card .mini-card-meta { color: #4a4d54; }
-    .mini-card .mini-card-meta .sep { color: #8a8d94; }
-    .mini-card .mini-card-price { background: #f1f3f8; color: #0e0f11; }
-    .mini-card .mini-card-going { color: var(--card-accent, #4a4d54); }
+    .mini-card:hover { background: rgba(255,255,255,0.08); }
+    .mini-card .mini-card-venue { color: var(--text); }
+    .mini-card .mini-card-meta { color: var(--text-dim); }
+    .mini-card .mini-card-meta .sep { color: var(--text-mute); }
+    .mini-card .mini-card-price { background: rgba(255,255,255,0.08); color: var(--text); }
+    .mini-card .mini-card-going { color: var(--card-accent, var(--text-dim)); }
+    /* In worldcup-mode (white page) — translucent dark glass */
+    body.worldcup-mode .mini-card { background: rgba(14,15,17,0.05); border-color: rgba(14,15,17,0.1); color: #0e0f11; }
+    body.worldcup-mode .mini-card:hover { background: rgba(14,15,17,0.08); }
+    body.worldcup-mode .mini-card .mini-card-venue { color: #0e0f11; }
+    body.worldcup-mode .mini-card .mini-card-meta { color: #4a4d54; }
+    body.worldcup-mode .mini-card .mini-card-price { background: rgba(14,15,17,0.06); color: #0e0f11; }
     .mini-card::after {
         content: ''; position: absolute;
         left: 0; top: 0; bottom: 0;
@@ -2696,6 +2723,49 @@
         border-color: transparent;
         position: relative;
         overflow: hidden;
+    }
+    .lineup-banner {
+        position: relative;
+        height: 140px; overflow: hidden;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .lineup-banner img {
+        position: absolute; inset: 0;
+        width: 100%; height: 100%; object-fit: cover;
+        opacity: 0.78;
+    }
+    .lineup-banner::before {
+        content: ''; position: absolute; inset: 0;
+        background:
+            linear-gradient(180deg, transparent 30%, rgba(11,18,39,0.85) 100%),
+            linear-gradient(135deg, var(--lb-a, rgba(255,45,58,0.6)) 0%, transparent 60%);
+    }
+    .lineup-banner-content {
+        position: absolute; left: 18px; right: 18px; bottom: 12px;
+        z-index: 1;
+        display: flex; align-items: end; justify-content: space-between;
+        gap: 12px;
+    }
+    .lineup-banner-title {
+        font-family: 'Inter', sans-serif;
+        font-weight: 900; font-size: 22px;
+        letter-spacing: -0.02em;
+        color: white;
+        display: inline-flex; align-items: center; gap: 10px;
+    }
+    .lineup-banner-flag {
+        font-size: 30px;
+        filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
+    }
+    .lineup-banner-formation {
+        background: rgba(255,255,255,0.18);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255,255,255,0.22);
+        color: white;
+        padding: 5px 12px;
+        border-radius: 999px;
+        font-size: 11px; font-weight: 900;
+        letter-spacing: 1.5px;
     }
     .lineup-panel::before {
         content: ''; position: absolute; inset: 0;
@@ -3346,7 +3416,6 @@
         <div class="tabs" id="tabs">
             <button class="tab" data-route="home">Home</button>
             <button class="tab" data-route="events">Events</button>
-            <button class="tab" data-route="fanhub">Fan Hub</button>
             <button class="tab highlight" data-route="worldcup">World Cup</button>
         </div>
         <div class="nav-right">
@@ -3474,6 +3543,10 @@
             <div class="worldcup-eyebrow">FIFA · 2026 · NORTH AMERICA</div>
             <h1 class="worldcup-title">World <em>Cup</em><br>2026.</h1>
             <p class="worldcup-sub">Every match. Every country. Find the watch party where your flag flies highest.</p>
+            <button class="wc-fanhub-cta" onclick="route('fanhub')">
+                <span>Join the Fan Hub</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </button>
         </div>
         <div class="worldcup-confetti"></div>
     </div>
@@ -3489,7 +3562,7 @@
             <select id="sport-select" onchange="applyFilters()">
                 <option value="">All sports</option>
                 <option>Soccer</option><option>NFL</option><option>NBA</option>
-                <option>MLB</option><option>NHL</option><option>UFC</option><option>F1</option>
+                <option>MLB</option><option>NHL</option><option>UFC</option>
             </select>
         </div>
         <div class="filter events-only">
@@ -3722,7 +3795,7 @@
     </div>
 </section>
 
-<footer>
+<footer id="site-footer">
     <div class="footer-inner">
         <div style="display:flex;align-items:center;gap:10px">
             <div class="brand-mark">L</div>
@@ -3913,6 +3986,12 @@ const schedule = [
 ];
 
 // Lineups in 4-3-3, rows top→bottom: FWD (3), MID (3), DEF (4), GK (1)
+const lineupBanners = {
+    AR: 'https://images.unsplash.com/photo-1577223625816-7546f13df25d?w=1200&q=80&auto=format&fit=crop',
+    BR: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1200&q=80&auto=format&fit=crop',
+    US: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=1200&q=80&auto=format&fit=crop',
+    EN: 'https://images.unsplash.com/photo-1488003700468-a3b69dd3afc1?w=1200&q=80&auto=format&fit=crop',
+};
 const lineups = {
     AR: { team:'Argentina', formation:'4-3-3', color:['#7DB9E8','#3074C0'], rows:[
         [{num:11,name:'Di Maria'},{num:10,name:'Messi',c:true},{num:9,name:'Alvarez'}],
@@ -4105,8 +4184,12 @@ function route(name) {
     if (name === 'events' || name === 'worldcup') {
         renderSportChip();
         applyFilters();
-        if (currentView === 'map') setTimeout(() => mapInstance?.invalidateSize(), 50);
+        setTimeout(() => mapInstance?.invalidateSize(), 50);
+        setTimeout(() => mapInstance?.invalidateSize(), 250);
     }
+    // Hide site footer on map-heavy pages so the borough strip is the bottom
+    const sf = document.getElementById('site-footer');
+    if (sf) sf.style.display = (name === 'events' || name === 'worldcup' || name === 'matchday') ? 'none' : '';
 }
 
 function initRouting() {
@@ -4568,10 +4651,18 @@ function renderLineup() {
         </div>
     `).join('');
 
+    const bannerUrl = lineupBanners[code] || lineupBanners.US;
+    const tint = `rgba(${parseInt(pA.slice(1,3),16)},${parseInt(pA.slice(3,5),16)},${parseInt(pA.slice(5,7),16)},0.55)`;
     document.getElementById('lineup-panel').innerHTML = `
-        <div class="panel-head">
-            <div class="panel-title">${co.flag} <em>${co.name}</em> · Starting XI</div>
-            <div class="panel-sub">${data.formation}</div>
+        <div class="lineup-banner" style="--lb-a:${tint}">
+            <img src="${bannerUrl}" alt="">
+            <div class="lineup-banner-content">
+                <div class="lineup-banner-title">
+                    <span class="lineup-banner-flag">${co.flag}</span>
+                    ${co.name}
+                </div>
+                <span class="lineup-banner-formation">${data.formation}</span>
+            </div>
         </div>
         <div class="pitch">
             <div class="pitch-frame"></div>
@@ -5167,7 +5258,6 @@ const sportTiles = [
     { name:'MLB',    emoji:'⚾', photo:photos.MLB,    tint:'linear-gradient(160deg, rgba(37,99,235,0.55), rgba(6,214,247,0.5))', glow:'rgba(6,214,247,0.5)' },
     { name:'NHL',    emoji:'🏒', photo:photos.NHL,    tint:'linear-gradient(160deg, rgba(6,214,247,0.5), rgba(168,85,247,0.55))', glow:'rgba(6,214,247,0.5)' },
     { name:'UFC',    emoji:'🥊', photo:photos.UFC,    tint:'linear-gradient(160deg, rgba(255,45,58,0.65), rgba(0,0,0,0.5))', glow:'rgba(255,45,58,0.5)' },
-    { name:'F1',     emoji:'🏎️', photo:photos.F1,     tint:'linear-gradient(160deg, rgba(255,45,58,0.6), rgba(255,184,0,0.55))', glow:'rgba(255,184,0,0.5)' },
 ];
 
 function buildSportGrid() {
