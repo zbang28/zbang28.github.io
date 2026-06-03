@@ -6,7 +6,7 @@
 <title>The Lineup — Find watch parties, parades & pickup</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
@@ -20,11 +20,19 @@
         --text: #0e0f11;
         --text-dim: #4a4d54;
         --text-mute: #8a8d94;
-        --red: #e51b23;
-        --red-bright: #ff2630;
+        --red: #ff2d3a;
+        --red-bright: #ff4753;
         --amber: #ffb800;
-        --green: #00b85f;
+        --orange: #ff7a1a;
+        --green: #00d96f;
         --blue: #2563eb;
+        --purple: #a855f7;
+        --pink: #ff3eb5;
+        --cyan: #06d6f7;
+        --grad-1: linear-gradient(135deg, #ff2d3a, #ff7a1a);
+        --grad-2: linear-gradient(135deg, #a855f7, #ff3eb5);
+        --grad-3: linear-gradient(135deg, #2563eb, #06d6f7);
+        --grad-4: linear-gradient(135deg, #00d96f, #ffb800);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -60,17 +68,19 @@
         flex-shrink: 0; color: white;
     }
     .brand-mark {
-        width: 30px; height: 30px;
-        background: var(--red); color: white;
-        font-family: 'Playfair Display', serif;
-        font-style: italic; font-weight: 700; font-size: 20px;
-        border-radius: 6px;
+        width: 32px; height: 32px;
+        background: var(--grad-1); color: white;
+        font-family: 'Inter', sans-serif;
+        font-weight: 900; font-size: 18px;
+        border-radius: 9px;
         display: grid; place-items: center;
+        box-shadow: 0 4px 14px rgba(255,45,58,0.5);
+        transform: rotate(-6deg);
     }
     .brand-name {
-        font-family: 'Anton', sans-serif;
-        font-size: 22px; letter-spacing: 2px;
-        text-transform: uppercase;
+        font-family: 'Inter', sans-serif;
+        font-weight: 800;
+        font-size: 20px; letter-spacing: -0.02em;
     }
 
     .tabs { display: flex; gap: 4px; align-items: center; flex: 1; overflow-x: auto; scrollbar-width: none; }
@@ -96,9 +106,12 @@
     }
     .nav-btn:hover { border-color: rgba(255,255,255,0.5); }
     .nav-btn.ai {
-        background: var(--red); border-color: var(--red);
+        background: var(--grad-2);
+        border-color: transparent;
+        font-weight: 800;
+        box-shadow: 0 4px 14px rgba(255,62,181,0.4);
     }
-    .nav-btn.ai:hover { background: var(--red-bright); }
+    .nav-btn.ai:hover { transform: translateY(-1px); }
 
     @media (max-width: 900px) {
         .nav-btn .lbl { display: none; }
@@ -113,34 +126,62 @@
     /* ===== Discover Hero ===== */
     .hero {
         position: relative;
-        background: linear-gradient(135deg, #0e0f11 0%, #1a1c20 50%, #0e0f11 100%);
+        background:
+            radial-gradient(ellipse 80% 60% at 80% 0%, rgba(255,62,181,0.5), transparent 60%),
+            radial-gradient(ellipse 70% 50% at 10% 100%, rgba(6,214,247,0.4), transparent 60%),
+            radial-gradient(ellipse 60% 60% at 50% 50%, rgba(255,122,26,0.35), transparent 70%),
+            linear-gradient(135deg, #0e0f11 0%, #1a0a2a 50%, #0e0f11 100%);
         color: white;
-        padding: 80px 32px 100px;
+        padding: 72px 32px 88px;
         overflow: hidden;
     }
     .hero::before {
         content: ''; position: absolute; inset: 0;
-        background:
-            radial-gradient(ellipse 60% 50% at 80% 20%, rgba(229,27,35,0.35), transparent 60%),
-            radial-gradient(ellipse 50% 60% at 10% 80%, rgba(255,184,0,0.25), transparent 60%),
-            url('https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=1600&q=80&auto=format&fit=crop') center/cover;
+        background-image:
+            radial-gradient(circle at 20% 20%, rgba(255,255,255,0.8) 0.5px, transparent 1.5px),
+            radial-gradient(circle at 80% 30%, rgba(255,255,255,0.6) 0.5px, transparent 1.5px),
+            radial-gradient(circle at 40% 80%, rgba(255,255,255,0.7) 0.5px, transparent 1.5px),
+            radial-gradient(circle at 70% 60%, rgba(255,255,255,0.5) 0.5px, transparent 1.5px);
+        background-size: 180px 180px, 220px 220px, 200px 200px, 240px 240px;
         opacity: 0.6;
         z-index: 0;
     }
     .hero-content {
         position: relative; z-index: 1;
-        max-width: 720px; margin: 0 auto;
+        max-width: 760px; margin: 0 auto;
         text-align: center;
     }
-    .hero h1 {
-        font-family: 'Playfair Display', serif;
-        font-weight: 400;
-        font-size: clamp(38px, 5.5vw, 64px);
-        line-height: 1.05; letter-spacing: -0.02em;
-        margin-bottom: 14px;
+    .hero-eyebrow {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 6px 14px;
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.18);
+        border-radius: 999px;
+        font-size: 12px; font-weight: 700;
+        text-transform: uppercase; letter-spacing: 1.5px;
+        margin-bottom: 22px;
     }
-    .hero h1 em { font-style: italic; color: var(--amber); }
-    .hero .lede { color: rgba(255,255,255,0.8); font-size: 16px; margin-bottom: 32px; }
+    .hero-eyebrow .live-dot {
+        width: 8px; height: 8px; border-radius: 50%;
+        background: var(--green);
+        box-shadow: 0 0 12px var(--green);
+        animation: pulse 1.5s infinite;
+    }
+    .hero h1 {
+        font-family: 'Inter', sans-serif;
+        font-weight: 900;
+        font-size: clamp(42px, 6.5vw, 76px);
+        line-height: 0.98; letter-spacing: -0.04em;
+        margin-bottom: 16px;
+    }
+    .hero h1 .gradient {
+        background: linear-gradient(135deg, #ffb800 0%, #ff7a1a 50%, #ff3eb5 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+    .hero .lede { color: rgba(255,255,255,0.85); font-size: 17px; margin-bottom: 32px; }
 
     .hero-search {
         display: flex; gap: 0;
@@ -156,11 +197,13 @@
         font-family: inherit;
     }
     .hero-search button {
-        background: var(--red); color: white; border: none;
-        padding: 0 24px; border-radius: 8px;
-        font-weight: 700; font-size: 14px;
+        background: var(--grad-1); color: white; border: none;
+        padding: 0 28px; border-radius: 8px;
+        font-weight: 800; font-size: 14px;
+        text-transform: uppercase; letter-spacing: 1px;
+        box-shadow: 0 6px 18px rgba(255,45,58,0.4);
     }
-    .hero-search button:hover { background: var(--red-bright); }
+    .hero-search button:hover { transform: translateY(-1px); }
 
     /* ===== Sub-tabs (Watch / Parade / Pickup) ===== */
     .subtabs-wrap {
@@ -186,7 +229,16 @@
         display: inline-flex; align-items: center; gap: 8px;
     }
     .subtab:hover { color: var(--text); }
-    .subtab.active { color: var(--text); border-bottom-color: var(--red); }
+    .subtab.active {
+        color: var(--text);
+        border-bottom-color: transparent;
+        background: linear-gradient(180deg, transparent 80%, rgba(255,45,58,0.08));
+    }
+    .subtab.active::after {
+        content: ''; position: absolute; left: 0; right: 0; bottom: -1px;
+        height: 3px; background: var(--grad-1);
+    }
+    .subtab { position: relative; }
     .subtab .count {
         background: var(--surface-2); color: var(--text-mute);
         padding: 1px 7px; border-radius: 999px;
@@ -201,10 +253,19 @@
         margin-bottom: 18px; gap: 16px;
     }
     .row-head h2 {
-        font-family: 'Playfair Display', serif;
-        font-weight: 400; font-size: 26px; letter-spacing: -0.01em;
+        font-family: 'Inter', sans-serif;
+        font-weight: 900; font-size: 28px;
+        letter-spacing: -0.03em;
+        display: flex; align-items: center; gap: 10px;
     }
-    .row-head h2 em { font-style: italic; color: var(--red); }
+    .row-head h2 em {
+        font-style: normal;
+        background: var(--grad-1);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+    .row-head h2 .emoji { font-size: 28px; }
     .row-head .actions { display: flex; gap: 8px; align-items: center; }
     .row-head .see-all {
         color: var(--text-dim); font-size: 13px; font-weight: 600;
@@ -233,17 +294,26 @@
     /* ===== Cards (Gametime-style) ===== */
     .card {
         background: var(--surface);
-        border-radius: 12px;
+        border-radius: 16px;
         overflow: hidden;
         border: 1px solid var(--border);
         position: relative;
         display: flex; flex-direction: column;
-        transition: transform 0.2s, box-shadow 0.2s;
+        transition: transform 0.25s cubic-bezier(.2,.7,.2,1), box-shadow 0.25s;
     }
-    .card:hover { transform: translateY(-3px); box-shadow: 0 16px 32px rgba(0,0,0,0.08); }
+    .card:hover {
+        transform: translateY(-6px) scale(1.01);
+        box-shadow: 0 24px 48px rgba(255,45,58,0.18), 0 12px 24px rgba(0,0,0,0.08);
+        border-color: transparent;
+    }
     .card-img {
-        position: relative; aspect-ratio: 16 / 11;
+        position: relative; aspect-ratio: 4 / 3;
         overflow: hidden; background: var(--surface-2);
+    }
+    .card-img::before {
+        content: ''; position: absolute; inset: 0;
+        background: var(--card-tint, linear-gradient(135deg, rgba(255,45,58,0.4), rgba(168,85,247,0.3)));
+        z-index: 1; mix-blend-mode: multiply;
     }
     .card-img img {
         width: 100%; height: 100%; object-fit: cover;
@@ -261,19 +331,26 @@
     }
     .pill {
         background: rgba(255,255,255,0.95); color: var(--text);
-        font-size: 11px; font-weight: 700;
-        padding: 3px 9px; border-radius: 999px;
+        font-size: 11px; font-weight: 800;
+        padding: 4px 11px; border-radius: 999px;
+        text-transform: uppercase; letter-spacing: 0.5px;
+        backdrop-filter: blur(8px);
     }
     .pill.live {
-        background: var(--red); color: white;
+        background: var(--grad-1); color: white;
         display: inline-flex; align-items: center; gap: 5px;
+        box-shadow: 0 4px 14px rgba(255,45,58,0.5);
     }
     .pill.live .dot {
-        width: 5px; height: 5px; background: white;
+        width: 6px; height: 6px; background: white;
         border-radius: 50%; animation: pulse 1.5s infinite;
     }
-    .pill.free { background: var(--green); color: white; }
+    .pill.free { background: var(--grad-4); color: white; }
     .pill.lock { background: var(--amber); color: #1a1408; }
+    .pill.hot {
+        background: var(--grad-2); color: white;
+        box-shadow: 0 4px 14px rgba(255,62,181,0.4);
+    }
 
     .save {
         width: 28px; height: 28px; border-radius: 50%;
@@ -286,13 +363,32 @@
     .save.on { background: var(--red); color: white; }
 
     .card-cover-title {
-        position: absolute; bottom: 12px; left: 14px; right: 14px;
-        color: white; z-index: 2;
-        font-family: 'Anton', sans-serif;
-        font-size: 22px; line-height: 1; letter-spacing: 0.5px;
-        text-transform: uppercase;
-        text-shadow: 0 2px 12px rgba(0,0,0,0.6);
+        position: absolute; bottom: 14px; left: 16px; right: 16px;
+        color: white; z-index: 3;
+        font-family: 'Inter', sans-serif;
+        font-weight: 900;
+        font-size: 22px; line-height: 1.05;
+        letter-spacing: -0.02em;
+        text-shadow: 0 2px 16px rgba(0,0,0,0.7);
     }
+    .card-attendees {
+        position: absolute; bottom: 14px; right: 16px;
+        background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+        color: white; z-index: 4;
+        padding: 4px 9px; border-radius: 999px;
+        font-size: 11px; font-weight: 700;
+        display: inline-flex; align-items: center; gap: 4px;
+    }
+    .card-trending {
+        position: absolute; top: 50%; left: 50%;
+        transform: translate(-50%, -50%) rotate(-12deg);
+        background: var(--grad-2); color: white;
+        padding: 6px 14px; border-radius: 999px;
+        font-size: 13px; font-weight: 900;
+        z-index: 3; opacity: 0;
+        box-shadow: 0 8px 24px rgba(255,62,181,0.5);
+    }
+    .card.trending .card-trending { opacity: 1; }
 
     .card-body { padding: 14px 16px 16px; }
     .card-title {
@@ -372,8 +468,9 @@
     }
     .country:hover { border-color: var(--text); }
     .country.active {
-        background: var(--text); color: white;
-        border-color: var(--text);
+        background: var(--grad-1); color: white;
+        border-color: transparent;
+        box-shadow: 0 4px 14px rgba(255,45,58,0.4);
     }
     .country .flag { font-size: 16px; }
 
@@ -402,13 +499,19 @@
         padding: 48px 32px 24px;
     }
     .page-head h1 {
-        font-family: 'Playfair Display', serif;
-        font-weight: 400; font-size: clamp(34px, 4vw, 48px);
-        letter-spacing: -0.02em; line-height: 1.05;
-        margin-bottom: 6px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 900; font-size: clamp(36px, 5vw, 56px);
+        letter-spacing: -0.04em; line-height: 1;
+        margin-bottom: 8px;
     }
-    .page-head h1 em { font-style: italic; color: var(--red); }
-    .page-head p { color: var(--text-dim); font-size: 15px; }
+    .page-head h1 em {
+        font-style: normal;
+        background: var(--grad-1);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+    .page-head p { color: var(--text-dim); font-size: 16px; }
 
     .page-content {
         max-width: 1280px; margin: 0 auto;
@@ -429,7 +532,11 @@
         display: inline-flex; align-items: center; gap: 6px;
     }
     .filter:hover { border-color: var(--text); color: var(--text); }
-    .filter.active { background: var(--text); color: white; border-color: var(--text); }
+    .filter.active {
+        background: var(--grad-1); color: white;
+        border-color: transparent;
+        box-shadow: 0 4px 14px rgba(255,45,58,0.35);
+    }
     .filter select {
         background: transparent; border: none; outline: none;
         font: inherit; color: inherit; cursor: pointer;
@@ -480,7 +587,7 @@
     .match-team.away { justify-content: flex-end; flex-direction: row-reverse; text-align: right; }
     .match-flag { font-size: 28px; }
     .match-team-name { font-family: 'Anton', sans-serif; font-size: 18px; letter-spacing: 1px; text-transform: uppercase; }
-    .match-vs { font-family: 'Playfair Display', serif; font-style: italic; color: var(--text-mute); }
+    .match-vs { font-family: 'Inter', sans-serif; font-weight: 800; color: var(--text-mute); font-style: italic; }
     .match-time {
         padding-top: 10px; border-top: 1px dashed var(--border);
         font-size: 13px; color: var(--text-dim);
@@ -511,10 +618,17 @@
         display: flex; justify-content: space-between; align-items: center;
     }
     .panel-title {
-        font-family: 'Playfair Display', serif;
-        font-weight: 700; font-size: 18px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 800; font-size: 18px;
+        letter-spacing: -0.02em;
     }
-    .panel-title em { font-style: italic; color: var(--red); }
+    .panel-title em {
+        font-style: normal;
+        background: var(--grad-1);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
     .panel-sub {
         font-size: 11px; color: var(--text-mute);
         text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700;
@@ -595,8 +709,9 @@
         position: relative;
     }
     .poll-card h3 {
-        font-family: 'Playfair Display', serif;
-        font-weight: 700; font-size: 18px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 800; font-size: 18px;
+        letter-spacing: -0.02em;
         margin-bottom: 4px;
     }
     .poll-sub {
@@ -660,10 +775,17 @@
         display: flex; justify-content: space-between; align-items: center;
     }
     .modal-head h3 {
-        font-family: 'Playfair Display', serif;
-        font-style: italic; font-weight: 400; font-size: 22px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 800; font-size: 22px;
+        letter-spacing: -0.02em;
     }
-    .modal-head h3 strong { font-family: 'Anton', sans-serif; font-style: normal; font-weight: 400; text-transform: uppercase; color: var(--red); letter-spacing: 1px; margin-left: 2px; }
+    .modal-head h3 strong {
+        background: var(--grad-1);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        margin-left: 6px;
+    }
     .modal-close {
         background: transparent; border: none; color: var(--text-dim);
         font-size: 22px;
@@ -706,10 +828,15 @@
     .paywall-hero { text-align: center; padding: 36px 26px 12px; }
     .paywall-hero .crown { font-size: 42px; margin-bottom: 8px; }
     .paywall-hero h3 {
-        font-family: 'Playfair Display', serif; font-style: italic;
-        font-size: 26px; margin-bottom: 8px;
+        font-family: 'Inter', sans-serif; font-weight: 800;
+        font-size: 26px; margin-bottom: 8px; letter-spacing: -0.02em;
     }
-    .paywall-hero h3 strong { font-family: 'Anton', sans-serif; font-style: normal; font-weight: 400; text-transform: uppercase; color: var(--red); letter-spacing: 1px; }
+    .paywall-hero h3 strong {
+        background: var(--grad-1);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
     .paywall-hero .sub { color: var(--text-dim); font-size: 14px; max-width: 320px; margin: 0 auto; }
     .paywall-features { padding: 0 26px 12px; }
     .paywall-feature {
@@ -725,11 +852,14 @@
     .paywall-price .small { font-size: 14px; color: var(--text-mute); display: block; letter-spacing: 2px; margin-top: 6px; }
     .paywall-actions { padding: 14px 26px 24px; display: flex; flex-direction: column; gap: 8px; }
     .paywall-pay {
-        background: var(--text); color: var(--amber); border: none;
-        padding: 14px; font-family: 'Anton', sans-serif;
-        font-size: 16px; letter-spacing: 2px; text-transform: uppercase;
-        border-radius: 8px;
+        background: var(--grad-1); color: white; border: none;
+        padding: 16px; font-family: 'Inter', sans-serif;
+        font-weight: 900; font-size: 15px;
+        letter-spacing: 1px; text-transform: uppercase;
+        border-radius: 10px;
+        box-shadow: 0 8px 24px rgba(255,45,58,0.4);
     }
+    .paywall-pay:hover { transform: translateY(-1px); }
     .paywall-skip { background: transparent; color: var(--text-mute); border: none; font-size: 13px; padding: 8px; }
 
     /* Empty + footer */
@@ -738,9 +868,10 @@
         grid-column: 1 / -1;
     }
     .empty h3 {
-        font-family: 'Playfair Display', serif;
-        font-style: italic; font-size: 24px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 800; font-size: 24px;
         margin-bottom: 6px; color: var(--text);
+        letter-spacing: -0.02em;
     }
     footer {
         margin-top: 80px; padding: 32px;
@@ -792,8 +923,9 @@
 <section class="page" data-page="discover">
     <div class="hero">
         <div class="hero-content">
-            <h1>Find your <em>crowd.</em> Catch the <em>game.</em></h1>
-            <p class="lede">Watch parties, post-game parades, and pickup games — every sport, every venue, every country.</p>
+            <div class="hero-eyebrow"><span class="live-dot"></span><span id="hero-live-count">47 live · 12,840 fans tonight</span></div>
+            <h1>Find your <span class="gradient">crowd.</span><br>Catch the <span class="gradient">game.</span></h1>
+            <p class="lede">Watch parties, post-game parades, pickup games — every sport, every venue, every country. 🏟️ 🔥</p>
             <form class="hero-search" onsubmit="event.preventDefault();applyFilters()">
                 <input id="search-input" type="text" placeholder="Search teams, venues, or events">
                 <button type="submit">Search</button>
@@ -1213,13 +1345,13 @@ function renderDiscoverList(filtered) {
     const tonightGroup = filtered.filter(p => p.when === 'Tonight');
 
     const rows = [];
-    if (liveGroup.length) rows.push({ title: `<em>Live</em> right now`, items: liveGroup });
-    if (tonightGroup.length) rows.push({ title: `<em>Tonight</em> near you`, items: tonightGroup });
-    if (freeGroup.length) rows.push({ title: `<em>Free</em> events`, items: freeGroup });
+    if (liveGroup.length) rows.push({ title: `<span class="emoji">🔴</span> <em>Live</em> right now` , items: liveGroup });
+    if (tonightGroup.length) rows.push({ title: `<span class="emoji">🌃</span> <em>Tonight</em> near you`, items: tonightGroup });
+    if (freeGroup.length) rows.push({ title: `<span class="emoji">🎉</span> <em>Free</em> events`, items: freeGroup });
     Object.entries(groups).forEach(([b, items]) => {
-        if (items.length >= 2) rows.push({ title: `Popular in <em>${b}</em>`, items });
+        if (items.length >= 2) rows.push({ title: `<span class="emoji">📍</span> Popular in <em>${b}</em>`, items });
     });
-    if (rows.length === 0) rows.push({ title: 'All events', items: filtered });
+    if (rows.length === 0) rows.push({ title: '<span class="emoji">🏟️</span> All events', items: filtered });
 
     wrap.innerHTML = rows.map((r, idx) => `
         <section class="row">
@@ -1242,20 +1374,33 @@ function cardHTML(p) {
     const isSaved = saved.has(p.id);
     const locked = isLocked(p);
     const isFree = p.perks.some(pk => pk.toLowerCase() === 'free');
+    const attendees = ((p.id * 37) % 480) + 24;
+    const isTrending = attendees > 380;
+    const isHot = attendees > 280 && !isTrending;
+    const tints = [
+        'linear-gradient(135deg, rgba(255,45,58,0.55), rgba(255,122,26,0.4))',
+        'linear-gradient(135deg, rgba(168,85,247,0.55), rgba(255,62,181,0.4))',
+        'linear-gradient(135deg, rgba(37,99,235,0.55), rgba(6,214,247,0.4))',
+        'linear-gradient(135deg, rgba(0,217,111,0.5), rgba(255,184,0,0.4))',
+    ];
+    const tint = tints[p.id % tints.length];
 
     return `
-        <article class="card${locked ? ' locked' : ''}">
+        <article class="card${locked ? ' locked' : ''}${isTrending ? ' trending' : ''}" style="--card-tint:${tint}">
             <div class="card-img">
                 <img src="${photos[p.sport] || photos.Soccer}" alt="" loading="lazy">
                 <div class="card-img-gradient"></div>
                 <div class="img-pills">
                     ${p.live ? '<span class="pill live"><span class="dot"></span>Live</span>'
+                       : isHot ? '<span class="pill hot">🔥 Hot</span>'
                        : isFree ? '<span class="pill free">Free</span>'
                        : `<span class="pill">${p.sport}</span>`}
                     <button class="save ${isSaved ? 'on' : ''}" onclick="event.stopPropagation();toggleSaved(${p.id})">${isSaved ? '♥' : '♡'}</button>
                 </div>
                 ${co ? `<div class="country-flag">${co.flag}</div>` : ''}
+                <div class="card-trending">📈 TRENDING</div>
                 <div class="card-cover-title">${p.match}</div>
+                <div class="card-attendees">👥 ${attendees} going</div>
                 ${locked ? `<div class="lock-banner" onclick="openPaywall()">
                     <div class="lock-icon">🔒</div>
                     <div class="lock-msg">${p.borough} · $5 to unlock</div>
