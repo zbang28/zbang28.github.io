@@ -100,15 +100,38 @@
     .tab.highlight {
         color: white !important;
         font-weight: 800 !important;
-        background: linear-gradient(135deg, #ffd400 0%, #16a34a 33%, #2563eb 66%, #ff2d3a 100%) !important;
+        background-color: #0e0f11 !important;
+        background-image:
+            radial-gradient(circle at 12% 20%, #ff2d3a 0%, #ff2d3a 22%, transparent 24%),
+            radial-gradient(circle at 88% 24%, #ffd400 0%, #ffd400 20%, transparent 22%),
+            radial-gradient(circle at 22% 82%, #16a34a 0%, #16a34a 22%, transparent 24%),
+            radial-gradient(circle at 80% 80%, #2563eb 0%, #2563eb 22%, transparent 24%),
+            radial-gradient(circle at 50% 50%, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.18) 14%, transparent 16%),
+            conic-gradient(from 0deg at 50% 50%,
+                #ff2d3a 0deg,
+                transparent 60deg,
+                #ffd400 90deg,
+                transparent 150deg,
+                #16a34a 180deg,
+                transparent 240deg,
+                #2563eb 270deg,
+                transparent 330deg,
+                #ff2d3a 360deg);
+        background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 200% 200%;
+        background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 50%;
         padding: 8px 16px !important;
         border-radius: 10px !important;
         box-shadow: none !important;
-        transition: transform 0.18s cubic-bezier(.2,.7,.2,1);
-        text-shadow: 0 1px 4px rgba(0,0,0,0.35);
+        transition: transform 0.2s cubic-bezier(.2,.7,.2,1);
+        text-shadow: 0 1px 4px rgba(0,0,0,0.55);
+        animation: wc-swirl 14s linear infinite;
     }
     .tab.highlight:hover { transform: translateY(-1px); }
     .tab.highlight.active { transform: translateY(-1px); }
+    @keyframes wc-swirl {
+        from { background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 50%; }
+        to   { background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 200% 50%; }
+    }
     .tab-badge {
         display: inline-block;
         margin-left: 6px;
@@ -3457,6 +3480,78 @@
     }
     .ai-response strong:first-child { margin-top: 0; }
 
+    /* Sign-in modal */
+    .signin-field { margin-bottom: 12px; }
+    .signin-field label {
+        display: block; font-size: 11px; font-weight: 700;
+        letter-spacing: 1.5px; text-transform: uppercase;
+        color: var(--text-mute); margin-bottom: 6px;
+    }
+    .signin-field input {
+        width: 100%; padding: 12px 14px;
+        background: var(--surface-2);
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        font: inherit; font-size: 14px; color: var(--text);
+        outline: none;
+    }
+    .signin-field input:focus { border-color: var(--red); }
+    .signin-divider {
+        text-align: center; margin: 18px 0;
+        position: relative;
+        color: var(--text-mute); font-size: 12px;
+        font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    }
+    .signin-divider::before, .signin-divider::after {
+        content: ''; position: absolute; top: 50%;
+        width: calc(50% - 28px); height: 1px;
+        background: var(--border);
+    }
+    .signin-divider::before { left: 0; }
+    .signin-divider::after { right: 0; }
+    .signin-oauth {
+        display: block; width: 100%;
+        background: var(--surface);
+        border: 1.5px solid var(--border);
+        color: var(--text);
+        padding: 12px;
+        border-radius: 10px;
+        font: inherit; font-weight: 600; font-size: 14px;
+        cursor: pointer;
+        margin-bottom: 8px;
+    }
+    .signin-oauth:hover { border-color: var(--text); }
+    .signin-foot {
+        text-align: center; color: var(--text-dim);
+        font-size: 13px; margin-top: 14px;
+    }
+    .signin-foot a {
+        background: var(--grad-1);
+        -webkit-background-clip: text; background-clip: text;
+        color: transparent; font-weight: 800; cursor: pointer;
+    }
+
+    /* Chat — premium gate */
+    .chat-input.premium-locked input { color: var(--text-mute); cursor: not-allowed; }
+    .chat-input.premium-locked button {
+        background: linear-gradient(135deg, #a855f7, #ff3eb5);
+        font-weight: 800;
+    }
+    .chat-premium-banner {
+        padding: 10px 18px;
+        background: linear-gradient(135deg, rgba(168,85,247,0.18), rgba(255,62,181,0.18));
+        border-top: 1px solid rgba(255,62,181,0.35);
+        border-bottom: 1px solid rgba(255,62,181,0.35);
+        font-size: 12px; font-weight: 600;
+        color: var(--text-dim);
+        text-align: center;
+    }
+    .chat-premium-banner strong {
+        background: var(--grad-2);
+        -webkit-background-clip: text; background-clip: text;
+        color: transparent;
+    }
+
     /* Paywall — dark editorial card so colors don't disappear in either theme */
     .paywall .modal {
         max-width: 460px;
@@ -3600,7 +3695,7 @@
         </div>
         <div class="nav-right">
             <button class="nav-btn ai" onclick="openAI()">✦ <span class="lbl">Plan with AI</span></button>
-            <button class="nav-btn">Sign in</button>
+            <button class="nav-btn" onclick="openSignIn()">Sign in</button>
         </div>
     </div>
 </nav>
@@ -3659,7 +3754,7 @@
 
             <article class="feature-card" onclick="openAI()">
                 <div class="feature-art">
-                    <img src="https://images.unsplash.com/photo-1505666287802-931dc83a0fe4?w=900&q=80&auto=format&fit=crop" alt="" loading="lazy">
+                    <img src="https://images.unsplash.com/photo-1518604666860-9ed391f76460?w=900&q=80&auto=format&fit=crop" alt="" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=900&q=80&auto=format&fit=crop'">
                 </div>
                 <div class="feature-body">
                     <div class="feature-kicker" style="color:#a855f7">AI VIBE MATCH</div>
@@ -3817,8 +3912,11 @@
                     <div class="online"><span class="dot"></span><span id="chat-online">2,341 online</span></div>
                 </div>
                 <div class="chat-body" id="chat-body"></div>
-                <form class="chat-input" onsubmit="sendChat(event)">
-                    <input id="chat-input" placeholder="Say something to fellow supporters...">
+                <div class="chat-premium-banner" id="chat-premium-banner">
+                    <strong>PRO</strong> · Texting in chat is for subscribers · $1.99 first month
+                </div>
+                <form class="chat-input" id="chat-input-form" onsubmit="sendChat(event)">
+                    <input id="chat-input" placeholder="Subscribe to chat with fellow supporters…">
                     <button type="submit">Send</button>
                 </form>
             </div>
@@ -3833,6 +3931,33 @@
 </section>
 
 <!-- ============ MATCHDAY PAGE ============ -->
+<!-- Sign in modal -->
+<div class="modal-bg" id="signin-modal" onclick="if(event.target===this)closeSignIn()">
+    <div class="modal" style="max-width:420px">
+        <div class="modal-head">
+            <h3>Sign <em>in</em></h3>
+            <button class="modal-close" onclick="closeSignIn()">✕</button>
+        </div>
+        <div class="modal-body">
+            <form onsubmit="event.preventDefault();handleSignIn()">
+                <div class="signin-field">
+                    <label>Email</label>
+                    <input id="signin-email" type="email" placeholder="you@example.com" required>
+                </div>
+                <div class="signin-field">
+                    <label>Password</label>
+                    <input id="signin-pass" type="password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="ai-submit" style="margin-top:18px">Sign in</button>
+                <div class="signin-divider"><span>or</span></div>
+                <button type="button" class="signin-oauth" onclick="handleSignIn('Google')">Continue with Google</button>
+                <button type="button" class="signin-oauth" onclick="handleSignIn('Apple')">Continue with Apple</button>
+                <p class="signin-foot">No account? <a onclick="closeSignIn()">Create one</a></p>
+            </form>
+        </div>
+    </div>
+</div>
+
 <div class="matchday-modal" id="matchday-modal" onclick="if(event.target===this)closeMatchdayModal()">
   <div class="matchday-sheet">
     <div class="matchday-head" id="matchday-head">
@@ -3995,7 +4120,7 @@
             <div class="paywall-feature"><span class="check">✓</span><span>Pickup-game locations in every park</span></div>
             <div class="paywall-feature"><span class="check">✓</span><span><strong>Unlimited AI vibe matches</strong> (free tier gets 1)</span></div>
         </div>
-        <div class="paywall-price">$4.99<span class="small">PER MONTH · CANCEL ANYTIME</span></div>
+        <div class="paywall-price">$1.99<span class="small">FIRST MONTH · THEN $4.99/MO · CANCEL ANYTIME</span></div>
         <div class="paywall-actions">
             <button class="paywall-pay" onclick="unlockBoroughs()">Unlock all locations</button>
             <button class="paywall-skip" onclick="closePaywall()">Maybe later</button>
@@ -4163,7 +4288,7 @@ const photos = {
     NFL:'https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=800&q=80&auto=format&fit=crop',
     NBA:'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&q=80&auto=format&fit=crop',
     MLB:'https://images.unsplash.com/photo-1508344928928-7165b67de128?w=800&q=80&auto=format&fit=crop',
-    NHL:'https://images.unsplash.com/photo-1515703407324-5f51c2ed1e8b?w=800&q=80&auto=format&fit=crop',
+    NHL:'https://images.unsplash.com/photo-1580692114672-b3aaccdb5fd8?w=900&q=80&auto=format&fit=crop',
     Soccer:'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=800&q=80&auto=format&fit=crop',
     UFC:'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=80&auto=format&fit=crop',
     F1:'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=800&q=80&auto=format&fit=crop',
@@ -4183,7 +4308,7 @@ const matchPhotos = {
     'Cowboys vs. Eagles':           'https://images.unsplash.com/photo-1495555687398-3f50d6e79e1e?w=800&q=80&auto=format&fit=crop',
     '49ers vs. Seahawks':           'https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=800&q=80&auto=format&fit=crop',
     'Yankees vs. Red Sox':          'https://images.unsplash.com/photo-1471295253337-3ceaaedca402?w=800&q=80&auto=format&fit=crop',
-    'Rangers vs. Devils':           'https://images.unsplash.com/photo-1515703407324-5f51c2ed1e8b?w=800&q=80&auto=format&fit=crop',
+    'Rangers vs. Devils':           'https://images.unsplash.com/photo-1580692114672-b3aaccdb5fd8?w=900&q=80&auto=format&fit=crop',
     'Islanders vs. Bruins':         'https://images.unsplash.com/photo-1580692114672-b3aaccdb5fd8?w=800&q=80&auto=format&fit=crop',
     'UFC 312 Main Card':            'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=80&auto=format&fit=crop',
     'Monaco Grand Prix':            'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=800&q=80&auto=format&fit=crop',
@@ -4330,7 +4455,8 @@ function route(name) {
     document.querySelectorAll('.worldcup-only').forEach(el => {
         el.classList.toggle('worldcup-on', name === 'worldcup');
     });
-    document.body.classList.toggle('worldcup-mode', name === 'worldcup');
+    document.body.classList.toggle('worldcup-mode', name === 'worldcup' || name === 'fanhub');
+    document.body.classList.toggle('fanhub-mode', name === 'fanhub');
     // Lock sport to Soccer on worldcup, otherwise clear any sport filter
     if (name === 'worldcup') activeSport = 'Soccer';
     else if (name === 'events' && !window._pickedSport) activeSport = null;
@@ -4785,7 +4911,7 @@ function renderFanHub() {
     if (lock) lock.style.display = 'none';
     if (head) head.style.display = 'block';
     if (body) body.style.display = 'block';
-    renderLineup(); renderChat(); renderPolls();
+    renderLineup(); renderChat(); renderPolls(); refreshChatGate();
 }
 
 function renderLineup() {
@@ -4854,14 +4980,31 @@ function renderChat() {
 
 function sendChat(e) {
     e.preventDefault();
+    if (!isAISubscriber()) { openPaywall(); return; }
     const input = document.getElementById('chat-input');
     const text = input.value.trim();
     if (!text) return;
     const code = activeCountry?.code || 'US';
     if (!chatExtra[code]) chatExtra[code] = [];
-    chatExtra[code].push({ user:'you', msg:text, time:'now' });
+    chatExtra[code].push({ user: signedInAs ? signedInAs.split('@')[0] : 'you', msg:text, time:'now' });
     input.value = '';
     renderChat();
+}
+
+function refreshChatGate() {
+    const form = document.getElementById('chat-input-form');
+    const banner = document.getElementById('chat-premium-banner');
+    const input = document.getElementById('chat-input');
+    if (!form || !banner || !input) return;
+    if (isAISubscriber()) {
+        form.classList.remove('premium-locked');
+        banner.style.display = 'none';
+        input.placeholder = 'Say something to fellow supporters…';
+    } else {
+        form.classList.add('premium-locked');
+        banner.style.display = '';
+        input.placeholder = 'Subscribe to chat with fellow supporters…';
+    }
 }
 
 function stringColor(s) {
@@ -4921,6 +5064,23 @@ function vote(id, i) {
 }
 
 // ============ AI ============
+let signedInAs = null;
+function openSignIn() {
+    document.getElementById('signin-modal').classList.add('open');
+}
+function closeSignIn() {
+    document.getElementById('signin-modal').classList.remove('open');
+}
+function handleSignIn(provider) {
+    const email = document.getElementById('signin-email').value.trim() || `user@${(provider || 'lineup').toLowerCase()}.com`;
+    signedInAs = email;
+    closeSignIn();
+    // Reflect in nav
+    const btn = document.querySelector('.nav-right .nav-btn:not(.ai)');
+    if (btn) btn.textContent = email.split('@')[0];
+    toast(provider ? `Signed in via ${provider}` : 'Signed in');
+}
+
 function openAI() {
     const modal = document.getElementById('matchday-modal');
     modal.classList.add('open');
@@ -5007,7 +5167,7 @@ function refreshAIQuotaUI() {
     const left = Math.max(0, AI_FREE_LIMIT - aiUsesUsed);
     if (left > 0) {
         el.className = 'ai-quota';
-        el.innerHTML = `<span class="dot"></span>${left} free vibe match · then \$4.99/mo`;
+        el.innerHTML = `<span class="dot"></span>${left} free vibe match · then \$1.99 first month`;
     } else {
         el.className = 'ai-quota used';
         el.innerHTML = `🔒 Free match used · <a onclick="closeMatchdayModal();openPaywall()">Subscribe for unlimited</a>`;
@@ -5470,6 +5630,7 @@ function unlockBoroughs() {
     applyFilters();
     if (activeRoute === 'fanhub') renderFanHub();
     refreshAIQuotaUI();
+    refreshChatGate();
 }
 
 function renderBoroughBanner() {
@@ -5525,7 +5686,7 @@ function buildSportGrid() {
         const live = parties.filter(p => p.sport === s.name && p.live).length;
         return `
             <button class="sport-tile" style="--tile-tint:${s.tint};--tile-glow:${s.glow}" onclick="pickSport('${s.name}')">
-                <img src="${s.photo}" alt="${s.name}" loading="lazy">
+                <img src="${s.photo}" alt="${s.name}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=900&q=80&auto=format&fit=crop'">
                 <div class="sport-tile-content">
                     <div class="sport-tile-top">
                         <span></span>
