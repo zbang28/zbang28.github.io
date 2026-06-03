@@ -1437,15 +1437,6 @@
         border-right: 1px solid var(--border);
     }
     body.worldcup-mode .filters { background: transparent; }
-    /* Light map tiles in worldcup-mode — invert the dark CARTO layer */
-    body.worldcup-mode #events-map {
-        filter: invert(0.92) hue-rotate(180deg) saturate(0.7) brightness(1.05);
-    }
-    body.worldcup-mode #events-map .leaflet-popup-content-wrapper,
-    body.worldcup-mode #events-map .leaflet-popup-tip,
-    body.worldcup-mode #events-map .pin {
-        filter: invert(1) hue-rotate(180deg) saturate(1.43) brightness(0.95);
-    }
     body.worldcup-mode .split-map { background: #eef0f4; }
     body.worldcup-mode .mini-card-img::after { background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.35)); }
     body.worldcup-mode .mini-card-price { background: var(--surface-2); color: var(--text); }
@@ -1902,8 +1893,9 @@
         display: grid;
         grid-template-columns: 120px 1fr;
         gap: 14px;
-        background: var(--surface);
-        border: 1.5px solid var(--border);
+        background: #ffffff;
+        color: #0e0f11;
+        border: 1px solid rgba(14,15,17,0.08);
         border-radius: 16px;
         overflow: hidden;
         cursor: pointer;
@@ -1912,6 +1904,11 @@
                     transform 0.25s cubic-bezier(.2,.7,.2,1),
                     box-shadow 0.3s cubic-bezier(.2,.7,.2,1);
     }
+    .mini-card .mini-card-venue { color: #0e0f11; }
+    .mini-card .mini-card-meta { color: #4a4d54; }
+    .mini-card .mini-card-meta .sep { color: #8a8d94; }
+    .mini-card .mini-card-price { background: #f1f3f8; color: #0e0f11; }
+    .mini-card .mini-card-going { color: var(--card-accent, #4a4d54); }
     .mini-card::after {
         content: ''; position: absolute;
         left: 0; top: 0; bottom: 0;
@@ -1935,6 +1932,46 @@
             0 16px 28px rgba(255,45,58,0.25);
     }
     .mini-card.active::after { opacity: 1; }
+    /* Versus art used inside .mini-card-img */
+    .vs-art {
+        position: absolute; inset: 0;
+        display: grid; grid-template-columns: 1fr 1fr;
+        z-index: 1;
+    }
+    .vs-half {
+        display: grid; place-items: center;
+        position: relative;
+    }
+    .vs-flag {
+        font-size: 38px;
+        line-height: 1;
+        filter: drop-shadow(0 2px 6px rgba(0,0,0,0.25));
+    }
+    .vs-label {
+        font-family: 'Anton', 'Inter', sans-serif;
+        font-weight: 400;
+        font-size: 20px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: white;
+        text-shadow: 0 1px 4px rgba(0,0,0,0.25);
+    }
+    .vs-divider {
+        position: absolute;
+        left: 50%; top: 50%;
+        transform: translate(-50%, -50%);
+        font-family: 'Anton', 'Inter', sans-serif;
+        font-weight: 400;
+        font-size: 10px;
+        letter-spacing: 1.5px;
+        background: #0e0f11;
+        color: white;
+        padding: 2px 6px;
+        border-radius: 999px;
+        border: 1.5px solid white;
+        z-index: 2;
+    }
+
     .mini-card-img {
         position: relative; height: 100%; min-height: 120px;
         background: var(--surface-2);
@@ -2024,13 +2061,13 @@
         box-shadow: 0 0 6px var(--card-accent, var(--green));
     }
     .mini-card.locked .mini-card-img::after {
-        content: '$5'; position: absolute; inset: 0;
-        background: rgba(255,255,255,0.78); backdrop-filter: blur(2px);
+        content: ''; position: absolute; inset: 0;
+        background-color: rgba(255,255,255,0.78);
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24' fill='none' stroke='%230e0f11' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='4' y='11' width='16' height='11' rx='2'/%3E%3Cpath d='M8 11V7a4 4 0 0 1 8 0v4'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: center;
+        backdrop-filter: blur(2px);
         z-index: 3;
-        display: grid; place-items: center;
-        font-family: 'Inter', sans-serif;
-        font-size: 18px; font-weight: 900;
-        color: var(--text); letter-spacing: -0.02em;
     }
 
     /* Pulse marker */
@@ -3274,12 +3311,8 @@
                 <h2 id="split-list-title">Events near you</h2>
                 <span class="count" id="split-count">0</span>
             </div>
-            <div class="mini-list" id="mini-list">
-                <form class="hero-search" style="margin-bottom:14px;background:var(--surface-2);border:1px solid var(--border);padding:4px;box-shadow:none" onsubmit="event.preventDefault();applyFilters()">
-                    <input id="search-input" type="text" placeholder="Search teams, venues..." style="padding:10px 12px;font-size:14px">
-                    <button type="submit" style="padding:0 16px;font-size:13px">Go</button>
-                </form>
-            </div>
+            <input id="search-input" type="hidden">
+            <div class="mini-list" id="mini-list"></div>
         </div>
         <div class="split-map">
             <div id="events-map"></div>
@@ -3675,6 +3708,71 @@ const matchPhotos = {
 function photoFor(p) {
     return matchPhotos[p.match] || photos[p.sport] || photos.Soccer;
 }
+
+// Per-team color + short name. Used to render Team A vs Team B card art.
+const teamData = {
+    // Nations (use country flags)
+    'Argentina':       { color:'#75aadb', flag:'🇦🇷' },
+    'Brazil':          { color:'#009c3b', flag:'🇧🇷' },
+    'USA':             { color:'#3c3b6e', flag:'🇺🇸' },
+    'Mexico':          { color:'#006847', flag:'🇲🇽' },
+    'England':         { color:'#ce1124', flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿' },
+    'Spain':           { color:'#aa151b', flag:'🇪🇸' },
+    'Uruguay':         { color:'#7b8fa8', flag:'🇺🇾' },
+    // Soccer clubs
+    'Arsenal':         { color:'#ef0107', label:'ARS' },
+    'Liverpool':       { color:'#c8102e', label:'LIV' },
+    'Real Madrid':     { color:'#ffffff', label:'RMA', text:'#0e0f11' },
+    'Barcelona':       { color:'#a50044', label:'FCB' },
+    // NBA
+    'Knicks':          { color:'#006bb6', label:'NYK' },
+    'Celtics':         { color:'#007a33', label:'BOS' },
+    'Lakers':          { color:'#552583', label:'LAL' },
+    'Warriors':        { color:'#1d428a', label:'GSW' },
+    'Nets':            { color:'#000000', label:'BKN' },
+    'Heat':            { color:'#98002e', label:'MIA' },
+    // NFL
+    'Bills':           { color:'#00338d', label:'BUF' },
+    'Chiefs':          { color:'#e31837', label:'KC' },
+    'Cowboys':         { color:'#003594', label:'DAL' },
+    'Eagles':          { color:'#004c54', label:'PHI' },
+    '49ers':           { color:'#aa0000', label:'SF' },
+    'Seahawks':        { color:'#002244', label:'SEA' },
+    // MLB
+    'Yankees':         { color:'#0c2340', label:'NYY' },
+    'Red Sox':         { color:'#bd3039', label:'BOS' },
+    // NHL
+    'Rangers':         { color:'#0033a0', label:'NYR' },
+    'Devils':          { color:'#c8102e', label:'NJD' },
+    'Islanders':       { color:'#00539b', label:'NYI' },
+    'Bruins':          { color:'#fcb514', label:'BOS', text:'#0e0f11' },
+};
+
+function cardArtHTML(p) {
+    const parts = p.match.split(' vs. ');
+    if (parts.length === 2) {
+        const aKey = parts[0].trim();
+        const bKey = parts[1].trim();
+        const A = teamData[aKey];
+        const B = teamData[bKey];
+        if (A && B) {
+            const renderSide = (T, name) => {
+                const txt = T.text || '#ffffff';
+                const inner = T.flag
+                    ? `<span class="vs-flag">${T.flag}</span>`
+                    : `<span class="vs-label" style="color:${txt}">${T.label || name.slice(0,3).toUpperCase()}</span>`;
+                return `<div class="vs-half" style="background:${T.color}">${inner}</div>`;
+            };
+            return `<div class="vs-art">
+                ${renderSide(A, aKey)}
+                ${renderSide(B, bKey)}
+                <span class="vs-divider">VS</span>
+            </div>`;
+        }
+    }
+    // Fallback for parades / pickup / single-name events
+    return `<img src="${photoFor(p)}" alt="" loading="lazy">`;
+}
 const sportColor = { NFL:'#013369', NBA:'#c8102e', MLB:'#002d72', NHL:'#1f2937', Soccer:'#00853f', UFC:'#9b1c1c', F1:'#b91c1c' };
 const reactionEmojis = [];
 
@@ -3886,8 +3984,7 @@ function renderMiniList(filtered) {
         card.style.setProperty('--card-accent', accentA);
         card.innerHTML = `
             <div class="mini-card-img">
-                <img src="${photoFor(p)}" alt="" loading="lazy">
-                ${co ? `<span class="mini-card-flag">${co.flag}</span>` : ''}
+                ${cardArtHTML(p)}
                 ${p.live ? '<span class="mini-card-pill live"><span class="dot"></span>LIVE</span>'
                   : isFree ? '<span class="mini-card-pill free">FREE</span>'
                   : `<span class="mini-card-pill" style="background:rgba(255,255,255,0.95);color:var(--text)">${p.sport}</span>`}
@@ -4026,7 +4123,7 @@ function initMap() {
     if (!el) return;
     mapInstance = L.map('events-map', { zoomControl: true, scrollWheelZoom: true })
         .setView([40.7128, -73.97], 12);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/voyager/{z}/{x}/{y}{r}.png', {
         attribution:'&copy; OpenStreetMap &copy; CARTO', subdomains:'abcd', maxZoom:19
     }).addTo(mapInstance);
     setTimeout(() => mapInstance.invalidateSize(), 100);
@@ -4043,7 +4140,7 @@ function renderMap(filtered) {
         const isActive = activeCardId === p.id;
         const icon = L.divIcon({
             className:'pin-wrap', iconSize:[36,36], iconAnchor:[18,18],
-            html:`<div class="pin ${p.live ? 'live' : ''} ${isActive ? 'active' : ''}" data-id="${p.id}" style="background:${color};color:${color}">${locked ? '$' : p.sport[0]}</div>`
+            html:`<div class="pin ${p.live ? 'live' : ''} ${isActive ? 'active' : ''}" data-id="${p.id}" style="background:${color};color:${color}">${locked ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="11" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>` : p.sport[0]}</div>`
         });
         const marker = L.marker([p.lat, p.lng], { icon }).addTo(mapInstance);
         marker._partyId = p.id;
@@ -4592,7 +4689,10 @@ function renderBoroughBanner() {
             <div class="borough-foot-inner">
                 <span class="borough-foot-label">Boroughs</span>
                 ${chips}
-                <button class="borough-foot-cta" onclick="openPaywall()">Unlock all · $5</button>
+                <button class="borough-foot-cta" onclick="openPaywall()">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;vertical-align:-2px"><rect x="4" y="11" width="16" height="11" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+                    Unlock all
+                </button>
             </div>
         </div>
     `;
