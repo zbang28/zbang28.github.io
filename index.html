@@ -6,7 +6,7 @@
 <title>The Lineup — Watch Parties Near You</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
@@ -43,31 +43,17 @@
         overflow-x: hidden;
     }
 
-    /* Vibrant backdrop */
+    /* Restrained editorial backdrop */
     .backdrop {
         position: fixed;
         inset: 0;
         z-index: -2;
         background:
-            radial-gradient(ellipse 60% 50% at 85% 10%, rgba(229,27,35,0.20), transparent 60%),
-            radial-gradient(ellipse 50% 40% at 10% 30%, rgba(168,85,247,0.15), transparent 60%),
-            radial-gradient(ellipse 50% 50% at 50% 100%, rgba(0,217,111,0.10), transparent 60%),
-            radial-gradient(ellipse 40% 30% at 90% 90%, rgba(255,184,0,0.12), transparent 60%),
+            radial-gradient(ellipse 70% 50% at 80% 0%, rgba(229,27,35,0.10), transparent 70%),
+            radial-gradient(ellipse 60% 40% at 20% 100%, rgba(229,27,35,0.06), transparent 70%),
             var(--bg);
     }
-
-    .grain {
-        position: fixed;
-        inset: 0;
-        z-index: -1;
-        pointer-events: none;
-        opacity: 0.4;
-        background-image:
-            radial-gradient(circle at 15% 20%, rgba(255,255,255,0.5) 0.5px, transparent 1px),
-            radial-gradient(circle at 70% 60%, rgba(255,255,255,0.4) 0.5px, transparent 1px),
-            radial-gradient(circle at 40% 90%, rgba(255,255,255,0.3) 0.5px, transparent 1px);
-        background-size: 200px 200px, 250px 250px, 180px 180px;
-    }
+    .grain { display: none; }
 
     /* Nav */
     nav {
@@ -95,25 +81,26 @@
     }
 
     .brand-mark {
-        width: 38px;
-        height: 38px;
+        width: 32px;
+        height: 32px;
         background: var(--red);
         display: grid;
         place-items: center;
         color: white;
-        font-family: 'Archivo Black', sans-serif;
-        font-size: 22px;
-        letter-spacing: -1px;
-        transform: skewX(-8deg);
-        box-shadow: 4px 4px 0 #000;
+        font-family: 'Playfair Display', serif;
+        font-style: italic;
+        font-weight: 700;
+        font-size: 20px;
+        border-radius: 4px;
     }
 
     .brand-name {
-        font-family: 'Anton', sans-serif;
-        font-size: 26px;
-        letter-spacing: 2px;
-        text-transform: uppercase;
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        font-size: 22px;
+        letter-spacing: 0;
     }
+    .brand-name em { font-style: italic; font-weight: 400; }
 
     .nav-links {
         display: flex;
@@ -134,18 +121,19 @@
     .nav-right { margin-left: auto; display: flex; gap: 10px; align-items: center; }
 
     .nav-cta {
-        padding: 10px 18px;
+        padding: 9px 18px;
         background: var(--red);
         color: white;
         border: none;
-        font-family: 'Anton', sans-serif;
-        font-size: 14px;
-        letter-spacing: 1.5px;
-        text-transform: uppercase;
+        border-radius: 4px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 13px;
+        letter-spacing: 0.3px;
         cursor: pointer;
-        transition: background 0.15s, transform 0.1s;
+        transition: background 0.15s;
     }
-    .nav-cta:hover { background: var(--red-bright); transform: translateY(-1px); }
+    .nav-cta:hover { background: var(--red-bright); }
 
     @media (max-width: 800px) {
         .nav-links { display: none; }
@@ -175,41 +163,43 @@
         display: inline-flex;
         align-items: center;
         gap: 10px;
-        padding: 6px 12px;
-        background: var(--red);
-        color: white;
-        font-family: 'Archivo Black', sans-serif;
-        font-size: 11px;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        margin-bottom: 24px;
-        transform: skewX(-8deg);
+        font-family: 'Playfair Display', serif;
+        font-style: italic;
+        font-size: 14px;
+        color: var(--red);
+        margin-bottom: 20px;
+        letter-spacing: 0.5px;
     }
-
-    .kicker > * { transform: skewX(8deg); }
+    .kicker .line { width: 36px; height: 1px; background: var(--red); }
     .kicker .dot {
-        width: 8px; height: 8px; background: white; border-radius: 50%;
-        animation: pulse 1.4s infinite;
+        width: 6px; height: 6px; background: var(--red); border-radius: 50%;
+        animation: pulse 1.6s infinite;
     }
 
     .hero h1 {
-        font-family: 'Anton', sans-serif;
-        font-size: clamp(64px, 9vw, 132px);
-        line-height: 0.88;
-        letter-spacing: 1px;
-        text-transform: uppercase;
+        font-family: 'Playfair Display', serif;
+        font-weight: 400;
+        font-size: clamp(56px, 7.5vw, 110px);
+        line-height: 1.0;
+        letter-spacing: -0.02em;
         margin-bottom: 24px;
     }
 
-    .hero h1 .stroke {
-        -webkit-text-stroke: 2px var(--text);
-        color: transparent;
+    .hero h1 .italic {
+        font-style: italic;
+        color: var(--text);
+    }
+
+    .hero h1 .bold {
+        font-family: 'Anton', sans-serif;
+        font-weight: 400;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: inline-block;
     }
 
     .hero h1 .red {
         color: var(--red);
-        font-style: italic;
-        display: inline-block;
     }
 
     .hero p.lede {
@@ -219,56 +209,67 @@
         margin-bottom: 36px;
     }
 
-    /* Hero art — stack of magazine covers */
+    /* Hero art — single editorial cover */
     .hero-art {
         position: relative;
-        height: 480px;
+        aspect-ratio: 3 / 4;
+        max-height: 540px;
+        justify-self: end;
+        width: 100%;
+        max-width: 420px;
     }
 
     .mag {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #000;
+        box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+    }
+
+    .mag img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.85;
+    }
+
+    .mag-overlay {
         position: absolute;
-        width: 240px;
-        height: 320px;
-        border: 6px solid var(--text);
-        box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+        inset: 0;
+        background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, transparent 30%, rgba(0,0,0,0.6) 100%);
+        padding: 24px 28px;
         display: flex;
         flex-direction: column;
-        overflow: hidden;
+        justify-content: space-between;
     }
 
-    .mag .mag-band {
-        background: var(--text);
-        color: var(--bg);
-        padding: 6px 10px;
-        font-family: 'Archivo Black', sans-serif;
-        font-size: 10px;
-        letter-spacing: 2px;
-        text-align: center;
-        text-transform: uppercase;
+    .mag-band {
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: 11px;
+        letter-spacing: 3px;
+        color: white;
+        opacity: 0.85;
     }
 
-    .mag .mag-body {
-        flex: 1;
-        display: grid;
-        place-items: center;
-        font-size: 80px;
-        position: relative;
+    .mag-title { line-height: 0.95; color: white; }
+    .mag-title .serif-italic {
+        font-family: 'Playfair Display', serif;
+        font-style: italic;
+        font-weight: 400;
+        font-size: 28px;
+        letter-spacing: -0.5px;
     }
-
-    .mag .mag-title {
-        background: var(--text);
-        color: var(--bg);
-        padding: 8px 10px;
+    .mag-title .display {
         font-family: 'Anton', sans-serif;
-        font-size: 22px;
-        letter-spacing: 1px;
-        text-align: center;
+        font-size: clamp(40px, 5vw, 56px);
+        letter-spacing: 0.5px;
         text-transform: uppercase;
+        display: inline-block;
+        margin-top: 4px;
     }
-
-    .mag-1 { background: linear-gradient(160deg, #e51b23, #6a0a0e); top: 20px; left: 0; transform: rotate(-8deg); }
-    .mag-2 { background: linear-gradient(160deg, #00d96f, #0a5a2e); top: 60px; left: 140px; transform: rotate(4deg); z-index: 2; }
-    .mag-3 { background: linear-gradient(160deg, #ffb800, #8a6010); top: 130px; left: 280px; transform: rotate(-3deg); }
 
     /* Search */
     .search-wrap {
@@ -340,29 +341,30 @@
 
     /* Marquee strip */
     .marquee {
-        background: var(--red);
-        color: white;
-        padding: 12px 0;
+        background: var(--bg-2);
+        color: var(--text);
+        padding: 14px 0;
         overflow: hidden;
         position: relative;
         margin-bottom: 48px;
-        border-top: 1px solid #000;
-        border-bottom: 1px solid #000;
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
     }
 
     .marquee-track {
         display: flex;
-        gap: 48px;
+        gap: 56px;
         white-space: nowrap;
-        animation: scroll 30s linear infinite;
-        font-family: 'Anton', sans-serif;
-        font-size: 18px;
-        letter-spacing: 3px;
-        text-transform: uppercase;
+        animation: scroll 40s linear infinite;
+        font-family: 'Playfair Display', serif;
+        font-style: italic;
+        font-size: 15px;
+        letter-spacing: 0.3px;
+        color: var(--text-dim);
     }
 
     .marquee-track span { display: inline-flex; align-items: center; gap: 12px; }
-    .marquee-track .sep { font-size: 12px; opacity: 0.7; }
+    .marquee-track .sep { font-size: 8px; opacity: 0.5; color: var(--red); }
 
     @keyframes scroll {
         from { transform: translateX(0); }
@@ -399,11 +401,21 @@
     }
 
     .sec-head h2 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 400;
+        font-size: clamp(32px, 4vw, 48px);
+        letter-spacing: -0.02em;
+        line-height: 1.05;
+    }
+    .sec-head h2 em {
+        font-style: italic;
+        color: var(--red);
+    }
+    .sec-head h2 .display {
         font-family: 'Anton', sans-serif;
-        font-size: clamp(34px, 4.5vw, 52px);
-        letter-spacing: 2px;
         text-transform: uppercase;
-        line-height: 1;
+        font-size: 0.92em;
+        letter-spacing: 1px;
     }
 
     .sec-head .sub {
@@ -596,15 +608,22 @@
     }
 
     .cover-top {
-        background: var(--text);
-        color: var(--bg);
-        padding: 8px 14px;
-        font-family: 'Archivo Black', sans-serif;
+        background: transparent;
+        color: white;
+        padding: 12px 16px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
         font-size: 10px;
         letter-spacing: 2.5px;
         text-transform: uppercase;
         display: flex;
         justify-content: space-between;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 3;
+        text-shadow: 0 1px 8px rgba(0,0,0,0.6);
     }
 
     .cover-art {
@@ -646,23 +665,32 @@
 
     .cover-headline {
         position: absolute;
-        bottom: 12px;
-        left: 14px;
-        right: 14px;
-        font-family: 'Anton', sans-serif;
-        font-size: 32px;
-        line-height: 0.9;
-        letter-spacing: 1px;
-        text-transform: uppercase;
+        bottom: 16px;
+        left: 16px;
+        right: 16px;
         color: white;
-        text-shadow: 0 2px 12px rgba(0,0,0,0.6);
+        text-shadow: 0 2px 16px rgba(0,0,0,0.7);
         z-index: 2;
+        line-height: 0.95;
     }
 
-    .cover-headline em {
-        color: var(--amber);
+    .cover-headline .serif {
+        font-family: 'Playfair Display', serif;
         font-style: italic;
-        display: inline-block;
+        font-weight: 400;
+        font-size: 18px;
+        opacity: 0.95;
+        display: block;
+        margin-bottom: 2px;
+        letter-spacing: 0.2px;
+    }
+
+    .cover-headline .display {
+        font-family: 'Anton', sans-serif;
+        font-size: 32px;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        display: block;
     }
 
     .live-tag {
@@ -837,10 +865,10 @@
     }
     .vtype-emoji { font-size: 28px; margin-bottom: 6px; }
     .vtype-name {
-        font-family: 'Anton', sans-serif;
-        font-size: 14px;
-        letter-spacing: 1.5px;
-        text-transform: uppercase;
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        font-size: 16px;
+        letter-spacing: 0;
     }
     .vtype-count {
         font-size: 11px;
@@ -895,28 +923,24 @@
 <section class="hero">
     <div class="hero-grid">
         <div>
-            <div class="kicker"><span class="dot"></span><span>Live · 47 watch parties</span></div>
+            <div class="kicker"><span class="dot"></span><span>Live tonight</span><span class="line"></span><span>47 watch parties</span></div>
             <h1>
-                <span class="stroke">One</span> <span class="red">Game.</span><br>
-                Every <span class="red">Crowd.</span>
+                <span class="italic">Find your</span><br>
+                <span class="bold red">CROWD.</span><br>
+                <span class="italic">Catch the</span> <span class="bold">GAME.</span>
             </h1>
-            <p class="lede">Find watch parties wherever they're happening — sports bars, public parks, breweries, rooftops, plazas, even your neighbor's backyard. Every sport. Every venue. One lineup.</p>
+            <p class="lede">From neighborhood sports bars to public parks, breweries, rooftops, and beachside bonfires — discover every watch party near you for every sport.</p>
         </div>
         <div class="hero-art">
-            <div class="mag mag-1">
-                <div class="mag-band">Issue 047 · Tonight</div>
-                <div class="mag-body">🏀</div>
-                <div class="mag-title">Court Side</div>
-            </div>
-            <div class="mag mag-2">
-                <div class="mag-band">Issue 047 · Weekend</div>
-                <div class="mag-body">⚽</div>
-                <div class="mag-title">In the Park</div>
-            </div>
-            <div class="mag mag-3">
-                <div class="mag-band">Issue 047 · Sunday</div>
-                <div class="mag-body">🏈</div>
-                <div class="mag-title">Big Game</div>
+            <div class="mag">
+                <img src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=900&q=85&auto=format&fit=crop" alt="">
+                <div class="mag-overlay">
+                    <div class="mag-band">VOL. 47 · TONIGHT</div>
+                    <div class="mag-title">
+                        <span class="serif-italic">Inside the</span><br>
+                        <span class="display">WATCH PARTY</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -969,7 +993,7 @@
     <div class="sec-head">
         <div class="title">
             <span class="bar"></span>
-            <h2>Browse <em style="color:var(--red);font-style:italic">venues</em></h2>
+            <h2><em>Browse</em> <span class="display">Venues</span></h2>
         </div>
         <div class="sub">Where the watch parties happen</div>
     </div>
@@ -980,7 +1004,7 @@
     <div class="sec-head">
         <div class="title">
             <span class="bar"></span>
-            <h2>Tonight's <em style="color:var(--red);font-style:italic">Lineup</em></h2>
+            <h2><em>Tonight's</em> <span class="display">Lineup</span></h2>
         </div>
         <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
             <div class="sub" id="count"></div>
@@ -1159,8 +1183,8 @@ function render() {
 
         const [teamA, teamB] = p.match.split(' vs. ');
         const headline = teamB
-            ? `${teamA}<br><em>vs ${teamB}</em>`
-            : p.match;
+            ? `<span class="serif">${teamA} vs.</span><span class="display">${teamB}</span>`
+            : `<span class="display">${p.match}</span>`;
 
         card.innerHTML = `
             <div class="card-cover">
