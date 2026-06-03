@@ -249,6 +249,215 @@
     }
     .sport-tile:hover .sport-tile-arrow { transform: translateX(4px); }
 
+    /* ===== App Store style feature cards ===== */
+    .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 16px;
+    }
+    .feature-card {
+        position: relative;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 22px;
+        overflow: hidden;
+        cursor: pointer;
+        display: flex; flex-direction: column;
+        transition: transform 0.25s cubic-bezier(.2,.7,.2,1),
+                    box-shadow 0.25s;
+    }
+    .feature-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 24px 48px rgba(14,15,17,0.12);
+    }
+    .feature-art {
+        position: relative;
+        aspect-ratio: 16 / 11;
+        overflow: hidden;
+    }
+    .feature-body {
+        padding: 18px 20px 22px;
+        display: flex; flex-direction: column; gap: 6px;
+    }
+    .feature-kicker {
+        font-size: 10px; font-weight: 900;
+        letter-spacing: 2px; text-transform: uppercase;
+        color: var(--red);
+    }
+    .feature-card h3 {
+        font-family: 'Inter', sans-serif;
+        font-weight: 900; font-size: 18px;
+        letter-spacing: -0.02em; line-height: 1.2;
+    }
+    .feature-card p {
+        font-size: 13px; color: var(--text-dim);
+        line-height: 1.45;
+    }
+
+    /* Map mock */
+    .feature-art-map {
+        background:
+            radial-gradient(ellipse 60% 50% at 30% 30%, rgba(255,45,58,0.18), transparent 60%),
+            radial-gradient(ellipse 50% 50% at 70% 70%, rgba(168,85,247,0.18), transparent 60%),
+            linear-gradient(135deg, #f4f3ed 0%, #e9e6dc 100%);
+    }
+    .map-mock {
+        position: absolute; inset: 16px;
+        background:
+            linear-gradient(135deg, #fcfbf6 0%, #e8e6dc 100%);
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.5);
+    }
+    .map-mock-grid {
+        position: absolute; inset: 0;
+        background-image:
+            linear-gradient(90deg, rgba(14,15,17,0.06) 1px, transparent 1px),
+            linear-gradient(0deg, rgba(14,15,17,0.06) 1px, transparent 1px);
+        background-size: 28px 28px;
+    }
+    .map-pin {
+        position: absolute;
+        width: 14px; height: 14px;
+        border-radius: 50%;
+        background: var(--c, var(--red));
+        border: 2.5px solid white;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+    }
+    .map-pin.live::after {
+        content: ''; position: absolute; inset: -4px;
+        border-radius: 50%;
+        background: var(--c, var(--red));
+        opacity: 0.4;
+        animation: pulse 1.6s infinite;
+        z-index: -1;
+    }
+
+    /* World Cup mock */
+    .feature-art-worldcup {
+        background: linear-gradient(135deg, #1a0a2c 0%, #0e0f11 100%);
+        position: relative;
+    }
+    .wc-stripes {
+        position: absolute; top: 0; left: 0; right: 0; height: 6px;
+        background: linear-gradient(90deg,
+            #ff2d3a 0% 14%, #ff7a1a 14% 28%, #ffb800 28% 42%,
+            #00d96f 42% 56%, #06d6f7 56% 70%, #2563eb 70% 84%, #a855f7 84% 100%);
+    }
+    .wc-flags {
+        position: absolute; inset: 22px 16px 16px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        align-content: center;
+    }
+    .wc-flags span {
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 10px;
+        font-size: 22px;
+        display: grid; place-items: center;
+        aspect-ratio: 1.4 / 1;
+    }
+    .wc-stamp {
+        position: absolute; bottom: 12px; right: 14px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 900; font-size: 30px;
+        letter-spacing: -0.04em;
+        background: linear-gradient(135deg, #ff2d3a, #ffb800);
+        -webkit-background-clip: text; background-clip: text;
+        color: transparent;
+    }
+
+    /* Fan Hub pitch mock */
+    .feature-art-fanhub {
+        background:
+            repeating-linear-gradient(90deg,
+                rgba(255,255,255,0.04) 0 1px,
+                transparent 1px 44px),
+            linear-gradient(180deg, #0d1a35 0%, #142454 50%, #0d1a35 100%);
+    }
+    .pitch-mock {
+        position: absolute; inset: 12px;
+        border: 1.5px solid rgba(255,255,255,0.15);
+        border-radius: 6px;
+    }
+    .pitch-circle {
+        position: absolute;
+        left: 50%; top: 50%;
+        width: 60px; height: 60px;
+        border: 1.5px solid rgba(255,255,255,0.15);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+    }
+    .pitch-line {
+        position: absolute;
+        left: 0; right: 0; top: 50%;
+        height: 1.5px;
+        background: rgba(255,255,255,0.15);
+    }
+    .pitch-bubble {
+        position: absolute;
+        width: 26px; height: 26px;
+        border-radius: 50%;
+        background: linear-gradient(180deg, #ff2d3a, #b91017);
+        border: 2px solid white;
+        display: grid; place-items: center;
+        color: white; font-weight: 900; font-size: 11px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+        transform: translate(-50%, -50%);
+    }
+    .pro-badge {
+        position: absolute;
+        top: 12px; right: 12px;
+        background: linear-gradient(135deg, #ff2d3a, #ff7a1a);
+        color: white;
+        font-size: 10px; font-weight: 900;
+        letter-spacing: 2px;
+        padding: 3px 9px; border-radius: 999px;
+        box-shadow: 0 6px 14px rgba(255,45,58,0.45);
+    }
+
+    /* AI mock */
+    .feature-art-ai {
+        background:
+            radial-gradient(ellipse 60% 60% at 20% 30%, rgba(168,85,247,0.45), transparent 60%),
+            radial-gradient(ellipse 50% 60% at 80% 80%, rgba(255,62,181,0.4), transparent 60%),
+            linear-gradient(135deg, #1a0a2c 0%, #2b0e2c 100%);
+        position: relative;
+    }
+    .ai-stars {
+        position: absolute; inset: 0;
+        background-image:
+            radial-gradient(circle at 18% 25%, white 1.5px, transparent 2.5px),
+            radial-gradient(circle at 72% 38%, white 1.2px, transparent 2px),
+            radial-gradient(circle at 40% 70%, white 1.5px, transparent 2.5px),
+            radial-gradient(circle at 88% 82%, white 1px, transparent 1.8px),
+            radial-gradient(circle at 22% 88%, white 1.2px, transparent 2px);
+        opacity: 0.6;
+    }
+    .ai-chip {
+        position: absolute;
+        top: 18px; left: 18px;
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255,255,255,0.2);
+        padding: 6px 12px;
+        border-radius: 999px;
+        color: white;
+        font-size: 12px; font-weight: 800;
+    }
+    .ai-lines {
+        position: absolute;
+        bottom: 18px; left: 18px; right: 18px;
+        display: flex; flex-direction: column; gap: 6px;
+    }
+    .ai-lines span {
+        height: 8px;
+        background: rgba(255,255,255,0.25);
+        border-radius: 4px;
+    }
+
     /* Featured rail (smaller tiles) */
     .featured-grid {
         display: grid;
@@ -2231,6 +2440,89 @@
             <div class="sub">Pick a sport to see every event near you</div>
         </div>
         <div class="sport-grid" id="sport-grid"></div>
+    </div>
+
+    <div class="home-section">
+        <div class="home-section-head">
+            <h2>Inside <em>Lineup</em></h2>
+            <div class="sub">Everything Lineup does, in one place</div>
+        </div>
+        <div class="feature-grid">
+
+            <article class="feature-card" onclick="openMapView()">
+                <div class="feature-art feature-art-map">
+                    <div class="map-mock">
+                        <div class="map-mock-grid"></div>
+                        <span class="map-pin" style="--c:#ff2d3a;top:32%;left:28%"></span>
+                        <span class="map-pin" style="--c:#a855f7;top:58%;left:62%"></span>
+                        <span class="map-pin" style="--c:#00d96f;top:46%;left:46%"></span>
+                        <span class="map-pin" style="--c:#06d6f7;top:70%;left:32%"></span>
+                        <span class="map-pin live" style="--c:#ff2d3a;top:24%;left:70%"></span>
+                    </div>
+                </div>
+                <div class="feature-body">
+                    <div class="feature-kicker">DISCOVER</div>
+                    <h3>An interactive map of every event</h3>
+                    <p>Watch parties, parades, and pickup games, plotted on a live map. Click a pin to RSVP.</p>
+                </div>
+            </article>
+
+            <article class="feature-card" onclick="route('worldcup')">
+                <div class="feature-art feature-art-worldcup">
+                    <div class="wc-stripes"></div>
+                    <div class="wc-flags">
+                        <span>🇦🇷</span><span>🇧🇷</span><span>🇺🇸</span>
+                        <span>🏴󠁧󠁢󠁥󠁮󠁧󠁿</span><span>🇪🇸</span><span>🇫🇷</span>
+                        <span>🇲🇽</span><span>🇩🇪</span><span>🇮🇹</span>
+                    </div>
+                    <div class="wc-stamp">2026</div>
+                </div>
+                <div class="feature-body">
+                    <div class="feature-kicker" style="color:#ffb800">WORLD CUP</div>
+                    <h3>Find your flag's crowd</h3>
+                    <p>Pick the country you're supporting and we'll show every watch spot, parade, and pickup match.</p>
+                </div>
+            </article>
+
+            <article class="feature-card feature-card-pro" onclick="route('fanhub')">
+                <div class="feature-art feature-art-fanhub">
+                    <div class="pitch-mock">
+                        <span class="pitch-circle"></span>
+                        <span class="pitch-line"></span>
+                        <span class="pitch-bubble" style="top:18%;left:30%">10</span>
+                        <span class="pitch-bubble" style="top:18%;left:60%">9</span>
+                        <span class="pitch-bubble" style="top:42%;left:22%">8</span>
+                        <span class="pitch-bubble" style="top:42%;left:50%">4</span>
+                        <span class="pitch-bubble" style="top:42%;left:78%">7</span>
+                        <span class="pitch-bubble" style="top:78%;left:46%">1</span>
+                    </div>
+                    <div class="pro-badge">PRO</div>
+                </div>
+                <div class="feature-body">
+                    <div class="feature-kicker" style="color:#ff3eb5">FAN HUB · PRO</div>
+                    <h3>Lineups, chat, and polls</h3>
+                    <p>An exclusive lounge for verified supporters. Live country chat and the starting XI as it drops.</p>
+                </div>
+            </article>
+
+            <article class="feature-card" onclick="openAI()">
+                <div class="feature-art feature-art-ai">
+                    <div class="ai-stars"></div>
+                    <div class="ai-chip">✦ Plan with AI</div>
+                    <div class="ai-lines">
+                        <span style="width:88%"></span>
+                        <span style="width:66%"></span>
+                        <span style="width:74%"></span>
+                    </div>
+                </div>
+                <div class="feature-body">
+                    <div class="feature-kicker" style="color:#a855f7">AI MATCHDAY</div>
+                    <h3>Plan your matchday in seconds</h3>
+                    <p>Tell us who you're rooting for and we'll build a route — primary spot, pregame, parade, backup.</p>
+                </div>
+            </article>
+
+        </div>
     </div>
 
 </section>
