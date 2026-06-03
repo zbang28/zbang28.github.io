@@ -98,40 +98,21 @@
     .tab:hover { color: white; background: rgba(255,255,255,0.08); }
     .tab.active { color: white; background: rgba(255,255,255,0.12); }
     .tab.highlight {
-        color: white !important;
-        font-weight: 800 !important;
-        background-color: #0e0f11 !important;
-        background-image:
-            radial-gradient(circle at 12% 20%, #ff2d3a 0%, #ff2d3a 22%, transparent 24%),
-            radial-gradient(circle at 88% 24%, #ffd400 0%, #ffd400 20%, transparent 22%),
-            radial-gradient(circle at 22% 82%, #16a34a 0%, #16a34a 22%, transparent 24%),
-            radial-gradient(circle at 80% 80%, #2563eb 0%, #2563eb 22%, transparent 24%),
-            radial-gradient(circle at 50% 50%, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.18) 14%, transparent 16%),
-            conic-gradient(from 0deg at 50% 50%,
-                #ff2d3a 0deg,
-                transparent 60deg,
-                #ffd400 90deg,
-                transparent 150deg,
-                #16a34a 180deg,
-                transparent 240deg,
-                #2563eb 270deg,
-                transparent 330deg,
-                #ff2d3a 360deg);
-        background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 200% 200%;
-        background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 50%;
+        color: #0e0f11 !important;
+        font-weight: 900 !important;
+        background-color: #f8f6ee !important;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 80' preserveAspectRatio='none'%3E%3Cpath d='M -10 22 C 40 8 80 52 130 22 S 220 34 260 22' stroke='%23ff7a1a' stroke-width='8' fill='none' stroke-linecap='round'/%3E%3Cpath d='M -10 62 C 40 76 80 34 130 62 S 220 50 260 62' stroke='%232563eb' stroke-width='8' fill='none' stroke-linecap='round'/%3E%3Cpath d='M -10 42 C 60 25 100 58 160 42 S 240 52 280 42' stroke='%2316a34a' stroke-width='7' fill='none' stroke-linecap='round'/%3E%3Cpath d='M -10 12 C 60 32 110 4 160 12 S 240 4 280 12' stroke='%23ff2d3a' stroke-width='6' fill='none' stroke-linecap='round' opacity='0.9'/%3E%3C/svg%3E") !important;
+        background-size: 100% 100% !important;
+        background-position: 0 0 !important;
+        background-repeat: no-repeat !important;
         padding: 8px 16px !important;
         border-radius: 10px !important;
-        box-shadow: none !important;
+        box-shadow: 0 0 0 1.5px rgba(255,255,255,0.6) inset !important;
         transition: transform 0.2s cubic-bezier(.2,.7,.2,1);
-        text-shadow: 0 1px 4px rgba(0,0,0,0.55);
-        animation: wc-swirl 14s linear infinite;
+        text-shadow: 0 1px 0 rgba(255,255,255,0.9), 0 0 6px rgba(255,255,255,0.7);
     }
     .tab.highlight:hover { transform: translateY(-1px); }
     .tab.highlight.active { transform: translateY(-1px); }
-    @keyframes wc-swirl {
-        from { background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 50%; }
-        to   { background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 200% 50%; }
-    }
     .tab-badge {
         display: inline-block;
         margin-left: 6px;
