@@ -3573,43 +3573,10 @@
         <div class="hero-content">
             <div class="hero-eyebrow"><span class="live-dot"></span><span id="hero-live-count">47 live · 12,840 fans tonight</span></div>
             <h1>Pick a <span class="gradient">sport.</span><br>Find your <span class="gradient">crowd.</span></h1>
-            <div class="browse-wrap">
-                <button class="browse-map-btn" id="browse-trigger" onclick="toggleBrowseMenu(event)">
-                    <span>Browse the map</span>
-                    <span class="browse-map-arrow">→</span>
-                </button>
-                <div class="browse-menu" id="browse-menu">
-                    <button class="browse-item" onclick="openMapView('watch-party')">
-                        <span class="browse-item-label">
-                            <span class="browse-item-name">Watch parties</span>
-                            <span class="browse-item-sub">Bars, breweries, rooftops</span>
-                        </span>
-                        <span class="browse-item-arrow">→</span>
-                    </button>
-                    <button class="browse-item" onclick="openMapView('parade')">
-                        <span class="browse-item-label">
-                            <span class="browse-item-name">Post-game parades</span>
-                            <span class="browse-item-sub">Routes & start times</span>
-                        </span>
-                        <span class="browse-item-arrow">→</span>
-                    </button>
-                    <button class="browse-item" onclick="openMapView('pickup')">
-                        <span class="browse-item-label">
-                            <span class="browse-item-name">Pickup games</span>
-                            <span class="browse-item-sub">Open runs in the park</span>
-                        </span>
-                        <span class="browse-item-arrow">→</span>
-                    </button>
-                    <div class="browse-divider"></div>
-                    <button class="browse-item" onclick="closeBrowseMenu();route('fanhub');">
-                        <span class="browse-item-label">
-                            <span class="browse-item-name">Community polls</span>
-                            <span class="browse-item-sub">Vote on best spots</span>
-                        </span>
-                        <span class="browse-item-arrow">→</span>
-                    </button>
-                </div>
-            </div>
+            <button class="browse-map-btn" onclick="route('events')">
+                <span>Browse the map</span>
+                <span class="browse-map-arrow">→</span>
+            </button>
         </div>
     </div>
 
