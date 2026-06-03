@@ -2071,7 +2071,7 @@
         display: grid;
         grid-template-columns: minmax(380px, 480px) 1fr;
         gap: 0;
-        height: calc(100vh - 64px - 70px);
+        height: calc(100vh - 64px);
         margin-top: 0;
     }
     @media (max-width: 900px) {
@@ -3687,7 +3687,6 @@
         </div>
     </div>
 
-    <div id="borough-banner"></div>
 </section>
 
 <!-- ============ FAN HUB PAGE ============ -->
@@ -5222,6 +5221,8 @@ function unlockBoroughs() {
 function renderBoroughBanner() {
     const wrap = document.getElementById('borough-banner');
     if (!wrap) return;
+    wrap.innerHTML = '';
+    return;
     if (unlockedBoroughs.size > 1) { wrap.innerHTML = ''; return; }
     const boroughs = ['Brooklyn','Manhattan','Queens','Bronx','Staten Island'];
     const lockSvg = `<svg class="lock-svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="11" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>`;
