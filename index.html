@@ -2133,10 +2133,10 @@
         display: grid;
         grid-template-columns: 120px 1fr;
         gap: 14px;
-        background: rgba(255,255,255,0.05);
+        background: rgba(255,255,255,0.10);
         backdrop-filter: blur(14px);
         color: var(--text);
-        border: 1px solid rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.14);
         border-radius: 16px;
         overflow: hidden;
         cursor: pointer;
@@ -2146,7 +2146,7 @@
                     box-shadow 0.3s cubic-bezier(.2,.7,.2,1),
                     background 0.2s;
     }
-    .mini-card:hover { background: rgba(255,255,255,0.08); }
+    .mini-card:hover { background: rgba(255,255,255,0.16); }
     .mini-card .mini-card-venue { color: var(--text); }
     .mini-card .mini-card-meta { color: var(--text-dim); }
     .mini-card .mini-card-meta .sep { color: var(--text-mute); }
@@ -2190,6 +2190,7 @@
     .vs-half {
         display: grid; place-items: center;
         position: relative;
+        padding: 8px;
     }
     .vs-flag {
         font-size: 38px;
@@ -2197,7 +2198,8 @@
         filter: drop-shadow(0 2px 6px rgba(0,0,0,0.25));
     }
     .vs-logo {
-        width: 48px; height: 48px;
+        max-width: 100%; max-height: 100%;
+        width: auto; height: auto;
         object-fit: contain;
         filter: drop-shadow(0 2px 6px rgba(0,0,0,0.25));
     }
@@ -4508,10 +4510,12 @@ function initMap() {
     if (!el) return;
     mapInstance = L.map('events-map', { zoomControl: true, scrollWheelZoom: true })
         .setView([40.7128, -73.97], 12);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/voyager/{z}/{x}/{y}{r}.png', {
-        attribution:'&copy; OpenStreetMap &copy; CARTO', subdomains:'abcd', maxZoom:19
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution:'&copy; OpenStreetMap contributors',
+        maxZoom: 19
     }).addTo(mapInstance);
     setTimeout(() => mapInstance.invalidateSize(), 100);
+    setTimeout(() => mapInstance.invalidateSize(), 400);
 }
 
 function renderMap(filtered) {
