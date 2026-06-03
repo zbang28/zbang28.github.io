@@ -2312,6 +2312,8 @@
         display: grid; grid-template-columns: 1fr 1fr;
         z-index: 1;
     }
+    .vs-art.vs-art-solo { grid-template-columns: 1fr; }
+    .vs-art.vs-art-solo .vs-divider { display: none; }
     .vs-half {
         display: grid; place-items: center;
         position: relative;
@@ -4229,11 +4231,22 @@ const teamData = {
     // MLB
     'Yankees':         { color:'#0c2340', label:'NYY', logo:'https://upload.wikimedia.org/wikipedia/en/thumb/2/25/NewYorkYankees_PrimaryLogo.svg/200px-NewYorkYankees_PrimaryLogo.svg.png' },
     'Red Sox':         { color:'#bd3039', label:'BOS', logo:'https://upload.wikimedia.org/wikipedia/en/thumb/6/6d/RedSoxPrimary_HangingSocks.svg/200px-RedSoxPrimary_HangingSocks.svg.png' },
+    'Mets':            { color:'#002d72', label:'NYM', logo:'https://upload.wikimedia.org/wikipedia/en/thumb/7/7b/New_York_Mets.svg/200px-New_York_Mets.svg.png' },
+    'Dodgers':         { color:'#005a9c', label:'LAD', logo:'https://upload.wikimedia.org/wikipedia/en/thumb/6/69/Los_Angeles_Dodgers_logo.svg/200px-Los_Angeles_Dodgers_logo.svg.png' },
+    'Cubs':            { color:'#0e3386', label:'CHC', logo:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Chicago_Cubs_logo.svg/200px-Chicago_Cubs_logo.svg.png' },
+    'Phillies':        { color:'#e81828', label:'PHI', logo:'https://upload.wikimedia.org/wikipedia/en/thumb/1/16/Philadelphia_Phillies_logo.svg/200px-Philadelphia_Phillies_logo.svg.png' },
     // NHL
     'Rangers':         { color:'#0033a0', label:'NYR', logo:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/New_York_Rangers.svg/200px-New_York_Rangers.svg.png' },
     'Devils':          { color:'#c8102e', label:'NJD', logo:'https://upload.wikimedia.org/wikipedia/en/thumb/9/93/Logo_New_Jersey_Devils.svg/200px-Logo_New_Jersey_Devils.svg.png' },
     'Islanders':       { color:'#00539b', label:'NYI', logo:'https://upload.wikimedia.org/wikipedia/en/thumb/4/42/Logo_New_York_Islanders.svg/200px-Logo_New_York_Islanders.svg.png' },
     'Bruins':          { color:'#fcb514', label:'BOS', text:'#0e0f11', logo:'https://upload.wikimedia.org/wikipedia/en/thumb/1/1f/Boston_Bruins.svg/200px-Boston_Bruins.svg.png' },
+    // College football
+    'Michigan':        { color:'#00274c', label:'MICH', logo:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Michigan_Wolverines_logo.svg/200px-Michigan_Wolverines_logo.svg.png' },
+    'Ohio State':      { color:'#bb0000', label:'OSU',  logo:'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Ohio_State_Buckeyes_logo.svg/200px-Ohio_State_Buckeyes_logo.svg.png' },
+    'Alabama':         { color:'#9e1b32', label:'ALA' },
+    'Georgia':         { color:'#ba0c2f', label:'UGA' },
+    'Texas':           { color:'#bf5700', label:'TEX' },
+    'USC':             { color:'#990000', label:'USC' },
 };
 
 function cardArtHTML(p) {
@@ -4263,7 +4276,25 @@ function cardArtHTML(p) {
             </div>`;
         }
     }
-    // Fallback for parades / pickup / single-name events
+    // Single-team event (parade, victory, championship). Match any known team name in the string.
+    const keys = Object.keys(teamData).sort((a, b) => b.length - a.length);
+    const matched = keys.find(k => p.match.includes(k));
+    if (matched) {
+        const T = teamData[matched];
+        const txt = T.text || '#ffffff';
+        let inner;
+        if (T.logo) {
+            inner = `<img class="vs-logo" src="${T.logo}" alt="${matched}" loading="lazy">`;
+        } else if (T.flag) {
+            inner = `<span class="vs-flag" style="font-size:54px">${T.flag}</span>`;
+        } else {
+            inner = `<span class="vs-label" style="color:${txt};font-size:24px">${T.label || matched.slice(0,3).toUpperCase()}</span>`;
+        }
+        return `<div class="vs-art vs-art-solo" style="background:${T.color}">
+            <div class="vs-half">${inner}</div>
+        </div>`;
+    }
+    // Fallback for sport-only events (Pickup Soccer, UFC main card, etc.)
     return `<img src="${photoFor(p)}" alt="" loading="lazy">`;
 }
 const sportColor = { NFL:'#013369', NBA:'#c8102e', MLB:'#002d72', NHL:'#1f2937', Soccer:'#00853f', UFC:'#9b1c1c', F1:'#b91c1c' };
