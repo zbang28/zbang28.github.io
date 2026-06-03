@@ -250,6 +250,40 @@
     .sport-tile:hover .sport-tile-arrow { transform: translateX(4px); }
 
     /* ===== App Store style feature cards ===== */
+    .home-section-tight {
+        padding-top: 28px;
+        padding-bottom: 8px;
+    }
+    .home-inline-head {
+        display: flex; align-items: baseline; gap: 12px;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+    }
+    .home-inline-tag {
+        font-family: 'Inter', sans-serif;
+        font-weight: 900; font-size: 18px;
+        letter-spacing: -0.02em;
+    }
+    .home-inline-tag em {
+        font-style: normal;
+        background: var(--grad-1);
+        -webkit-background-clip: text; background-clip: text;
+        color: transparent;
+    }
+    .home-inline-sub {
+        font-size: 12px; color: var(--text-mute);
+        text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700;
+    }
+    .feature-grid-compact {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
+        gap: 12px !important;
+    }
+    .feature-grid-compact .feature-card { border-radius: 16px; }
+    .feature-grid-compact .feature-art { aspect-ratio: 16 / 9; }
+    .feature-grid-compact .feature-body { padding: 12px 14px 14px; gap: 4px; }
+    .feature-grid-compact .feature-kicker { font-size: 9px; letter-spacing: 1.5px; }
+    .feature-grid-compact .feature-card h3 { font-size: 14px; }
+    .feature-grid-compact .feature-card p { font-size: 12px; line-height: 1.4; }
     .feature-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -1884,7 +1918,8 @@
     }
     .fanhub-lock-card {
         max-width: 520px; width: 100%;
-        background: var(--text); color: white;
+        background: #0e0f11; color: white;
+        border: 1px solid rgba(255,255,255,0.08);
         border-radius: 24px;
         padding: 40px 36px 32px;
         box-shadow:
@@ -2205,10 +2240,12 @@
         border-top: 1px solid var(--border); background: var(--surface-2);
     }
     .chat-input input {
-        flex: 1; background: white; border: 1px solid var(--border);
+        flex: 1; background: var(--surface); color: var(--text);
+        border: 1px solid var(--border);
         padding: 10px 12px; border-radius: 6px; outline: none;
         font: inherit; font-size: 14px;
     }
+    .chat-input input::placeholder { color: var(--text-mute); }
     .chat-input input:focus { border-color: var(--red); }
     .chat-input button {
         background: var(--red); border: none; color: white;
@@ -2678,20 +2715,12 @@
         </div>
     </div>
 
-    <div class="home-section">
-        <div class="home-section-head">
-            <h2>What are you <em>watching?</em></h2>
-            <div class="sub">Pick a sport to see every event near you</div>
+    <div class="home-section home-section-tight">
+        <div class="home-inline-head">
+            <span class="home-inline-tag">Inside <em>Lineup</em></span>
+            <span class="home-inline-sub">everything the app does, in one place</span>
         </div>
-        <div class="sport-grid" id="sport-grid"></div>
-    </div>
-
-    <div class="home-section">
-        <div class="home-section-head">
-            <h2>Inside <em>Lineup</em></h2>
-            <div class="sub">Everything Lineup does, in one place</div>
-        </div>
-        <div class="feature-grid">
+        <div class="feature-grid feature-grid-compact">
 
             <article class="feature-card" onclick="openMapView()">
                 <div class="feature-art feature-art-map">
@@ -2767,6 +2796,14 @@
             </article>
 
         </div>
+    </div>
+
+    <div class="home-section">
+        <div class="home-section-head">
+            <h2>What are you <em>watching?</em></h2>
+            <div class="sub">Pick a sport to see every event near you</div>
+        </div>
+        <div class="sport-grid" id="sport-grid"></div>
     </div>
 
 </section>
