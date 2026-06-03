@@ -1495,12 +1495,14 @@
     }
     /* Flat flags — no circle backgrounds */
     .countries-flagrow {
-        gap: 14px;
-        padding: 4px 24px;
+        gap: 18px;
+        padding: 4px 0;
         margin: 0;
-        mask-image: linear-gradient(90deg, transparent 0, black 32px, black calc(100% - 32px), transparent 100%);
-        -webkit-mask-image: linear-gradient(90deg, transparent 0, black 32px, black calc(100% - 32px), transparent 100%);
+        mask-image: linear-gradient(90deg, transparent 0, black 16px, black calc(100% - 16px), transparent 100%);
+        -webkit-mask-image: linear-gradient(90deg, transparent 0, black 16px, black calc(100% - 16px), transparent 100%);
     }
+    .countries-flagrow .country:first-child { margin-left: 16px; }
+    .countries-flagrow .country:last-child { margin-right: 16px; }
     .countries-flagrow .country {
         padding: 4px 6px;
         background: transparent !important;
@@ -3928,6 +3930,36 @@ const countries = [
     { code:'PT', name:'Portugal',    flag:'🇵🇹' },
     { code:'NL', name:'Netherlands', flag:'🇳🇱' },
     { code:'JP', name:'Japan',       flag:'🇯🇵' },
+    { code:'BE', name:'Belgium',     flag:'🇧🇪' },
+    { code:'HR', name:'Croatia',     flag:'🇭🇷' },
+    { code:'CH', name:'Switzerland', flag:'🇨🇭' },
+    { code:'DK', name:'Denmark',     flag:'🇩🇰' },
+    { code:'SE', name:'Sweden',      flag:'🇸🇪' },
+    { code:'AT', name:'Austria',     flag:'🇦🇹' },
+    { code:'TR', name:'Turkey',      flag:'🇹🇷' },
+    { code:'PL', name:'Poland',      flag:'🇵🇱' },
+    { code:'AU', name:'Australia',   flag:'🇦🇺' },
+    { code:'CA', name:'Canada',      flag:'🇨🇦' },
+    { code:'KR', name:'South Korea', flag:'🇰🇷' },
+    { code:'SA', name:'Saudi Arabia',flag:'🇸🇦' },
+    { code:'MA', name:'Morocco',     flag:'🇲🇦' },
+    { code:'SN', name:'Senegal',     flag:'🇸🇳' },
+    { code:'CM', name:'Cameroon',    flag:'🇨🇲' },
+    { code:'GH', name:'Ghana',       flag:'🇬🇭' },
+    { code:'NG', name:'Nigeria',     flag:'🇳🇬' },
+    { code:'CI', name:"Côte d'Ivoire", flag:'🇨🇮' },
+    { code:'IR', name:'Iran',        flag:'🇮🇷' },
+    { code:'QA', name:'Qatar',       flag:'🇶🇦' },
+    { code:'UY', name:'Uruguay',     flag:'🇺🇾' },
+    { code:'CO', name:'Colombia',    flag:'🇨🇴' },
+    { code:'CL', name:'Chile',       flag:'🇨🇱' },
+    { code:'PE', name:'Peru',        flag:'🇵🇪' },
+    { code:'EC', name:'Ecuador',     flag:'🇪🇨' },
+    { code:'CR', name:'Costa Rica',  flag:'🇨🇷' },
+    { code:'EG', name:'Egypt',       flag:'🇪🇬' },
+    { code:'NO', name:'Norway',      flag:'🇳🇴' },
+    { code:'IS', name:'Iceland',     flag:'🇮🇸' },
+    { code:'IE', name:'Ireland',     flag:'🇮🇪' },
 ];
 
 const subtabs = [
