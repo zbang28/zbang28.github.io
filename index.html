@@ -1018,44 +1018,53 @@
     .worldcup-only.worldcup-on { display: block; }
     body.worldcup-mode .events-only { display: none !important; }
 
-    /* ===== Worldcup mode: WHITE base, vibrant red/blue/green ===== */
+    /* ===== Worldcup mode: FIFA Russia 2018 royal blue / white / red ===== */
     body.worldcup-mode {
-        --bg: #ffffff;
-        --bg-alt: #f6f7fb;
-        --surface: #ffffff;
-        --surface-2: #f1f3f8;
-        --border: #e3e6ed;
-        --border-2: #c8ccd6;
-        --text: #0e0f11;
-        --text-dim: #4a4d54;
-        --text-mute: #8a8d94;
+        --bg: #0a2470;
+        --bg-alt: #0c2a82;
+        --surface: #143dab;
+        --surface-2: #1a4cbf;
+        --border: rgba(255,255,255,0.14);
+        --border-2: rgba(255,255,255,0.3);
+        --text: #ffffff;
+        --text-dim: rgba(255,255,255,0.78);
+        --text-mute: rgba(255,255,255,0.5);
+        --red: #ff3140;
+        --grad-1: linear-gradient(135deg, #ff3140, #e8b923);
         background: var(--bg);
     }
+    /* Soft tournament pattern + atmospheric glows */
     body.worldcup-mode::after {
         content: '';
         position: fixed; inset: 0; z-index: -1;
         pointer-events: none;
         background:
-            radial-gradient(ellipse 40% 30% at 10% 12%, rgba(22,163,74,0.25), transparent 70%),
-            radial-gradient(ellipse 40% 30% at 90% 14%, rgba(37,99,235,0.25), transparent 70%),
-            radial-gradient(ellipse 40% 30% at 80% 85%, rgba(255,45,58,0.22), transparent 70%),
-            radial-gradient(ellipse 40% 30% at 18% 80%, rgba(37,99,235,0.20), transparent 70%),
-            radial-gradient(ellipse 50% 40% at 50% 50%, rgba(22,163,74,0.14), transparent 70%);
+            radial-gradient(ellipse 50% 35% at 12% 15%, rgba(255,255,255,0.10), transparent 70%),
+            radial-gradient(ellipse 55% 45% at 88% 22%, rgba(255,255,255,0.08), transparent 70%),
+            radial-gradient(ellipse 50% 40% at 80% 85%, rgba(232,185,35,0.14), transparent 70%),
+            radial-gradient(ellipse 50% 40% at 18% 82%, rgba(255,49,64,0.10), transparent 70%),
+            radial-gradient(ellipse 60% 50% at 50% 50%, rgba(0,0,0,0.18), transparent 70%);
+    }
+    body.worldcup-mode::before {
+        content: ''; position: fixed; inset: 0; z-index: -1;
+        pointer-events: none; opacity: 0.06;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='1.2'%3E%3Ccircle cx='40' cy='40' r='12'/%3E%3Ccircle cx='120' cy='40' r='12'/%3E%3Ccircle cx='40' cy='120' r='12'/%3E%3Ccircle cx='120' cy='120' r='12'/%3E%3Ccircle cx='80' cy='80' r='28'/%3E%3Cpath d='M52 80 L80 52 L108 80 L80 108 Z'/%3E%3C/g%3E%3C/svg%3E");
+        background-size: 160px 160px;
     }
     body.worldcup-mode .split-list {
         background:
-            radial-gradient(ellipse 80% 30% at 50% 0%, rgba(22,163,74,0.10), transparent 70%),
+            radial-gradient(ellipse 80% 30% at 50% 0%, rgba(232,185,35,0.10), transparent 70%),
             var(--bg);
     }
     body.worldcup-mode .split-list-head h2 .accent {
-        background: linear-gradient(135deg, #16a34a, #2563eb);
+        background: linear-gradient(135deg, #e8b923, #ff3140);
         -webkit-background-clip: text; background-clip: text;
         color: transparent;
     }
-    body.worldcup-mode .split-list-head::after { background: linear-gradient(90deg, #16a34a, #2563eb); }
+    body.worldcup-mode .split-list-head::after { background: linear-gradient(90deg, #ff3140, #e8b923); }
     body.worldcup-mode .split-list-head .count {
-        background: linear-gradient(135deg, #16a34a, #2563eb);
-        box-shadow: 0 4px 14px rgba(22,163,74,0.3);
+        background: linear-gradient(135deg, #ff3140, #e8b923);
+        box-shadow: 0 4px 14px rgba(255,49,64,0.45);
     }
     body.worldcup-mode .split-map { background: var(--surface-2); }
 
@@ -1079,9 +1088,9 @@
     body.worldcup-mode .country { background: var(--surface); border-color: var(--border); color: var(--text-dim); }
     body.worldcup-mode .country:hover { color: var(--text); border-color: var(--text); }
     body.worldcup-mode .country.active {
-        background: linear-gradient(135deg, #16a34a, #2563eb);
+        background: linear-gradient(135deg, #ff3140, #e8b923);
         color: white; border-color: transparent;
-        box-shadow: 0 6px 18px rgba(22,163,74,0.35);
+        box-shadow: 0 6px 18px rgba(255,49,64,0.4);
     }
     body.worldcup-mode .country .flag { background: var(--surface-2); }
     body.worldcup-mode .country-strip { background: var(--bg-alt); border-color: var(--border); }
@@ -1092,64 +1101,72 @@
     body.worldcup-mode .split-list-head { border-color: var(--border); }
     body.worldcup-mode .empty h3 { color: var(--text); }
 
-    /* Nav flips to white in worldcup-mode */
+    /* Nav blends with the royal blue */
     body.worldcup-mode nav {
-        background: rgba(255,255,255,0.92);
+        background: rgba(8,32,98,0.85);
         backdrop-filter: blur(14px);
-        color: var(--text);
-        border-bottom-color: var(--border);
+        color: white;
+        border-bottom-color: rgba(255,255,255,0.12);
     }
     body.worldcup-mode .brand,
     body.worldcup-mode .tabs .tab,
-    body.worldcup-mode .nav-btn { color: var(--text); }
-    body.worldcup-mode .tab { color: var(--text-dim); }
-    body.worldcup-mode .tab:hover { color: var(--text); background: rgba(14,15,17,0.05); }
-    body.worldcup-mode .tab.active { color: var(--text); background: rgba(14,15,17,0.08); }
-    body.worldcup-mode .nav-btn { border-color: rgba(14,15,17,0.15); }
-    body.worldcup-mode .nav-btn:hover { border-color: rgba(14,15,17,0.4); }
+    body.worldcup-mode .nav-btn { color: white; }
+    body.worldcup-mode .tab { color: rgba(255,255,255,0.72); }
+    body.worldcup-mode .tab:hover { color: white; background: rgba(255,255,255,0.1); }
+    body.worldcup-mode .tab.active { color: white; background: rgba(255,255,255,0.15); }
+    body.worldcup-mode .nav-btn { border-color: rgba(255,255,255,0.25); }
+    body.worldcup-mode .nav-btn:hover { border-color: rgba(255,255,255,0.55); }
     body.worldcup-mode .nav-btn.ai {
-        background: linear-gradient(135deg, #16a34a, #2563eb);
+        background: linear-gradient(135deg, #ff3140, #e8b923);
         color: white;
         border-color: transparent;
+        box-shadow: 0 6px 18px rgba(255,49,64,0.4);
     }
     body.worldcup-mode .tab-badge {
-        background: linear-gradient(135deg, #16a34a, #2563eb);
-        box-shadow: 0 4px 10px rgba(22,163,74,0.4);
+        background: linear-gradient(135deg, #ff3140, #e8b923);
+        box-shadow: 0 4px 10px rgba(255,49,64,0.45);
     }
+    body.worldcup-mode .tab.highlight::before {
+        background: linear-gradient(90deg, #ff3140, #e8b923);
+    }
+    body.worldcup-mode .country-strip { background: rgba(0,0,0,0.18); border-color: rgba(255,255,255,0.1); }
+    body.worldcup-mode .country { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); color: rgba(255,255,255,0.85); }
+    body.worldcup-mode .country:hover { color: white; border-color: white; }
+    body.worldcup-mode .country .flag { background: rgba(255,255,255,0.15); }
+    body.worldcup-mode .country-strip-label { color: rgba(255,255,255,0.65); }
+    body.worldcup-mode .mini-card-img::after { background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.55)); }
 
     /* ===== World Cup vibrant hero ===== */
     .worldcup-hero {
         position: relative;
         overflow: hidden;
         background:
-            radial-gradient(ellipse 60% 80% at 80% 0%, rgba(22,163,74,0.18), transparent 60%),
-            radial-gradient(ellipse 50% 80% at 20% 100%, rgba(37,99,235,0.18), transparent 60%),
-            radial-gradient(ellipse 40% 60% at 50% 50%, rgba(255,45,58,0.10), transparent 60%),
-            #ffffff;
-        color: #0e0f11;
+            radial-gradient(ellipse 60% 80% at 80% 0%, rgba(232,185,35,0.18), transparent 60%),
+            radial-gradient(ellipse 50% 80% at 20% 100%, rgba(255,49,64,0.18), transparent 60%),
+            linear-gradient(160deg, #0a2470 0%, #0e3499 60%, #0a2470 100%);
+        color: white;
         padding: 56px 32px;
     }
     .worldcup-stripes {
         position: absolute;
         top: 0; left: 0; right: 0; height: 8px;
         background: linear-gradient(90deg,
-            #16a34a 0% 33%,
-            #2563eb 33% 66%,
-            #16a34a 66% 100%);
+            #ff3140 0% 50%,
+            #e8b923 50% 100%);
     }
     .worldcup-confetti {
         position: absolute; inset: 0;
         background-image:
-            radial-gradient(circle at 15% 35%, #ff2d3a 4px, transparent 5px),
-            radial-gradient(circle at 85% 25%, #2563eb 4px, transparent 5px),
-            radial-gradient(circle at 70% 70%, #16a34a 4px, transparent 5px),
-            radial-gradient(circle at 25% 80%, #ff2d3a 3px, transparent 4px),
-            radial-gradient(circle at 92% 90%, #16a34a 4px, transparent 5px),
-            radial-gradient(circle at 8% 12%, #2563eb 3px, transparent 4px),
-            radial-gradient(circle at 55% 18%, #ff2d3a 3px, transparent 4px),
-            radial-gradient(circle at 45% 92%, #2563eb 4px, transparent 5px);
+            radial-gradient(circle at 15% 35%, #ff3140 4px, transparent 5px),
+            radial-gradient(circle at 85% 25%, #ffffff 4px, transparent 5px),
+            radial-gradient(circle at 70% 70%, #e8b923 4px, transparent 5px),
+            radial-gradient(circle at 25% 80%, #ff3140 3px, transparent 4px),
+            radial-gradient(circle at 92% 90%, #ffffff 4px, transparent 5px),
+            radial-gradient(circle at 8% 12%, #e8b923 3px, transparent 4px),
+            radial-gradient(circle at 55% 18%, #ff3140 3px, transparent 4px),
+            radial-gradient(circle at 45% 92%, #ffffff 4px, transparent 5px);
         background-size: 100% 100%;
-        opacity: 0.85;
+        opacity: 0.9;
         pointer-events: none;
     }
     .worldcup-hero-inner {
@@ -1159,7 +1176,7 @@
     .worldcup-eyebrow {
         display: inline-block;
         padding: 6px 14px;
-        background: #0e0f11; color: white;
+        background: white; color: #0a2470;
         font-family: 'Inter', sans-serif;
         font-weight: 900; font-size: 11px;
         letter-spacing: 3px;
@@ -1175,12 +1192,12 @@
     }
     .worldcup-title em {
         font-style: normal;
-        background: linear-gradient(135deg, #16a34a 0%, #22c55e 35%, #2563eb 100%);
+        background: linear-gradient(135deg, #ff3140 0%, #e8b923 100%);
         -webkit-background-clip: text; background-clip: text;
         color: transparent;
     }
     .worldcup-sub {
-        font-size: 16px; color: rgba(14,15,17,0.7);
+        font-size: 16px; color: rgba(255,255,255,0.85);
         max-width: 540px;
     }
 
