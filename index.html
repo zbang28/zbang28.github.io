@@ -97,7 +97,23 @@
     }
     .tab:hover { color: white; background: rgba(255,255,255,0.08); }
     .tab.active { color: white; background: rgba(255,255,255,0.12); }
-    .tab.highlight { color: var(--amber); font-weight: 700; }
+    .tab.highlight {
+        color: white !important;
+        font-weight: 800 !important;
+        background: linear-gradient(135deg, #2563eb 0%, #06d6f7 50%, #16a34a 100%) !important;
+        padding: 8px 16px !important;
+        border-radius: 10px !important;
+        box-shadow: 0 6px 18px rgba(37,99,235,0.45), 0 0 0 1px rgba(255,255,255,0.18) inset;
+        transition: transform 0.18s cubic-bezier(.2,.7,.2,1), box-shadow 0.2s;
+    }
+    .tab.highlight:hover {
+        transform: translateY(-1px);
+        background: linear-gradient(135deg, #2563eb 0%, #06d6f7 50%, #16a34a 100%) !important;
+        box-shadow: 0 10px 24px rgba(37,99,235,0.55), 0 0 0 1px rgba(255,255,255,0.25) inset;
+    }
+    .tab.highlight.active {
+        box-shadow: 0 10px 24px rgba(37,99,235,0.6), 0 0 0 2px white inset;
+    }
     .tab-badge {
         display: inline-block;
         margin-left: 6px;
@@ -722,6 +738,11 @@
         background: var(--surface-2);
         color: var(--text-dim);
         border-radius: 999px;
+    }
+
+    /* Matchday route line glow */
+    #matchday-map .route-glow {
+        filter: blur(4px);
     }
 
     /* Matchday route pin (map) */
@@ -1738,9 +1759,7 @@
         background: linear-gradient(135deg, #ff3140, #e8b923);
         box-shadow: 0 4px 10px rgba(255,49,64,0.45);
     }
-    body.worldcup-mode .tab.highlight::before {
-        background: linear-gradient(90deg, #ff3140, #e8b923);
-    }
+    body.worldcup-mode .tab.highlight::before { display: none; }
     body.worldcup-mode .country-strip { background: var(--bg-alt); border-color: var(--border); }
     body.worldcup-mode .country { background: var(--surface); border-color: var(--border); color: var(--text-dim); }
     body.worldcup-mode .country:hover { color: var(--text); border-color: var(--text); }
@@ -1842,14 +1861,7 @@
         color: white !important;
         font-weight: 900;
     }
-    .tab.highlight::before {
-        content: '';
-        position: absolute;
-        left: 6px; right: 6px; bottom: 4px;
-        height: 3px; border-radius: 2px;
-        background: linear-gradient(90deg, #16a34a, #2563eb);
-        opacity: 0.95;
-    }
+    .tab.highlight::before { display: none; }
 
     /* ===== Borough banner ===== */
     .borough-banner {
@@ -2132,9 +2144,9 @@
     .split-map #events-map {
         width: 100%; height: 100%;
     }
-    /* Gray (desaturated) map tiles */
+    /* Slight desaturation on dark tiles */
     #events-map .leaflet-tile-pane {
-        filter: grayscale(100%) brightness(0.96) contrast(0.95);
+        filter: brightness(1.02);
     }
 
     /* ===== Mini cards (compact list items) ===== */
@@ -3913,7 +3925,7 @@
             <div class="paywall-feature"><span class="check">✓</span><span>Pickup-game locations in every park</span></div>
             <div class="paywall-feature"><span class="check">✓</span><span>Unlimited AI matchday plans, city-wide</span></div>
         </div>
-        <div class="paywall-price">$5<span class="small">ONE-TIME · LIFETIME</span></div>
+        <div class="paywall-price">$4.99<span class="small">PER MONTH · CANCEL ANYTIME</span></div>
         <div class="paywall-actions">
             <button class="paywall-pay" onclick="unlockBoroughs()">Unlock all locations</button>
             <button class="paywall-skip" onclick="closePaywall()">Maybe later</button>
@@ -4550,9 +4562,8 @@ function initMap() {
     if (!el) return;
     mapInstance = L.map('events-map', { zoomControl: true, scrollWheelZoom: true })
         .setView([40.7128, -73.97], 12);
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution:'&copy; OpenStreetMap contributors',
-        maxZoom: 19
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution:'&copy; OpenStreetMap &copy; CARTO', subdomains:'abcd', maxZoom:19
     }).addTo(mapInstance);
     setTimeout(() => mapInstance.invalidateSize(), 100);
     setTimeout(() => mapInstance.invalidateSize(), 400);
@@ -4950,15 +4961,22 @@ function buildMatchday() {
             matchdayMarkers.push(m);
         });
 
-        // Draw route polyline
+        // Draw glowing orange route — three stacked polylines for the stream effect
         const coords = stops.map(s => [s.p.lat, s.p.lng]);
-        matchdayLine = L.polyline(coords, {
-            color: '#a855f7',
-            weight: 4,
-            opacity: 0.85,
-            dashArray: '8, 10',
-            lineCap: 'round'
+        const glowOuter = L.polyline(coords, {
+            color: '#ff7a1a', weight: 20, opacity: 0.18,
+            lineCap: 'round', lineJoin: 'round', className: 'route-glow'
         }).addTo(matchdayMap);
+        const glowMid = L.polyline(coords, {
+            color: '#ff7a1a', weight: 10, opacity: 0.45,
+            lineCap: 'round', lineJoin: 'round', className: 'route-glow'
+        }).addTo(matchdayMap);
+        matchdayLine = L.polyline(coords, {
+            color: '#ffae3b', weight: 4, opacity: 1,
+            lineCap: 'round', lineJoin: 'round'
+        }).addTo(matchdayMap);
+        // Track the glow lines so we clean them up
+        matchdayMarkers.push(glowOuter, glowMid);
 
         // Fit bounds
         const bounds = L.latLngBounds(coords);
