@@ -598,41 +598,65 @@
     /* ===== Matchday page ===== */
     .matchday-head {
         position: relative;
-        background: var(--bg-alt);
+        background:
+            radial-gradient(ellipse 80% 55% at 80% 0%, rgba(168,85,247,0.28), transparent 65%),
+            radial-gradient(ellipse 70% 60% at 15% 100%, rgba(255,62,181,0.22), transparent 65%),
+            linear-gradient(180deg, var(--bg-alt), var(--bg));
         border-bottom: 1px solid var(--border);
-        padding: 32px 24px 40px;
+        padding: 28px 24px 36px;
         color: var(--text);
         overflow: hidden;
     }
-    .matchday-head-inner {
-        position: relative; z-index: 1;
-        max-width: 760px; margin: 0 auto;
-        text-align: center;
+    /* Soft sparkles */
+    .matchday-head::before {
+        content: ''; position: absolute; inset: 0;
+        background-image:
+            radial-gradient(circle at 14% 22%, rgba(255,255,255,0.55) 1.2px, transparent 2.2px),
+            radial-gradient(circle at 78% 18%, rgba(255,255,255,0.4) 1px, transparent 2px),
+            radial-gradient(circle at 38% 78%, rgba(255,255,255,0.45) 1.2px, transparent 2px),
+            radial-gradient(circle at 88% 72%, rgba(255,255,255,0.3) 1px, transparent 1.8px);
+        background-size: 220px 220px, 260px 260px, 200px 200px, 280px 280px;
+        opacity: 0.55;
+        pointer-events: none;
     }
     .matchday-back {
-        background: var(--surface);
-        border: 1px solid var(--border);
+        position: absolute;
+        top: 18px; left: 18px;
+        background: rgba(255,255,255,0.06);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255,255,255,0.12);
         color: var(--text);
         padding: 7px 14px;
         border-radius: 999px;
         font: inherit; font-size: 12px; font-weight: 700;
         cursor: pointer;
-        margin-bottom: 22px;
-        float: left;
+        z-index: 2;
     }
-    .matchday-back:hover { border-color: var(--text-dim); }
+    .matchday-back:hover { background: rgba(255,255,255,0.12); }
+    .matchday-head-inner {
+        position: relative; z-index: 1;
+        max-width: 600px; margin: 0 auto;
+        text-align: center;
+        display: flex; flex-direction: column; align-items: center;
+    }
     .matchday-eyebrow {
         display: inline-flex; align-items: center; gap: 6px;
-        background: var(--surface);
-        border: 1px solid var(--border);
-        color: var(--text);
+        background: rgba(255,255,255,0.06);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255,255,255,0.14);
+        color: white;
         padding: 5px 12px;
         border-radius: 999px;
         font-size: 11px; font-weight: 800;
         letter-spacing: 2px; text-transform: uppercase;
         margin-bottom: 14px;
     }
-    .matchday-eyebrow .spark { font-size: 14px; color: var(--red); }
+    .matchday-eyebrow .spark {
+        font-size: 14px;
+        background: var(--grad-2);
+        -webkit-background-clip: text; background-clip: text;
+        color: transparent;
+    }
     .matchday-title {
         font-family: 'Inter', sans-serif;
         font-weight: 900;
@@ -650,11 +674,16 @@
         font-size: 15px;
         max-width: 480px; margin: 0 auto 20px;
     }
-    .matchday-prompt-box { margin: 0 auto; max-width: 600px; text-align: left; }
+    .matchday-prompt-box {
+        margin: 0;
+        width: 100%;
+        text-align: left;
+    }
     .matchday-quick {
         display: flex; flex-wrap: wrap; gap: 6px;
         justify-content: center;
         margin-top: 14px;
+        width: 100%;
     }
 
     .matchday-result {
