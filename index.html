@@ -4269,7 +4269,7 @@ const photos = {
     NFL:'https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=800&q=80&auto=format&fit=crop',
     NBA:'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&q=80&auto=format&fit=crop',
     MLB:'https://images.unsplash.com/photo-1508344928928-7165b67de128?w=800&q=80&auto=format&fit=crop',
-    NHL:'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=900&q=80&auto=format&fit=crop',
+    NHL:'https://images.unsplash.com/photo-1565992441121-4367c2967103?w=900&q=80&auto=format&fit=crop',
     Soccer:'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=800&q=80&auto=format&fit=crop',
     UFC:'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=80&auto=format&fit=crop',
     F1:'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=800&q=80&auto=format&fit=crop',
@@ -4289,7 +4289,7 @@ const matchPhotos = {
     'Cowboys vs. Eagles':           'https://images.unsplash.com/photo-1495555687398-3f50d6e79e1e?w=800&q=80&auto=format&fit=crop',
     '49ers vs. Seahawks':           'https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=800&q=80&auto=format&fit=crop',
     'Yankees vs. Red Sox':          'https://images.unsplash.com/photo-1471295253337-3ceaaedca402?w=800&q=80&auto=format&fit=crop',
-    'Rangers vs. Devils':           'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=900&q=80&auto=format&fit=crop',
+    'Rangers vs. Devils':           'https://images.unsplash.com/photo-1565992441121-4367c2967103?w=900&q=80&auto=format&fit=crop',
     'Islanders vs. Bruins':         'https://images.unsplash.com/photo-1580692114672-b3aaccdb5fd8?w=800&q=80&auto=format&fit=crop',
     'UFC 312 Main Card':            'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=80&auto=format&fit=crop',
     'Monaco Grand Prix':            'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=800&q=80&auto=format&fit=crop',
@@ -5656,7 +5656,7 @@ const sportTiles = [
     { name:'NBA',    emoji:'🏀', photo:photos.NBA,    tint:'linear-gradient(160deg, rgba(255,122,26,0.6), rgba(255,45,58,0.55))', glow:'rgba(255,122,26,0.5)' },
     { name:'NFL',    emoji:'🏈', photo:photos.NFL,    tint:'linear-gradient(160deg, rgba(37,99,235,0.55), rgba(168,85,247,0.55))', glow:'rgba(37,99,235,0.5)' },
     { name:'MLB',    emoji:'⚾', photo:photos.MLB,    tint:'linear-gradient(160deg, rgba(37,99,235,0.55), rgba(6,214,247,0.5))', glow:'rgba(6,214,247,0.5)' },
-    { name:'NHL',    emoji:'🏒', photo:photos.NHL,    tint:'linear-gradient(160deg, rgba(6,214,247,0.5), rgba(168,85,247,0.55))', glow:'rgba(6,214,247,0.5)' },
+    { name:'NHL',    emoji:'🏒', photo:photos.NHL, fallback:'https://images.unsplash.com/photo-1577003833619-76bbd7f82948?w=900&q=80&auto=format&fit=crop',  tint:'linear-gradient(160deg, rgba(6,214,247,0.5), rgba(168,85,247,0.55))', glow:'rgba(6,214,247,0.5)' },
     { name:'UFC',    emoji:'🥊', photo:photos.UFC,    tint:'linear-gradient(160deg, rgba(255,45,58,0.65), rgba(0,0,0,0.5))', glow:'rgba(255,45,58,0.5)' },
 ];
 
@@ -5667,7 +5667,7 @@ function buildSportGrid() {
         const live = parties.filter(p => p.sport === s.name && p.live).length;
         return `
             <button class="sport-tile" style="--tile-tint:${s.tint};--tile-glow:${s.glow}" onclick="pickSport('${s.name}')">
-                <img src="${s.photo}" alt="${s.name}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=900&q=80&auto=format&fit=crop'">
+                <img src="${s.photo}" alt="${s.name}" loading="lazy" onerror="this.onerror=null;this.src='${s.fallback || 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=900&q=80&auto=format&fit=crop'}'">
                 <div class="sport-tile-content">
                     <div class="sport-tile-top">
                         <span></span>
