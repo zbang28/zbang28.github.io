@@ -562,6 +562,38 @@
         border-radius: 4px;
     }
 
+    /* ===== Matchday modal (overlay) ===== */
+    .matchday-modal {
+        position: fixed; inset: 0; z-index: 250;
+        background: rgba(8,8,11,0.7);
+        backdrop-filter: blur(8px);
+        display: none;
+        align-items: center; justify-content: center;
+        padding: 24px;
+        overflow-y: auto;
+    }
+    .matchday-modal.open { display: flex; }
+    .matchday-sheet {
+        position: relative;
+        width: 100%; max-width: 980px;
+        max-height: calc(100vh - 48px);
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+        display: flex; flex-direction: column;
+    }
+    .matchday-sheet .matchday-head {
+        border-bottom: none;
+        padding: 28px 28px 32px;
+    }
+    .matchday-sheet .matchday-result {
+        height: auto !important;
+        flex: 1;
+        min-height: 480px;
+    }
+
     /* ===== Matchday page ===== */
     .matchday-head {
         position: relative;
@@ -3778,10 +3810,11 @@
 </section>
 
 <!-- ============ MATCHDAY PAGE ============ -->
-<section class="page" data-page="matchday">
+<div class="matchday-modal" id="matchday-modal" onclick="if(event.target===this)closeMatchdayModal()">
+  <div class="matchday-sheet">
     <div class="matchday-head" id="matchday-head">
         <div class="matchday-head-inner">
-            <button class="matchday-back" onclick="route('home')">← Back</button>
+            <button class="matchday-back" onclick="closeMatchdayModal()">← Close</button>
             <div class="matchday-eyebrow">
                 <span class="spark">✦</span> AI Matchday Planner
             </div>
@@ -3837,7 +3870,8 @@
             </div>
         </div>
     </div>
-</section>
+  </div>
+</div>
 
 <footer id="site-footer">
     <div class="footer-inner">
@@ -4254,7 +4288,6 @@ function route(name) {
     if (location.hash !== '#/' + name) history.replaceState(null, '', '#/' + name);
     window.scrollTo(0, 0);
     if (name === 'fanhub') renderFanHub();
-    if (name === 'matchday') { setupMatchdayPrompt(); setTimeout(() => matchdayMap?.invalidateSize(), 80); }
     if (name === 'events' || name === 'worldcup') {
         renderSportChip();
         applyFilters();
@@ -4263,7 +4296,7 @@ function route(name) {
     }
     // Hide site footer on map-heavy pages so the borough strip is the bottom
     const sf = document.getElementById('site-footer');
-    if (sf) sf.style.display = (name === 'events' || name === 'worldcup' || name === 'matchday') ? 'none' : '';
+    if (sf) sf.style.display = (name === 'events' || name === 'worldcup') ? 'none' : '';
 }
 
 function initRouting() {
@@ -4271,7 +4304,7 @@ function initRouting() {
         t.addEventListener('click', () => route(t.dataset.route));
     });
     const hash = location.hash.replace('#/', '');
-    route(['home','events','fanhub','worldcup','matchday'].includes(hash) ? hash : 'home');
+    route(['home','events','fanhub','worldcup'].includes(hash) ? hash : 'home');
 }
 
 // ============ COUNTRIES ============
@@ -4837,7 +4870,21 @@ function vote(id, i) {
 }
 
 // ============ AI ============
-function openAI() { route('matchday'); }
+function openAI() {
+    const modal = document.getElementById('matchday-modal');
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setupMatchdayPrompt();
+    setTimeout(() => {
+        document.getElementById('matchday-prompt')?.focus();
+        matchdayMap?.invalidateSize();
+    }, 80);
+}
+function closeMatchdayModal() {
+    const modal = document.getElementById('matchday-modal');
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+}
 function openAIModal() { document.getElementById('ai-modal').classList.add('open'); setupPromptBox(); }
 
 let matchdayMap = null;
@@ -5426,7 +5473,10 @@ document.addEventListener('click', (e) => {
     if (wrap && !wrap.contains(e.target)) closeBrowseMenu();
 });
 document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeBrowseMenu();
+    if (e.key === 'Escape') {
+        closeBrowseMenu();
+        if (document.getElementById('matchday-modal')?.classList.contains('open')) closeMatchdayModal();
+    }
 });
 
 function renderSportChip() {
@@ -5457,7 +5507,7 @@ applyFilters();
 initRouting();
 window.addEventListener('hashchange', () => {
     const hash = location.hash.replace('#/', '');
-    if (['home','events','fanhub','worldcup','matchday'].includes(hash)) route(hash);
+    if (['home','events','fanhub','worldcup'].includes(hash)) route(hash);
 });
 </script>
 
