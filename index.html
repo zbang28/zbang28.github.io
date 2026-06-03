@@ -100,19 +100,20 @@
     .tab.highlight {
         color: white !important;
         font-weight: 800 !important;
-        background: linear-gradient(135deg, #ff2d3a 0%, #2563eb 50%, #16a34a 100%) !important;
+        background: linear-gradient(135deg, #ffd400 0%, #16a34a 33%, #2563eb 66%, #ff2d3a 100%) !important;
         padding: 8px 16px !important;
         border-radius: 10px !important;
-        box-shadow: 0 6px 18px rgba(255,45,58,0.4), 0 0 0 1px rgba(255,255,255,0.18) inset;
+        box-shadow: 0 6px 18px rgba(255,212,0,0.35), 0 0 0 1px rgba(255,255,255,0.22) inset;
         transition: transform 0.18s cubic-bezier(.2,.7,.2,1), box-shadow 0.2s;
+        text-shadow: 0 1px 4px rgba(0,0,0,0.35);
     }
     .tab.highlight:hover {
         transform: translateY(-1px);
-        background: linear-gradient(135deg, #ff2d3a 0%, #2563eb 50%, #16a34a 100%) !important;
-        box-shadow: 0 10px 24px rgba(255,45,58,0.5), 0 0 0 1px rgba(255,255,255,0.25) inset;
+        background: linear-gradient(135deg, #ffd400 0%, #16a34a 33%, #2563eb 66%, #ff2d3a 100%) !important;
+        box-shadow: 0 12px 28px rgba(255,212,0,0.45), 0 0 0 1px rgba(255,255,255,0.3) inset;
     }
     .tab.highlight.active {
-        box-shadow: 0 10px 24px rgba(255,45,58,0.55), 0 0 0 2px white inset;
+        box-shadow: 0 12px 28px rgba(255,45,58,0.55), 0 0 0 2px white inset;
     }
     .tab-badge {
         display: inline-block;
@@ -3648,10 +3649,6 @@
         </div>
     </div>
 
-    <div class="sport-rail-wrap">
-        <div class="sport-rail" id="sport-grid"></div>
-    </div>
-
 </section>
 
 <!-- ============ EVENTS PAGE ============ -->
@@ -3672,6 +3669,10 @@
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
             </button>
         </div>
+    </div>
+
+    <div class="sport-rail-wrap events-only">
+        <div class="sport-rail" id="sport-grid"></div>
     </div>
 
     <div class="filters">
