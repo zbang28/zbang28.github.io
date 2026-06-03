@@ -3493,6 +3493,37 @@ const photos = {
     UFC:'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=80&auto=format&fit=crop',
     F1:'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=800&q=80&auto=format&fit=crop',
 };
+
+// Match-specific photography (teams playing) — keyed by match string
+const matchPhotos = {
+    'Argentina vs. Brazil':         'https://images.unsplash.com/photo-1577223625816-7546f13df25d?w=800&q=80&auto=format&fit=crop',
+    'Brazil vs. Argentina':         'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=80&auto=format&fit=crop',
+    'USA vs. Mexico':               'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=800&q=80&auto=format&fit=crop',
+    'Arsenal vs. Liverpool':        'https://images.unsplash.com/photo-1488003700468-a3b69dd3afc1?w=800&q=80&auto=format&fit=crop',
+    'Real Madrid vs. Barcelona':    'https://images.unsplash.com/photo-1551958219-acbc608c6377?w=800&q=80&auto=format&fit=crop',
+    'Knicks vs. Celtics':           'https://images.unsplash.com/photo-1518604666860-9ed391f76460?w=800&q=80&auto=format&fit=crop',
+    'Lakers vs. Warriors':          'https://images.unsplash.com/photo-1519861531473-9200262188bf?w=800&q=80&auto=format&fit=crop',
+    'Nets vs. Heat':                'https://images.unsplash.com/photo-1571019613540-996a692acfd5?w=800&q=80&auto=format&fit=crop',
+    'Bills vs. Chiefs':             'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&q=80&auto=format&fit=crop',
+    'Cowboys vs. Eagles':           'https://images.unsplash.com/photo-1495555687398-3f50d6e79e1e?w=800&q=80&auto=format&fit=crop',
+    '49ers vs. Seahawks':           'https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=800&q=80&auto=format&fit=crop',
+    'Yankees vs. Red Sox':          'https://images.unsplash.com/photo-1471295253337-3ceaaedca402?w=800&q=80&auto=format&fit=crop',
+    'Rangers vs. Devils':           'https://images.unsplash.com/photo-1515703407324-5f51c2ed1e8b?w=800&q=80&auto=format&fit=crop',
+    'Islanders vs. Bruins':         'https://images.unsplash.com/photo-1580692114672-b3aaccdb5fd8?w=800&q=80&auto=format&fit=crop',
+    'UFC 312 Main Card':            'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=80&auto=format&fit=crop',
+    'Monaco Grand Prix':            'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=800&q=80&auto=format&fit=crop',
+    'Michigan vs. Ohio State':      'https://images.unsplash.com/photo-1495555687398-3f50d6e79e1e?w=800&q=80&auto=format&fit=crop',
+    'Argentina Victory Parade':     'https://images.unsplash.com/photo-1577223625816-7546f13df25d?w=800&q=80&auto=format&fit=crop',
+    'Brazil Carnival March':        'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=80&auto=format&fit=crop',
+    'Knicks Championship Parade':   'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=800&q=80&auto=format&fit=crop',
+    'Pickup Soccer · 5v5':          'https://images.unsplash.com/photo-1551958219-acbc608c6377?w=800&q=80&auto=format&fit=crop',
+    'Pickup Basketball · Open Run': 'https://images.unsplash.com/photo-1519861531473-9200262188bf?w=800&q=80&auto=format&fit=crop',
+    'Pickup Soccer':                'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=800&q=80&auto=format&fit=crop',
+};
+
+function photoFor(p) {
+    return matchPhotos[p.match] || photos[p.sport] || photos.Soccer;
+}
 const sportColor = { NFL:'#013369', NBA:'#c8102e', MLB:'#002d72', NHL:'#1f2937', Soccer:'#00853f', UFC:'#9b1c1c', F1:'#b91c1c' };
 const reactionEmojis = [];
 
@@ -3704,7 +3735,7 @@ function renderMiniList(filtered) {
         card.style.setProperty('--card-accent', accentA);
         card.innerHTML = `
             <div class="mini-card-img">
-                <img src="${photos[p.sport] || photos.Soccer}" alt="" loading="lazy">
+                <img src="${photoFor(p)}" alt="" loading="lazy">
                 ${co ? `<span class="mini-card-flag">${co.flag}</span>` : ''}
                 ${p.live ? '<span class="mini-card-pill live"><span class="dot"></span>LIVE</span>'
                   : isFree ? '<span class="mini-card-pill free">FREE</span>'
@@ -3784,7 +3815,7 @@ function cardHTML(p) {
     return `
         <article class="card${locked ? ' locked' : ''}${isTrending ? ' trending' : ''}" style="--card-tint:${tint}">
             <div class="card-img">
-                <img src="${photos[p.sport] || photos.Soccer}" alt="" loading="lazy">
+                <img src="${photoFor(p)}" alt="" loading="lazy">
                 <div class="card-img-gradient"></div>
                 <div class="img-pills">
                     ${p.live ? '<span class="pill live"><span class="dot"></span>Live</span>'
