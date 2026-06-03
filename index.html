@@ -11,15 +11,15 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
     :root {
-        --bg: #ffffff;
-        --bg-alt: #f7f6f1;
-        --surface: #ffffff;
-        --surface-2: #f4f3ed;
-        --border: #e8e6df;
-        --border-2: #d4d1c8;
-        --text: #0e0f11;
-        --text-dim: #4a4d54;
-        --text-mute: #8a8d94;
+        --bg: #08080b;
+        --bg-alt: #0e0e12;
+        --surface: #14141a;
+        --surface-2: #1c1c24;
+        --border: #2a2a35;
+        --border-2: #38384a;
+        --text: #f7f7f8;
+        --text-dim: #b0b3c0;
+        --text-mute: #7a7e8c;
         --red: #ff2d3a;
         --red-bright: #ff4753;
         --amber: #ffb800;
@@ -56,9 +56,9 @@
     /* ===== Nav ===== */
     nav {
         position: sticky; top: 0; z-index: 100;
-        background: var(--text);
+        background: #0e0f11;
         color: white;
-        border-bottom: 1px solid #1a1c20;
+        border-bottom: 1px solid #1c1c24;
     }
     .nav-inner {
         max-width: 1280px; margin: 0 auto;
@@ -1016,18 +1016,19 @@
     /* ===== Worldcup-only visibility (controlled via JS) ===== */
     .worldcup-only { display: none; }
     .worldcup-only.worldcup-on { display: block; }
+    body.worldcup-mode .events-only { display: none !important; }
 
-    /* ===== Worldcup mode: black backdrop with colorful glows ===== */
+    /* ===== Worldcup mode: WHITE base, vibrant red/blue/green ===== */
     body.worldcup-mode {
-        --bg: #08080b;
-        --bg-alt: #0e0e12;
-        --surface: #14141a;
-        --surface-2: #1c1c24;
-        --border: #2a2a35;
-        --border-2: #38384a;
-        --text: #f7f7f8;
-        --text-dim: #b0b3c0;
-        --text-mute: #7a7e8c;
+        --bg: #ffffff;
+        --bg-alt: #f6f7fb;
+        --surface: #ffffff;
+        --surface-2: #f1f3f8;
+        --border: #e3e6ed;
+        --border-2: #c8ccd6;
+        --text: #0e0f11;
+        --text-dim: #4a4d54;
+        --text-mute: #8a8d94;
         background: var(--bg);
     }
     body.worldcup-mode::after {
@@ -1035,59 +1036,97 @@
         position: fixed; inset: 0; z-index: -1;
         pointer-events: none;
         background:
-            radial-gradient(ellipse 40% 35% at 12% 15%, rgba(22,163,74,0.35), transparent 70%),
-            radial-gradient(ellipse 40% 35% at 88% 12%, rgba(37,99,235,0.35), transparent 70%),
-            radial-gradient(ellipse 40% 35% at 78% 78%, rgba(22,163,74,0.28), transparent 70%),
-            radial-gradient(ellipse 40% 35% at 18% 82%, rgba(37,99,235,0.28), transparent 70%),
-            radial-gradient(ellipse 45% 40% at 50% 50%, rgba(255,184,0,0.10), transparent 70%);
+            radial-gradient(ellipse 40% 30% at 10% 12%, rgba(22,163,74,0.25), transparent 70%),
+            radial-gradient(ellipse 40% 30% at 90% 14%, rgba(37,99,235,0.25), transparent 70%),
+            radial-gradient(ellipse 40% 30% at 80% 85%, rgba(255,45,58,0.22), transparent 70%),
+            radial-gradient(ellipse 40% 30% at 18% 80%, rgba(37,99,235,0.20), transparent 70%),
+            radial-gradient(ellipse 50% 40% at 50% 50%, rgba(22,163,74,0.14), transparent 70%);
     }
     body.worldcup-mode .split-list {
         background:
-            radial-gradient(ellipse 80% 30% at 50% 0%, rgba(22,163,74,0.18), transparent 70%),
+            radial-gradient(ellipse 80% 30% at 50% 0%, rgba(22,163,74,0.10), transparent 70%),
             var(--bg);
     }
-    body.worldcup-mode .split-list {
-        background:
-            radial-gradient(ellipse 80% 30% at 50% 0%, rgba(255,45,58,0.12), transparent 70%),
-            var(--bg);
+    body.worldcup-mode .split-list-head h2 .accent {
+        background: linear-gradient(135deg, #16a34a, #2563eb);
+        -webkit-background-clip: text; background-clip: text;
+        color: transparent;
     }
-    body.worldcup-mode .split-map { background: var(--surface); }
+    body.worldcup-mode .split-list-head::after { background: linear-gradient(90deg, #16a34a, #2563eb); }
+    body.worldcup-mode .split-list-head .count {
+        background: linear-gradient(135deg, #16a34a, #2563eb);
+        box-shadow: 0 4px 14px rgba(22,163,74,0.3);
+    }
+    body.worldcup-mode .split-map { background: var(--surface-2); }
+
     body.worldcup-mode .mini-card { background: var(--surface); border-color: var(--border); }
-    body.worldcup-mode .mini-card-img::after { background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.65)); }
+    body.worldcup-mode .mini-card-img::after { background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.35)); }
     body.worldcup-mode .mini-card-price { background: var(--surface-2); color: var(--text); }
-    body.worldcup-mode .filter { background: var(--surface); border-color: var(--border); color: var(--text-dim); }
-    body.worldcup-mode .filter select option { background: var(--surface-2); color: var(--text); }
-    body.worldcup-mode .subtabs-wrap { background: var(--bg); border-color: var(--border); }
-    body.worldcup-mode .subtab { color: var(--text-dim); }
-    body.worldcup-mode .subtab.active { color: var(--text); }
-    body.worldcup-mode .subtab .count { background: var(--surface-2); color: var(--text-dim); }
+    body.worldcup-mode .mini-card-venue { color: var(--text); }
+    body.worldcup-mode .mini-card-meta { color: var(--text-dim); }
+    body.worldcup-mode .mini-card.locked .mini-card-img::after { background: rgba(255,255,255,0.78); color: var(--text); }
+
+    body.worldcup-mode .filter { background: var(--surface); border-color: var(--border); color: var(--text); }
+    body.worldcup-mode .filter select option { background: var(--surface); color: var(--text); }
+    body.worldcup-mode .drop-btn { background: var(--surface); color: var(--text); border-color: var(--border); }
+    body.worldcup-mode .drop-btn:hover { border-color: var(--text); }
+    body.worldcup-mode .drop-menu { background: var(--surface); border-color: var(--border); }
+    body.worldcup-mode .drop-item { color: var(--text); }
+    body.worldcup-mode .drop-item:hover { background: var(--surface-2); }
+    body.worldcup-mode .drop-item-count { background: var(--surface-2); color: var(--text-dim); }
+    body.worldcup-mode .drop-check { color: var(--text); }
+
     body.worldcup-mode .country { background: var(--surface); border-color: var(--border); color: var(--text-dim); }
     body.worldcup-mode .country:hover { color: var(--text); border-color: var(--text); }
+    body.worldcup-mode .country.active {
+        background: linear-gradient(135deg, #16a34a, #2563eb);
+        color: white; border-color: transparent;
+        box-shadow: 0 6px 18px rgba(22,163,74,0.35);
+    }
     body.worldcup-mode .country .flag { background: var(--surface-2); }
     body.worldcup-mode .country-strip { background: var(--bg-alt); border-color: var(--border); }
     body.worldcup-mode .country-strip-label { color: var(--text-dim); }
+
+    body.worldcup-mode .borough-banner { background: linear-gradient(135deg, #fff8e6, #ffeed4); }
+
     body.worldcup-mode .split-list-head { border-color: var(--border); }
     body.worldcup-mode .empty h3 { color: var(--text); }
-    /* Nav stays dark in worldcup-mode (its bg was var(--text) which flipped) */
+
+    /* Nav flips to white in worldcup-mode */
     body.worldcup-mode nav {
-        background: #0e0f11;
-        border-bottom-color: #1c1c24;
+        background: rgba(255,255,255,0.92);
+        backdrop-filter: blur(14px);
+        color: var(--text);
+        border-bottom-color: var(--border);
     }
-    body.worldcup-mode .drop-btn { background: var(--surface); color: var(--text); border-color: var(--border); }
-    body.worldcup-mode .drop-btn:hover { border-color: var(--text); }
-    body.worldcup-mode .drop-check { color: var(--text); }
-    body.worldcup-mode .drop-item { color: var(--text); }
-    body.worldcup-mode .drop-item-count { background: var(--bg); color: var(--text-dim); }
+    body.worldcup-mode .brand,
+    body.worldcup-mode .tabs .tab,
+    body.worldcup-mode .nav-btn { color: var(--text); }
+    body.worldcup-mode .tab { color: var(--text-dim); }
+    body.worldcup-mode .tab:hover { color: var(--text); background: rgba(14,15,17,0.05); }
+    body.worldcup-mode .tab.active { color: var(--text); background: rgba(14,15,17,0.08); }
+    body.worldcup-mode .nav-btn { border-color: rgba(14,15,17,0.15); }
+    body.worldcup-mode .nav-btn:hover { border-color: rgba(14,15,17,0.4); }
+    body.worldcup-mode .nav-btn.ai {
+        background: linear-gradient(135deg, #16a34a, #2563eb);
+        color: white;
+        border-color: transparent;
+    }
+    body.worldcup-mode .tab-badge {
+        background: linear-gradient(135deg, #16a34a, #2563eb);
+        box-shadow: 0 4px 10px rgba(22,163,74,0.4);
+    }
 
     /* ===== World Cup vibrant hero ===== */
     .worldcup-hero {
         position: relative;
         overflow: hidden;
         background:
-            radial-gradient(ellipse 60% 80% at 80% 0%, rgba(22,163,74,0.32), transparent 60%),
-            radial-gradient(ellipse 50% 80% at 20% 100%, rgba(37,99,235,0.32), transparent 60%),
-            linear-gradient(135deg, #04241a 0%, #081d4d 50%, #04241a 100%);
-        color: white;
+            radial-gradient(ellipse 60% 80% at 80% 0%, rgba(22,163,74,0.18), transparent 60%),
+            radial-gradient(ellipse 50% 80% at 20% 100%, rgba(37,99,235,0.18), transparent 60%),
+            radial-gradient(ellipse 40% 60% at 50% 50%, rgba(255,45,58,0.10), transparent 60%),
+            #ffffff;
+        color: #0e0f11;
         padding: 56px 32px;
     }
     .worldcup-stripes {
@@ -1101,16 +1140,16 @@
     .worldcup-confetti {
         position: absolute; inset: 0;
         background-image:
-            radial-gradient(circle at 15% 35%, #16a34a 3px, transparent 4px),
-            radial-gradient(circle at 85% 25%, #2563eb 3px, transparent 4px),
-            radial-gradient(circle at 70% 70%, #16a34a 3px, transparent 4px),
-            radial-gradient(circle at 25% 80%, #ffffff 3px, transparent 4px),
-            radial-gradient(circle at 92% 90%, #2563eb 3px, transparent 4px),
-            radial-gradient(circle at 8% 12%, #ffb800 2px, transparent 3px),
-            radial-gradient(circle at 55% 18%, #ffffff 2px, transparent 3px),
-            radial-gradient(circle at 45% 92%, #16a34a 3px, transparent 4px);
+            radial-gradient(circle at 15% 35%, #ff2d3a 4px, transparent 5px),
+            radial-gradient(circle at 85% 25%, #2563eb 4px, transparent 5px),
+            radial-gradient(circle at 70% 70%, #16a34a 4px, transparent 5px),
+            radial-gradient(circle at 25% 80%, #ff2d3a 3px, transparent 4px),
+            radial-gradient(circle at 92% 90%, #16a34a 4px, transparent 5px),
+            radial-gradient(circle at 8% 12%, #2563eb 3px, transparent 4px),
+            radial-gradient(circle at 55% 18%, #ff2d3a 3px, transparent 4px),
+            radial-gradient(circle at 45% 92%, #2563eb 4px, transparent 5px);
         background-size: 100% 100%;
-        opacity: 0.7;
+        opacity: 0.85;
         pointer-events: none;
     }
     .worldcup-hero-inner {
@@ -1120,7 +1159,7 @@
     .worldcup-eyebrow {
         display: inline-block;
         padding: 6px 14px;
-        background: white; color: #0e0f11;
+        background: #0e0f11; color: white;
         font-family: 'Inter', sans-serif;
         font-weight: 900; font-size: 11px;
         letter-spacing: 3px;
@@ -1141,7 +1180,7 @@
         color: transparent;
     }
     .worldcup-sub {
-        font-size: 16px; color: rgba(255,255,255,0.78);
+        font-size: 16px; color: rgba(14,15,17,0.7);
         max-width: 540px;
     }
 
@@ -2777,14 +2816,14 @@
             </div>
         </div>
 
-        <div class="filter">
+        <div class="filter events-only">
             <select id="sport-select" onchange="applyFilters()">
                 <option value="">All sports</option>
                 <option>Soccer</option><option>NFL</option><option>NBA</option>
                 <option>MLB</option><option>NHL</option><option>UFC</option><option>F1</option>
             </select>
         </div>
-        <div class="filter">
+        <div class="filter events-only">
             <select id="when-select" onchange="applyFilters()">
                 <option value="">Anytime</option>
                 <option>Tonight</option><option>Tomorrow</option><option>This weekend</option>
