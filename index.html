@@ -2246,6 +2246,24 @@
     #events-map .leaflet-tile-pane {
         filter: brightness(1.02);
     }
+    /* Locked borough overlay tooltip */
+    .leaflet-tooltip.locked-borough-tip {
+        background: rgba(14,15,17,0.92);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255,184,0,0.45);
+        border-radius: 10px;
+        padding: 8px 12px;
+        box-shadow: 0 12px 28px rgba(0,0,0,0.4);
+    }
+    .leaflet-tooltip.locked-borough-tip::before { display: none; }
+    /* Lock pattern fill on locked borough polygons */
+    path.locked-borough-shape {
+        cursor: pointer;
+    }
+    path.locked-borough-shape:hover {
+        fill-opacity: 0.65 !important;
+        stroke-opacity: 1 !important;
+    }
     /* Invert dark CARTO tiles to a light map for World Cup mode */
     body.worldcup-mode #events-map .leaflet-tile-pane {
         filter: invert(0.92) hue-rotate(180deg) brightness(1.05) saturate(0.85);
@@ -4663,10 +4681,71 @@ function initMap() {
     setTimeout(() => mapInstance.invalidateSize(), 400);
 }
 
+// Approximate NYC borough outlines for the locked overlays
+const boroughShapes = {
+    'Manhattan': [
+        [40.701, -74.018], [40.711, -74.014], [40.736, -74.012],
+        [40.764, -73.996], [40.794, -73.974], [40.823, -73.946],
+        [40.851, -73.929], [40.873, -73.911], [40.873, -73.910],
+        [40.842, -73.929], [40.806, -73.929], [40.776, -73.940],
+        [40.745, -73.967], [40.714, -73.999]
+    ],
+    'Queens': [
+        [40.541, -73.749], [40.546, -73.956], [40.586, -73.965],
+        [40.621, -73.969], [40.674, -73.971], [40.719, -73.972],
+        [40.748, -73.954], [40.770, -73.939], [40.789, -73.917],
+        [40.794, -73.857], [40.804, -73.789], [40.799, -73.705],
+        [40.741, -73.704], [40.659, -73.733], [40.575, -73.749]
+    ],
+    'Bronx': [
+        [40.786, -73.927], [40.799, -73.910], [40.815, -73.886],
+        [40.824, -73.864], [40.835, -73.850], [40.860, -73.834],
+        [40.889, -73.811], [40.911, -73.799], [40.916, -73.823],
+        [40.901, -73.851], [40.879, -73.892], [40.844, -73.921],
+        [40.811, -73.931]
+    ],
+    'Staten Island': [
+        [40.495, -74.255], [40.495, -74.100], [40.522, -74.056],
+        [40.575, -74.063], [40.638, -74.084], [40.651, -74.197],
+        [40.647, -74.252]
+    ]
+};
+let boroughOverlays = [];
+
+function drawLockedBoroughs() {
+    if (!mapInstance) return;
+    boroughOverlays.forEach(o => mapInstance.removeLayer(o));
+    boroughOverlays = [];
+    Object.entries(boroughShapes).forEach(([name, coords]) => {
+        if (unlockedBoroughs.has(name)) return;
+        const poly = L.polygon(coords, {
+            color: '#ffb800',
+            weight: 2,
+            opacity: 0.85,
+            fillColor: '#0e0f11',
+            fillOpacity: 0.55,
+            dashArray: '8, 6',
+            interactive: true,
+            className: 'locked-borough-shape'
+        }).addTo(mapInstance);
+        poly.bindTooltip(
+            `<div style="font-family:Inter,sans-serif;text-align:center">
+                <div style="font-size:9px;color:#ffb800;font-weight:900;letter-spacing:2px">LOCKED</div>
+                <div style="font-size:13px;font-weight:800;color:#fff;margin-top:2px">${name}</div>
+                <div style="font-size:11px;color:rgba(255,255,255,0.7);margin-top:2px">Subscribe to unlock</div>
+            </div>`,
+            { permanent: false, direction: 'center', className: 'locked-borough-tip' }
+        );
+        poly.on('click', () => openPaywall());
+        boroughOverlays.push(poly);
+    });
+}
+
 function renderMap(filtered) {
     if (!mapInstance) return;
     mapMarkers.forEach(m => mapInstance.removeLayer(m));
     mapMarkers = [];
+    drawLockedBoroughs();
     if (!filtered || !filtered.length) return;
     filtered.forEach(p => {
         const locked = isLocked(p);
