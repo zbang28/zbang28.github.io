@@ -1296,6 +1296,190 @@
     .worldcup-only.worldcup-on { display: block; }
     body.worldcup-mode .events-only { display: none !important; }
 
+    /* List-tab bar (Watch parties / Filters as tabs inside the list) */
+    .list-tab-bar {
+        display: flex; gap: 8px;
+        padding: 6px;
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        margin-bottom: 14px;
+    }
+    .list-tab {
+        flex: 1;
+        background: transparent !important;
+        border: none !important;
+        padding: 9px 14px !important;
+        color: var(--text-dim) !important;
+        font-size: 13px; font-weight: 800;
+        border-radius: 8px;
+        justify-content: center;
+        box-shadow: none !important;
+    }
+    .list-tab:hover { color: var(--text) !important; background: rgba(255,255,255,0.04) !important; }
+    .drop.open .list-tab {
+        background: var(--bg) !important;
+        color: var(--text) !important;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.25) !important;
+    }
+
+    /* ===== Venue detail panel (Google place style) ===== */
+    .venue-panel {
+        position: absolute;
+        top: 0; right: 0; bottom: 0;
+        width: 420px; max-width: 100%;
+        background: #ffffff;
+        color: #0e0f11;
+        border-left: 1px solid rgba(14,15,17,0.08);
+        box-shadow: -12px 0 40px rgba(0,0,0,0.25);
+        z-index: 1100;
+        overflow-y: auto;
+        transform: translateX(100%);
+        transition: transform 0.3s cubic-bezier(.2,.7,.2,1);
+    }
+    .venue-panel.open {
+        transform: translateX(0);
+    }
+    .venue-close {
+        position: absolute;
+        top: 12px; right: 12px;
+        z-index: 2;
+        width: 32px; height: 32px;
+        background: rgba(255,255,255,0.92);
+        backdrop-filter: blur(6px);
+        border: 1px solid rgba(14,15,17,0.12);
+        border-radius: 50%;
+        color: #0e0f11;
+        display: grid; place-items: center;
+        cursor: pointer;
+    }
+    .venue-close:hover { background: white; }
+    .venue-photo-wrap {
+        position: relative;
+        display: grid;
+        grid-template-columns: 1.7fr 1fr;
+        gap: 2px;
+        height: 220px;
+        background: #f1f3f8;
+    }
+    .venue-photo-wrap img {
+        width: 100%; height: 100%; object-fit: cover;
+        display: block;
+    }
+    .venue-content { padding: 18px 20px 28px; }
+    .venue-head { margin-bottom: 14px; }
+    .venue-head h2 {
+        font-family: 'Inter', sans-serif;
+        font-weight: 900; font-size: 22px;
+        letter-spacing: -0.02em;
+        margin-bottom: 4px;
+    }
+    .venue-meta {
+        display: flex; align-items: center; gap: 8px;
+        font-size: 13px; color: #4a4d54;
+        flex-wrap: wrap;
+    }
+    .venue-meta .venue-rating { color: #0e0f11; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; }
+    .venue-meta .venue-rating .star { color: #ffb800; }
+    .venue-meta .venue-price { color: #0e0f11; font-weight: 700; }
+    .venue-meta .venue-type { color: #4a4d54; }
+
+    .venue-tabs {
+        display: flex; gap: 4px;
+        border-bottom: 1px solid rgba(14,15,17,0.08);
+        margin-bottom: 16px;
+    }
+    .venue-tab {
+        background: transparent; border: none;
+        padding: 10px 14px;
+        font: inherit; font-size: 13px; font-weight: 700;
+        color: #4a4d54; cursor: pointer;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -1px;
+    }
+    .venue-tab:hover { color: #0e0f11; }
+    .venue-tab.active {
+        color: #0e0f11;
+        border-bottom-color: #0e0f11;
+    }
+
+    .venue-actions {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+        margin-bottom: 18px;
+    }
+    .venue-act {
+        background: white;
+        border: 1px solid rgba(14,15,17,0.12);
+        color: #0e0f11;
+        padding: 8px 6px;
+        border-radius: 999px;
+        font: inherit; font-size: 12px; font-weight: 600;
+        cursor: pointer;
+        display: inline-flex; align-items: center; justify-content: center;
+        gap: 5px;
+        transition: background 0.15s, border-color 0.15s;
+    }
+    .venue-act:hover { background: #f1f3f8; border-color: rgba(14,15,17,0.25); }
+
+    .venue-info-row {
+        display: flex; align-items: start; gap: 12px;
+        padding: 10px 0;
+        border-top: 1px solid rgba(14,15,17,0.05);
+        font-size: 14px; color: #0e0f11;
+    }
+    .venue-info-row:first-child { border-top: none; }
+    .venue-info-row svg { color: #4a4d54; flex-shrink: 0; margin-top: 2px; }
+    .venue-info-row strong { color: #00a85a; font-weight: 700; }
+
+    /* Reviews */
+    .venue-review {
+        padding: 14px 0;
+        border-top: 1px solid rgba(14,15,17,0.06);
+    }
+    .venue-review:first-child { border-top: none; }
+    .venue-review-head {
+        display: flex; gap: 10px; align-items: center; margin-bottom: 6px;
+    }
+    .venue-review-avatar {
+        width: 32px; height: 32px; border-radius: 50%;
+        display: grid; place-items: center;
+        font-weight: 800; color: white; font-size: 13px;
+    }
+    .venue-review-name {
+        font-weight: 700; font-size: 13px; color: #0e0f11;
+        display: flex; align-items: center; gap: 6px;
+    }
+    .venue-review-stars {
+        font-size: 12px; color: #ffb800; letter-spacing: 1px;
+    }
+    .venue-review-when { font-size: 11px; color: #8a8d94; }
+    .venue-review-text { font-size: 13px; color: #4a4d54; line-height: 1.5; }
+
+    /* Menu */
+    .venue-menu-item {
+        display: flex; justify-content: space-between; align-items: start;
+        gap: 14px;
+        padding: 12px 0;
+        border-top: 1px solid rgba(14,15,17,0.06);
+    }
+    .venue-menu-item:first-child { border-top: none; }
+    .venue-menu-name { font-weight: 700; font-size: 14px; color: #0e0f11; }
+    .venue-menu-desc { font-size: 12px; color: #4a4d54; margin-top: 2px; }
+    .venue-menu-price { font-weight: 800; font-size: 14px; color: #0e0f11; white-space: nowrap; }
+
+    /* Photo grid */
+    .venue-photo-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+    }
+    .venue-photo-grid img {
+        width: 100%; aspect-ratio: 1/1;
+        object-fit: cover; border-radius: 8px;
+    }
+
     /* Country strip floating on top of the map */
     .country-strip.floating-strip {
         position: absolute;
@@ -1385,17 +1569,18 @@
         --grad-1: linear-gradient(135deg, #ff2e2e, #ffd400);
         background: var(--bg);
     }
-    /* Multi-color soft glows on a white page */
+    /* Multi-color soft glows on a white page — red, amber, blue, green */
     body.worldcup-mode::after {
         content: '';
         position: fixed; inset: 0; z-index: -2;
         pointer-events: none;
         background:
-            radial-gradient(ellipse 45% 35% at 8% 8%,   rgba(255,46,46,0.32),  transparent 70%),
-            radial-gradient(ellipse 45% 35% at 92% 8%,  rgba(255,212,0,0.30),  transparent 70%),
-            radial-gradient(ellipse 45% 35% at 92% 92%, rgba(37,99,235,0.22),  transparent 70%),
-            radial-gradient(ellipse 45% 35% at 8% 92%,  rgba(0,217,111,0.22),  transparent 70%),
-            radial-gradient(ellipse 50% 40% at 50% 50%, rgba(255,107,26,0.14), transparent 70%);
+            radial-gradient(ellipse 42% 32% at 5% 6%,    rgba(255,46,46,0.36),  transparent 70%),
+            radial-gradient(ellipse 42% 32% at 95% 8%,   rgba(0,217,111,0.32),  transparent 70%),
+            radial-gradient(ellipse 42% 32% at 95% 94%,  rgba(37,99,235,0.32),  transparent 70%),
+            radial-gradient(ellipse 42% 32% at 5% 94%,   rgba(255,212,0,0.30),  transparent 70%),
+            radial-gradient(ellipse 36% 28% at 50% 8%,   rgba(255,107,26,0.18), transparent 70%),
+            radial-gradient(ellipse 36% 28% at 50% 95%,  rgba(6,214,247,0.16),  transparent 70%);
     }
     /* Sunburst/wedge tournament pattern overlay (subtle) */
     body.worldcup-mode::before {
@@ -1516,9 +1701,11 @@
         position: relative;
         overflow: hidden;
         background:
-            radial-gradient(ellipse 40% 60% at 90% 50%, rgba(255,212,0,0.85), transparent 60%),
-            radial-gradient(ellipse 50% 70% at 5% 50%, rgba(255,46,46,0.7), transparent 60%),
-            radial-gradient(ellipse 40% 60% at 50% 100%, rgba(255,107,26,0.55), transparent 60%),
+            radial-gradient(ellipse 38% 75% at 95% 30%, rgba(0,217,111,0.6), transparent 60%),
+            radial-gradient(ellipse 38% 75% at 0% 30%, rgba(255,46,46,0.6), transparent 60%),
+            radial-gradient(ellipse 38% 75% at 95% 90%, rgba(37,99,235,0.5), transparent 60%),
+            radial-gradient(ellipse 38% 75% at 0% 90%, rgba(255,212,0,0.5), transparent 60%),
+            radial-gradient(ellipse 40% 60% at 50% 50%, rgba(255,107,26,0.25), transparent 60%),
             #ffffff;
         color: #0e0f11;
         padding: 36px 32px 44px;
@@ -1583,9 +1770,10 @@
     }
     .worldcup-title em {
         font-style: italic;
-        color: #ff2e2e;
-        background: none;
-        -webkit-text-fill-color: currentColor;
+        background: linear-gradient(110deg, #ff2e2e 0%, #ff7a1a 25%, #00b85f 60%, #2563eb 100%);
+        -webkit-background-clip: text; background-clip: text;
+        color: transparent;
+        -webkit-text-fill-color: transparent;
     }
     .worldcup-sub {
         font-size: 15px; color: rgba(14,15,17,0.7);
@@ -3250,45 +3438,6 @@
     </div>
 
     <div class="filters">
-        <!-- Event type dropdown -->
-        <div class="drop" id="drop-type">
-            <button class="drop-btn" type="button" onclick="toggleDrop('drop-type', event)">
-                <span id="drop-type-label">Watch parties</span>
-                <span class="drop-caret">▾</span>
-            </button>
-            <div class="drop-menu">
-                <button class="drop-item" data-type="watch-party" onclick="pickEventType('watch-party')">
-                    <span class="drop-item-name">Watch parties</span>
-                    <span class="drop-item-count" data-count-type="watch-party">0</span>
-                </button>
-                <button class="drop-item" data-type="parade" onclick="pickEventType('parade')">
-                    <span class="drop-item-name">Parades</span>
-                    <span class="drop-item-count" data-count-type="parade">0</span>
-                </button>
-                <button class="drop-item" data-type="pickup" onclick="pickEventType('pickup')">
-                    <span class="drop-item-name">Pickup games</span>
-                    <span class="drop-item-count" data-count-type="pickup">0</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Quick filters dropdown -->
-        <div class="drop" id="drop-filters">
-            <button class="drop-btn" type="button" onclick="toggleDrop('drop-filters', event)">
-                <span>Filters</span>
-                <span class="drop-badge" id="drop-filter-count" style="display:none">0</span>
-                <span class="drop-caret">▾</span>
-            </button>
-            <div class="drop-menu drop-menu-wide">
-                <label class="drop-check"><input type="checkbox" data-filter="Live Now" onchange="toggleQuickFilterCheck(this)"><span>Live now</span></label>
-                <label class="drop-check"><input type="checkbox" data-filter="Free" onchange="toggleQuickFilterCheck(this)"><span>Free</span></label>
-                <label class="drop-check"><input type="checkbox" data-filter="Outdoor" onchange="toggleQuickFilterCheck(this)"><span>Outdoor</span></label>
-                <label class="drop-check"><input type="checkbox" data-filter="Within 1 mi" onchange="toggleQuickFilterCheck(this)"><span>Within 1 mi</span></label>
-                <div class="drop-divider"></div>
-                <button class="drop-clear" onclick="clearQuickFilters()">Clear all</button>
-            </div>
-        </div>
-
         <div class="filter events-only">
             <select id="sport-select" onchange="applyFilters()">
                 <option value="">All sports</option>
@@ -3311,6 +3460,46 @@
                 <h2 id="split-list-title">Events near you</h2>
                 <span class="count" id="split-count">0</span>
             </div>
+
+            <div class="list-tab-bar">
+                <div class="drop" id="drop-type">
+                    <button class="drop-btn list-tab" type="button" onclick="toggleDrop('drop-type', event)">
+                        <span id="drop-type-label">Watch parties</span>
+                        <span class="drop-caret">▾</span>
+                    </button>
+                    <div class="drop-menu">
+                        <button class="drop-item" data-type="watch-party" onclick="pickEventType('watch-party')">
+                            <span class="drop-item-name">Watch parties</span>
+                            <span class="drop-item-count" data-count-type="watch-party">0</span>
+                        </button>
+                        <button class="drop-item" data-type="parade" onclick="pickEventType('parade')">
+                            <span class="drop-item-name">Parades</span>
+                            <span class="drop-item-count" data-count-type="parade">0</span>
+                        </button>
+                        <button class="drop-item" data-type="pickup" onclick="pickEventType('pickup')">
+                            <span class="drop-item-name">Pickup games</span>
+                            <span class="drop-item-count" data-count-type="pickup">0</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="drop" id="drop-filters">
+                    <button class="drop-btn list-tab" type="button" onclick="toggleDrop('drop-filters', event)">
+                        <span>Filters</span>
+                        <span class="drop-badge" id="drop-filter-count" style="display:none">0</span>
+                        <span class="drop-caret">▾</span>
+                    </button>
+                    <div class="drop-menu drop-menu-wide">
+                        <label class="drop-check"><input type="checkbox" data-filter="Live Now" onchange="toggleQuickFilterCheck(this)"><span>Live now</span></label>
+                        <label class="drop-check"><input type="checkbox" data-filter="Free" onchange="toggleQuickFilterCheck(this)"><span>Free</span></label>
+                        <label class="drop-check"><input type="checkbox" data-filter="Outdoor" onchange="toggleQuickFilterCheck(this)"><span>Outdoor</span></label>
+                        <label class="drop-check"><input type="checkbox" data-filter="Within 1 mi" onchange="toggleQuickFilterCheck(this)"><span>Within 1 mi</span></label>
+                        <div class="drop-divider"></div>
+                        <button class="drop-clear" onclick="clearQuickFilters()">Clear all</button>
+                    </div>
+                </div>
+            </div>
+
             <input id="search-input" type="hidden">
             <div class="mini-list" id="mini-list"></div>
         </div>
@@ -3322,6 +3511,63 @@
                     <div class="countries" id="countries"></div>
                 </div>
             </div>
+
+            <!-- Google-style venue detail panel -->
+            <aside class="venue-panel" id="venue-panel" aria-hidden="true">
+                <button class="venue-close" onclick="closeVenue()" aria-label="Close">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                </button>
+                <div class="venue-photo-wrap" id="venue-photo-wrap"></div>
+                <div class="venue-content">
+                    <div class="venue-head">
+                        <h2 id="venue-name">Venue</h2>
+                        <div class="venue-meta">
+                            <span class="venue-rating" id="venue-rating"></span>
+                            <span class="venue-price" id="venue-price"></span>
+                            <span class="venue-type" id="venue-type"></span>
+                        </div>
+                    </div>
+                    <div class="venue-tabs">
+                        <button class="venue-tab active" data-vtab="overview" onclick="setVenueTab('overview')">Overview</button>
+                        <button class="venue-tab" data-vtab="menu" onclick="setVenueTab('menu')">Menu</button>
+                        <button class="venue-tab" data-vtab="reviews" onclick="setVenueTab('reviews')">Reviews</button>
+                        <button class="venue-tab" data-vtab="photos" onclick="setVenueTab('photos')">Photos</button>
+                    </div>
+                    <div class="venue-actions">
+                        <button class="venue-act"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/></svg>Website</button>
+                        <button class="venue-act"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>Directions</button>
+                        <button class="venue-act"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16Z"/></svg>Save</button>
+                        <button class="venue-act"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share</button>
+                    </div>
+
+                    <div class="venue-tab-content" data-vcontent="overview">
+                        <div class="venue-info-row">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM3 9l2-5h14l2 5"/></svg>
+                            <span id="venue-features">Great cocktails · Vegetarian options · Private dining</span>
+                        </div>
+                        <div class="venue-info-row">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            <span><strong id="venue-status">Open</strong> · <span id="venue-hours">Closes 11 PM</span></span>
+                        </div>
+                        <div class="venue-info-row">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 7-8 12-8 12s-8-5-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                            <span id="venue-address"></span>
+                        </div>
+                    </div>
+
+                    <div class="venue-tab-content" data-vcontent="menu" hidden>
+                        <div class="venue-menu" id="venue-menu"></div>
+                    </div>
+
+                    <div class="venue-tab-content" data-vcontent="reviews" hidden>
+                        <div class="venue-reviews" id="venue-reviews"></div>
+                    </div>
+
+                    <div class="venue-tab-content" data-vcontent="photos" hidden>
+                        <div class="venue-photo-grid" id="venue-photo-grid"></div>
+                    </div>
+                </div>
+            </aside>
         </div>
     </div>
 
@@ -4006,6 +4252,7 @@ function renderMiniList(filtered) {
         card.addEventListener('click', () => {
             if (isLocked(p)) { openPaywall(); return; }
             focusCard(p.id);
+            openVenue(p.id);
         });
         card.addEventListener('mouseenter', () => highlightPin(p.id, true));
         card.addEventListener('mouseleave', () => highlightPin(p.id, false));
@@ -4529,6 +4776,159 @@ function buildMatchday() {
     }, 50);
 
     window.matchdayStops = stops;
+}
+
+// ============ VENUE DETAIL PANEL ============
+const reviewerNames = ['Alex M.','Sofia R.','Jamal K.','Priya S.','Marco D.','Emma W.','Diego L.','Yui T.','Noah B.','Olivia C.'];
+const reviewTemplates = [
+    "Vibe was unreal — perfect spot to catch the match with friends.",
+    "Solid drinks list and the crowd really gets into the game.",
+    "Got a booth 30 minutes before kickoff. Wings were excellent.",
+    "Loud, packed, and exactly the energy you want for a watch party.",
+    "Sound system is great, every angle has a screen. Highly recommend.",
+    "Service was fast even when slammed. Will be back.",
+    "Outdoor patio + big screen = perfect Sunday.",
+    "Sangria flowed, samba played, instant best Brazil day.",
+];
+
+function ratingFor(p) {
+    const seed = (p.id * 1103515245 + 12345) % 100;
+    return (3.8 + (seed / 100) * 1.1).toFixed(1);
+}
+function reviewCountFor(p) {
+    return ((p.id * 137) % 1900) + 120;
+}
+function colorFromName(s) {
+    let h = 0; for (let i = 0; i < s.length; i++) h = s.charCodeAt(i) + ((h << 5) - h);
+    return `hsl(${Math.abs(h) % 360}, 55%, 50%)`;
+}
+function fakeReviewsFor(p) {
+    const seed = p.id;
+    const items = [];
+    for (let i = 0; i < 4; i++) {
+        const name = reviewerNames[(seed + i * 3) % reviewerNames.length];
+        const text = reviewTemplates[(seed + i * 7) % reviewTemplates.length];
+        const stars = 4 + (i % 2);
+        const when = ['2 weeks ago','a month ago','3 weeks ago','last week','2 months ago'][i % 5];
+        items.push({ name, text, stars, when });
+    }
+    return items;
+}
+function fakeMenuFor(p) {
+    const menus = {
+        Restaurant: [
+            ['Chef\'s board','Charcuterie, cheese, olives','$24'],
+            ['Truffle fries','Parmesan & garlic aioli','$14'],
+            ['Argentine empanadas','Beef, chicken, spinach','$16'],
+            ['Wood-fired pizza','Margherita / pepperoni','$22'],
+        ],
+        'Sports Bar': [
+            ['Buffalo wings','10pc · classic / honey BBQ','$18'],
+            ['Smash burger','Double patty, american','$16'],
+            ['Loaded nachos','Pulled pork, queso, jalapeños','$15'],
+            ['Bucket of 5 beers','Bud / Stella / Modelo','$30'],
+        ],
+        Brewery: [
+            ['Flight of 4','Pick your own pours','$14'],
+            ['Pretzel knot','Beer cheese, mustard','$10'],
+            ['Sausage board','3 housemade sausages','$22'],
+            ['IPA pint','House double IPA','$9'],
+        ],
+        Rooftop: [
+            ['Espresso martini','Vodka, espresso, kahlua','$18'],
+            ['Spicy paloma','Mezcal, grapefruit, chili','$17'],
+            ['Wagyu slider','Onion jam, gruyère','$22'],
+            ['Tuna tartare','Sesame, avocado, ponzu','$24'],
+        ],
+    };
+    return menus[p.vtype] || menus['Sports Bar'];
+}
+function morePhotosFor(p) {
+    const extra = [
+        'https://images.unsplash.com/photo-1572116469696-31de0f17cc34?w=400&q=80&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1559339352-11d035aa65de?w=400&q=80&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&q=80&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1592861956120-e524fc739696?w=400&q=80&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=400&q=80&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1559925393-8be0ec4767c8?w=400&q=80&auto=format&fit=crop',
+    ];
+    return [photoFor(p), ...extra];
+}
+
+function openVenue(id) {
+    const p = parties.find(x => x.id === id);
+    if (!p) return;
+    if (isLocked(p)) { openPaywall(); return; }
+    const panel = document.getElementById('venue-panel');
+    panel.dataset.venueId = id;
+    panel.classList.add('open');
+    panel.setAttribute('aria-hidden', 'false');
+
+    document.getElementById('venue-name').textContent = p.venue;
+    const rating = ratingFor(p);
+    const count = reviewCountFor(p).toLocaleString();
+    document.getElementById('venue-rating').innerHTML = `<span class="star">★</span>${rating} <span style="color:#8a8d94;font-weight:500">(${count})</span>`;
+    document.getElementById('venue-price').textContent = p.price === 'Free' ? 'Free' : (p.price.startsWith('$') ? p.price.split(' ')[0] : '$$');
+    document.getElementById('venue-type').textContent = '· ' + p.vtype;
+    document.getElementById('venue-features').textContent = p.perks.join(' · ');
+    const isOpen = p.live || /Tonight|Tomorrow/.test(p.time);
+    document.getElementById('venue-status').textContent = isOpen ? 'Open' : 'Opens later';
+    document.getElementById('venue-status').style.color = isOpen ? '#00a85a' : '#c47a00';
+    document.getElementById('venue-hours').textContent = isOpen ? 'Closes 1 AM' : p.time;
+    document.getElementById('venue-address').textContent = `${p.neighborhood}, ${p.borough}, NY`;
+
+    // Photos
+    const photos = morePhotosFor(p);
+    document.getElementById('venue-photo-wrap').innerHTML = `
+        <img src="${photos[0]}" alt="">
+        <img src="${photos[1]}" alt="">
+    `;
+    document.getElementById('venue-photo-grid').innerHTML =
+        photos.slice(0, 6).map(u => `<img src="${u}" alt="" loading="lazy">`).join('');
+
+    // Reviews
+    const reviews = fakeReviewsFor(p);
+    document.getElementById('venue-reviews').innerHTML = reviews.map(r => `
+        <div class="venue-review">
+            <div class="venue-review-head">
+                <div class="venue-review-avatar" style="background:${colorFromName(r.name)}">${r.name[0]}</div>
+                <div>
+                    <div class="venue-review-name">${r.name} <span class="venue-review-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5 - r.stars)}</span></div>
+                    <div class="venue-review-when">${r.when}</div>
+                </div>
+            </div>
+            <div class="venue-review-text">${r.text}</div>
+        </div>
+    `).join('');
+
+    // Menu
+    const menu = fakeMenuFor(p);
+    document.getElementById('venue-menu').innerHTML = menu.map(m => `
+        <div class="venue-menu-item">
+            <div>
+                <div class="venue-menu-name">${m[0]}</div>
+                <div class="venue-menu-desc">${m[1]}</div>
+            </div>
+            <div class="venue-menu-price">${m[2]}</div>
+        </div>
+    `).join('');
+
+    setVenueTab('overview');
+}
+
+function closeVenue() {
+    const panel = document.getElementById('venue-panel');
+    panel.classList.remove('open');
+    panel.setAttribute('aria-hidden', 'true');
+}
+
+function setVenueTab(tab) {
+    document.querySelectorAll('.venue-tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.vtab === tab);
+    });
+    document.querySelectorAll('.venue-tab-content').forEach(c => {
+        c.hidden = c.dataset.vcontent !== tab;
+    });
 }
 
 function zoomMatchdayStop(i) {
