@@ -1014,6 +1014,7 @@
 
     /* ===== Worldcup-only visibility (controlled via JS) ===== */
     .worldcup-only { display: none; }
+    .worldcup-only.worldcup-on { display: block; }
 
     /* ===== Worldcup mode: black backdrop with colorful glows ===== */
     body.worldcup-mode {
@@ -2240,16 +2241,37 @@
         display: flex; flex-direction: column; overflow: hidden;
         box-shadow: 0 30px 80px rgba(0,0,0,0.3);
     }
+    /* ===== Modal (AI matchday) — site theme ===== */
+    .modal {
+        position: relative;
+        border-radius: 22px !important;
+    }
     .modal-head {
-        padding: 22px 26px; border-bottom: 1px solid var(--border);
+        position: relative;
+        padding: 26px 26px 18px;
+        border-bottom: 1px solid var(--border);
         display: flex; justify-content: space-between; align-items: center;
+    }
+    .modal-head::before {
+        content: '';
+        position: absolute; top: 0; left: 0; right: 0; height: 4px;
+        background: linear-gradient(90deg,
+            #ff2d3a 0% 14%, #ff7a1a 14% 28%, #ffb800 28% 42%,
+            #00d96f 42% 56%, #06d6f7 56% 70%, #2563eb 70% 84%, #a855f7 84% 100%);
     }
     .modal-head h3 {
         font-family: 'Inter', sans-serif;
-        font-weight: 800; font-size: 22px;
+        font-weight: 900; font-size: 22px;
         letter-spacing: -0.02em;
     }
+    .modal-head h3 em {
+        font-style: normal;
+        background: var(--grad-1);
+        -webkit-background-clip: text; background-clip: text;
+        color: transparent;
+    }
     .modal-head h3 strong {
+        font-weight: 900;
         background: var(--grad-1);
         -webkit-background-clip: text;
         background-clip: text;
@@ -2258,40 +2280,74 @@
     }
     .modal-close {
         background: transparent; border: none; color: var(--text-dim);
-        font-size: 22px;
+        font-size: 22px; cursor: pointer;
     }
-    .modal-body { padding: 22px 26px; overflow-y: auto; }
+    .modal-close:hover { color: var(--text); }
+    .modal-body { padding: 22px 26px 26px; overflow-y: auto; }
+
     .ai-prompt {
-        width: 100%; min-height: 90px;
-        background: var(--surface-2); border: 1px solid var(--border);
+        width: 100%; min-height: 96px;
+        background: var(--surface-2); border: 1.5px solid var(--border);
         padding: 14px; font: inherit; font-size: 14px;
-        border-radius: 8px; outline: none; resize: vertical;
+        border-radius: 12px; outline: none; resize: vertical;
+        transition: border-color 0.15s, box-shadow 0.2s;
     }
-    .ai-prompt:focus { border-color: var(--red); }
-    .ai-suggestions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .ai-prompt:focus {
+        border-color: var(--red);
+        box-shadow: 0 0 0 4px rgba(255,45,58,0.12);
+    }
+    .ai-suggestions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
     .ai-sugg {
-        font-size: 12px; padding: 6px 12px;
-        background: var(--surface-2); border: 1px solid var(--border);
-        color: var(--text-dim); border-radius: 999px;
+        font-size: 12px; font-weight: 600;
+        padding: 7px 12px;
+        background: transparent;
+        border: 1.5px solid var(--border);
+        color: var(--text-dim);
+        border-radius: 999px;
+        cursor: pointer;
+        transition: all 0.15s;
     }
-    .ai-sugg:hover { color: var(--text); border-color: var(--text); }
+    .ai-sugg:hover {
+        color: var(--text);
+        border-color: var(--text);
+        transform: translateY(-1px);
+    }
     .ai-submit {
-        margin-top: 16px; width: 100%;
-        background: var(--red); border: none; color: white;
-        padding: 14px; font-weight: 700; font-size: 14px;
-        border-radius: 8px;
+        margin-top: 18px; width: 100%;
+        background: var(--grad-1); border: none; color: white;
+        padding: 16px; font-weight: 900; font-size: 14px;
+        letter-spacing: 1px; text-transform: uppercase;
+        border-radius: 12px;
+        cursor: pointer;
+        box-shadow: 0 10px 28px rgba(255,45,58,0.4);
+        transition: transform 0.2s cubic-bezier(.2,.7,.2,1), box-shadow 0.2s;
     }
-    .ai-submit:hover { background: var(--red-bright); }
+    .ai-submit:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(255,45,58,0.5); }
     .ai-response {
-        margin-top: 22px; padding: 18px;
-        background: linear-gradient(135deg, #fff8e6, #ffeed4);
-        border: 1px solid var(--amber); border-radius: 8px;
+        position: relative;
+        margin-top: 22px; padding: 22px 20px 20px;
+        background: var(--surface-2);
+        border: 1.5px solid var(--border);
+        border-radius: 14px;
         font-size: 14px; line-height: 1.6; white-space: pre-wrap;
+        color: var(--text);
+        overflow: hidden;
+    }
+    .ai-response::before {
+        content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+        background: var(--grad-1);
     }
     .ai-response strong {
-        color: var(--red); font-family: 'Anton', sans-serif;
-        font-weight: 400; letter-spacing: 1px;
+        display: inline-block;
+        font-family: 'Inter', sans-serif;
+        font-weight: 900; font-size: 13px;
+        letter-spacing: 1.5px;
+        background: var(--grad-1);
+        -webkit-background-clip: text; background-clip: text;
+        color: transparent;
+        margin-top: 8px;
     }
+    .ai-response strong:first-child { margin-top: 0; }
 
     /* Paywall */
     .paywall .modal { max-width: 440px; background: linear-gradient(180deg, #fff8e6 0%, white 60%); }
@@ -2875,9 +2931,9 @@ function route(name) {
     const pageKey = name === 'worldcup' ? 'events' : name;
     document.querySelectorAll('.page').forEach(p => p.classList.toggle('active', p.dataset.page === pageKey));
     document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.route === name));
-    // Toggle worldcup-only elements
+    // Toggle worldcup-only elements via class (empty style.display falls back to CSS none)
     document.querySelectorAll('.worldcup-only').forEach(el => {
-        el.style.display = name === 'worldcup' ? '' : 'none';
+        el.classList.toggle('worldcup-on', name === 'worldcup');
     });
     document.body.classList.toggle('worldcup-mode', name === 'worldcup');
     // Lock sport to Soccer on worldcup, otherwise clear any sport filter
