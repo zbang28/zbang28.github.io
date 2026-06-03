@@ -1312,7 +1312,9 @@
         border: none !important;
         padding: 9px 14px !important;
         color: var(--text-dim) !important;
-        font-size: 13px; font-weight: 800;
+        font-family: 'Space Grotesk', 'Inter', sans-serif;
+        font-size: 14px; font-weight: 600;
+        letter-spacing: -0.01em;
         border-radius: 8px;
         justify-content: center;
         box-shadow: none !important;
@@ -1895,8 +1897,8 @@
 
     /* ===== Filters bar (Discover) ===== */
     .filters {
-        max-width: 1280px; margin: 0 auto;
-        padding: 24px 32px 0;
+        max-width: none; margin: 0;
+        padding: 14px 16px 14px 16px;
         display: flex; gap: 10px; flex-wrap: wrap;
         align-items: center;
     }
@@ -2033,7 +2035,9 @@
     .filter {
         background: var(--surface); border: 1px solid var(--border);
         padding: 8px 14px; border-radius: 999px;
-        font-size: 13px; font-weight: 600; color: var(--text-dim);
+        font-family: 'Space Grotesk', 'Inter', sans-serif;
+        font-size: 14px; font-weight: 500; color: var(--text-dim);
+        letter-spacing: -0.01em;
         display: inline-flex; align-items: center; gap: 6px;
     }
     .filter:hover { border-color: var(--text); color: var(--text); }
@@ -2127,6 +2131,10 @@
     }
     .split-map #events-map {
         width: 100%; height: 100%;
+    }
+    /* Gray (desaturated) map tiles */
+    #events-map .leaflet-tile-pane {
+        filter: grayscale(100%) brightness(0.96) contrast(0.95);
     }
 
     /* ===== Mini cards (compact list items) ===== */
@@ -2284,7 +2292,7 @@
         letter-spacing: -0.02em;
         line-height: 1.1;
         text-transform: uppercase;
-        color: var(--card-accent, var(--text));
+        color: var(--text);
         white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .mini-card-venue {
