@@ -1290,43 +1290,39 @@
     .worldcup-only.worldcup-on { display: block; }
     body.worldcup-mode .events-only { display: none !important; }
 
-    /* ===== Worldcup mode: FIFA 2026 multi-color tournament ===== */
+    /* ===== Worldcup mode: white base with multi-color tournament accents ===== */
     body.worldcup-mode {
-        --bg: #ff2e2e;
-        --bg-alt: #ff4d2e;
-        --surface: rgba(255,255,255,0.08);
-        --surface-2: rgba(255,255,255,0.14);
-        --border: rgba(255,255,255,0.18);
-        --border-2: rgba(255,255,255,0.35);
-        --text: #ffffff;
-        --text-dim: rgba(255,255,255,0.82);
-        --text-mute: rgba(255,255,255,0.55);
+        --bg: #ffffff;
+        --bg-alt: #f7f6f1;
+        --surface: #ffffff;
+        --surface-2: #f1f3f8;
+        --border: #e4e6ed;
+        --border-2: #c8ccd6;
+        --text: #0e0f11;
+        --text-dim: #4a4d54;
+        --text-mute: #8a8d94;
         --red: #ff2e2e;
-        --grad-1: linear-gradient(135deg, #ffffff, #ffd400);
+        --grad-1: linear-gradient(135deg, #ff2e2e, #ffd400);
         background: var(--bg);
     }
-    /* Multi-color gradient backdrop + atmospheric glows */
+    /* Multi-color soft glows on a white page */
     body.worldcup-mode::after {
         content: '';
         position: fixed; inset: 0; z-index: -2;
         pointer-events: none;
         background:
-            radial-gradient(ellipse 60% 50% at 5% 0%, #ff2e2e 0%, rgba(255,46,46,0) 60%),
-            radial-gradient(ellipse 55% 45% at 50% 0%, #ff6b1a 0%, rgba(255,107,26,0) 60%),
-            radial-gradient(ellipse 60% 55% at 95% 10%, #ffd400 0%, rgba(255,212,0,0) 60%),
-            radial-gradient(ellipse 55% 50% at 100% 60%, #00d96f 0%, rgba(0,217,111,0) 60%),
-            radial-gradient(ellipse 55% 50% at 70% 100%, #06d6f7 0%, rgba(6,214,247,0) 60%),
-            radial-gradient(ellipse 55% 50% at 20% 100%, #2563eb 0%, rgba(37,99,235,0) 60%),
-            radial-gradient(ellipse 55% 50% at 0% 50%, #a855f7 0%, rgba(168,85,247,0) 60%),
-            linear-gradient(135deg, #ff2e2e 0%, #ff6b1a 50%, #ffd400 100%);
+            radial-gradient(ellipse 45% 35% at 8% 8%,   rgba(255,46,46,0.32),  transparent 70%),
+            radial-gradient(ellipse 45% 35% at 92% 8%,  rgba(255,212,0,0.30),  transparent 70%),
+            radial-gradient(ellipse 45% 35% at 92% 92%, rgba(37,99,235,0.22),  transparent 70%),
+            radial-gradient(ellipse 45% 35% at 8% 92%,  rgba(0,217,111,0.22),  transparent 70%),
+            radial-gradient(ellipse 50% 40% at 50% 50%, rgba(255,107,26,0.14), transparent 70%);
     }
-    /* Sunburst/wedge tournament pattern overlay */
+    /* Sunburst/wedge tournament pattern overlay (subtle) */
     body.worldcup-mode::before {
         content: ''; position: fixed; inset: 0; z-index: -1;
-        pointer-events: none; opacity: 0.18;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='100' viewBox='0 0 160 100'%3E%3Cg fill='%23ffffff'%3E%3Cpolygon points='0,100 20,40 40,100'/%3E%3Cpolygon points='40,100 60,40 80,100'/%3E%3Cpolygon points='80,100 100,40 120,100'/%3E%3Cpolygon points='120,100 140,40 160,100'/%3E%3Cpolygon points='-20,40 0,0 20,40'/%3E%3Cpolygon points='20,40 40,0 60,40'/%3E%3Cpolygon points='60,40 80,0 100,40'/%3E%3Cpolygon points='100,40 120,0 140,40'/%3E%3Cpolygon points='140,40 160,0 180,40'/%3E%3C/g%3E%3C/svg%3E");
+        pointer-events: none; opacity: 0.06;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='100' viewBox='0 0 160 100'%3E%3Cg fill='%230e0f11'%3E%3Cpolygon points='0,100 20,40 40,100'/%3E%3Cpolygon points='40,100 60,40 80,100'/%3E%3Cpolygon points='80,100 100,40 120,100'/%3E%3Cpolygon points='120,100 140,40 160,100'/%3E%3Cpolygon points='-20,40 0,0 20,40'/%3E%3Cpolygon points='20,40 40,0 60,40'/%3E%3Cpolygon points='60,40 80,0 100,40'/%3E%3Cpolygon points='100,40 120,0 140,40'/%3E%3Cpolygon points='140,40 160,0 180,40'/%3E%3C/g%3E%3C/svg%3E");
         background-size: 160px 100px;
-        mix-blend-mode: overlay;
     }
     body.worldcup-mode .split-list {
         background:
@@ -1346,12 +1342,31 @@
     body.worldcup-mode .split-map { background: var(--surface-2); }
 
     body.worldcup-mode .mini-card {
-        background: rgba(14,15,17,0.6);
-        backdrop-filter: blur(10px);
-        border-color: rgba(255,255,255,0.18);
+        background: var(--surface);
+        border-color: var(--border);
+        color: var(--text);
     }
-    body.worldcup-mode .split-list { background: rgba(0,0,0,0.2); backdrop-filter: blur(20px); }
-    body.worldcup-mode .filters { background: rgba(0,0,0,0.15); padding-top: 12px; padding-bottom: 12px; }
+    body.worldcup-mode .mini-card-venue { color: var(--text); }
+    body.worldcup-mode .mini-card-meta { color: var(--text-dim); }
+    body.worldcup-mode .mini-card-price { background: var(--surface-2); color: var(--text); }
+    body.worldcup-mode .split-list {
+        background:
+            radial-gradient(ellipse 80% 30% at 50% 0%, rgba(255,46,46,0.10), transparent 70%),
+            rgba(255,255,255,0.92);
+        backdrop-filter: blur(8px);
+        border-right: 1px solid var(--border);
+    }
+    body.worldcup-mode .filters { background: transparent; }
+    /* Light map tiles in worldcup-mode — invert the dark CARTO layer */
+    body.worldcup-mode #events-map {
+        filter: invert(0.92) hue-rotate(180deg) saturate(0.7) brightness(1.05);
+    }
+    body.worldcup-mode #events-map .leaflet-popup-content-wrapper,
+    body.worldcup-mode #events-map .leaflet-popup-tip,
+    body.worldcup-mode #events-map .pin {
+        filter: invert(1) hue-rotate(180deg) saturate(1.43) brightness(0.95);
+    }
+    body.worldcup-mode .split-map { background: #eef0f4; }
     body.worldcup-mode .mini-card-img::after { background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.35)); }
     body.worldcup-mode .mini-card-price { background: var(--surface-2); color: var(--text); }
     body.worldcup-mode .mini-card-venue { color: var(--text); }
@@ -1360,22 +1375,26 @@
 
     body.worldcup-mode .filter { background: var(--surface); border-color: var(--border); color: var(--text); }
     body.worldcup-mode .filter select option { background: var(--surface); color: var(--text); }
-    body.worldcup-mode .drop-btn { background: rgba(255,255,255,0.12); color: white; border-color: rgba(255,255,255,0.22); backdrop-filter: blur(8px); }
-    body.worldcup-mode .drop-btn:hover { border-color: white; }
-    body.worldcup-mode .drop-menu { background: #0e0f11; border-color: rgba(255,255,255,0.15); color: white; }
-    body.worldcup-mode .drop-item { color: white; }
-    body.worldcup-mode .drop-item:hover { background: rgba(255,255,255,0.08); }
-    body.worldcup-mode .drop-item-count { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); }
-    body.worldcup-mode .drop-check { color: white; }
-    body.worldcup-mode .filter { background: rgba(255,255,255,0.12); color: white; border-color: rgba(255,255,255,0.22); backdrop-filter: blur(8px); }
-    body.worldcup-mode .filter.active { background: #0e0f11; color: #ffd400; border-color: #ffd400; }
+    body.worldcup-mode .drop-btn { background: var(--surface); color: var(--text); border-color: var(--border); }
+    body.worldcup-mode .drop-btn:hover { border-color: var(--text); }
+    body.worldcup-mode .drop-menu { background: var(--surface); border-color: var(--border); color: var(--text); }
+    body.worldcup-mode .drop-item { color: var(--text); }
+    body.worldcup-mode .drop-item:hover { background: var(--surface-2); }
+    body.worldcup-mode .drop-item-count { background: var(--surface-2); color: var(--text-dim); }
+    body.worldcup-mode .drop-check { color: var(--text); }
+    body.worldcup-mode .filter { background: var(--surface); color: var(--text); border-color: var(--border); }
+    body.worldcup-mode .filter.active {
+        background: linear-gradient(135deg, #ff2e2e, #ffd400);
+        color: white; border-color: transparent;
+        box-shadow: 0 4px 14px rgba(255,46,46,0.4);
+    }
 
     body.worldcup-mode .country { background: var(--surface); border-color: var(--border); color: var(--text-dim); }
     body.worldcup-mode .country:hover { color: var(--text); border-color: var(--text); }
     body.worldcup-mode .country.active {
-        background: #0e0f11;
-        color: #ffd400; border-color: #ffd400;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+        background: linear-gradient(135deg, #ff2e2e, #ffd400);
+        color: white; border-color: transparent;
+        box-shadow: 0 6px 18px rgba(255,46,46,0.4);
     }
     body.worldcup-mode .country .flag { background: var(--surface-2); }
     body.worldcup-mode .country-strip { background: var(--bg-alt); border-color: var(--border); }
@@ -1386,21 +1405,21 @@
     body.worldcup-mode .split-list-head { border-color: var(--border); }
     body.worldcup-mode .empty h3 { color: var(--text); }
 
-    /* Nav blends with the royal blue */
+    /* Nav goes light/translucent in worldcup-mode to match the white page */
     body.worldcup-mode nav {
-        background: rgba(8,32,98,0.85);
+        background: rgba(255,255,255,0.92);
         backdrop-filter: blur(14px);
-        color: white;
-        border-bottom-color: rgba(255,255,255,0.12);
+        color: var(--text);
+        border-bottom-color: var(--border);
     }
     body.worldcup-mode .brand,
     body.worldcup-mode .tabs .tab,
-    body.worldcup-mode .nav-btn { color: white; }
-    body.worldcup-mode .tab { color: rgba(255,255,255,0.72); }
-    body.worldcup-mode .tab:hover { color: white; background: rgba(255,255,255,0.1); }
-    body.worldcup-mode .tab.active { color: white; background: rgba(255,255,255,0.15); }
-    body.worldcup-mode .nav-btn { border-color: rgba(255,255,255,0.25); }
-    body.worldcup-mode .nav-btn:hover { border-color: rgba(255,255,255,0.55); }
+    body.worldcup-mode .nav-btn { color: var(--text); }
+    body.worldcup-mode .tab { color: var(--text-dim); }
+    body.worldcup-mode .tab:hover { color: var(--text); background: rgba(14,15,17,0.05); }
+    body.worldcup-mode .tab.active { color: var(--text); background: rgba(14,15,17,0.08); }
+    body.worldcup-mode .nav-btn { border-color: rgba(14,15,17,0.15); }
+    body.worldcup-mode .nav-btn:hover { border-color: rgba(14,15,17,0.45); }
     body.worldcup-mode .nav-btn.ai {
         background: linear-gradient(135deg, #ff3140, #e8b923);
         color: white;
@@ -1414,23 +1433,24 @@
     body.worldcup-mode .tab.highlight::before {
         background: linear-gradient(90deg, #ff3140, #e8b923);
     }
-    body.worldcup-mode .country-strip { background: rgba(0,0,0,0.18); border-color: rgba(255,255,255,0.1); }
-    body.worldcup-mode .country { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); color: rgba(255,255,255,0.85); }
-    body.worldcup-mode .country:hover { color: white; border-color: white; }
-    body.worldcup-mode .country .flag { background: rgba(255,255,255,0.15); }
-    body.worldcup-mode .country-strip-label { color: rgba(255,255,255,0.65); }
-    body.worldcup-mode .mini-card-img::after { background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.55)); }
+    body.worldcup-mode .country-strip { background: var(--bg-alt); border-color: var(--border); }
+    body.worldcup-mode .country { background: var(--surface); border-color: var(--border); color: var(--text-dim); }
+    body.worldcup-mode .country:hover { color: var(--text); border-color: var(--text); }
+    body.worldcup-mode .country .flag { background: var(--surface-2); }
+    body.worldcup-mode .country-strip-label { color: var(--text-dim); }
+    body.worldcup-mode .mini-card-img::after { background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.35)); }
 
     /* ===== World Cup vibrant hero ===== */
     .worldcup-hero {
         position: relative;
         overflow: hidden;
         background:
-            radial-gradient(ellipse 55% 75% at 95% 50%, rgba(255,212,0,0.45), transparent 60%),
-            radial-gradient(ellipse 70% 90% at 0% 50%, rgba(255,46,46,0.55), transparent 60%),
-            linear-gradient(120deg, #ff2e2e 0%, #ff6b1a 55%, #ffd400 100%);
-        color: white;
-        padding: 72px 32px 80px;
+            radial-gradient(ellipse 40% 60% at 90% 50%, rgba(255,212,0,0.85), transparent 60%),
+            radial-gradient(ellipse 50% 70% at 5% 50%, rgba(255,46,46,0.7), transparent 60%),
+            radial-gradient(ellipse 40% 60% at 50% 100%, rgba(255,107,26,0.55), transparent 60%),
+            #ffffff;
+        color: #0e0f11;
+        padding: 36px 32px 44px;
     }
     .worldcup-hero::before {
         content: ''; position: absolute; inset: 0;
@@ -1473,31 +1493,31 @@
     }
     .worldcup-eyebrow {
         display: inline-block;
-        padding: 6px 14px;
+        padding: 5px 12px;
         background: #0e0f11; color: #ffd400;
         font-family: 'Inter', sans-serif;
-        font-weight: 900; font-size: 11px;
-        letter-spacing: 3px;
+        font-weight: 900; font-size: 10px;
+        letter-spacing: 2.5px;
         border-radius: 999px;
-        margin-bottom: 22px;
+        margin-bottom: 14px;
     }
     .worldcup-title {
         font-family: 'Anton', 'Inter', sans-serif;
         font-weight: 400;
-        font-size: clamp(64px, 11vw, 140px);
-        line-height: 0.86; letter-spacing: 0.5px;
+        font-size: clamp(40px, 6.5vw, 72px);
+        line-height: 0.92; letter-spacing: 0.5px;
         text-transform: uppercase;
-        margin-bottom: 14px;
-        text-shadow: 0 4px 24px rgba(0,0,0,0.18);
+        margin-bottom: 10px;
+        text-shadow: 0 2px 12px rgba(0,0,0,0.08);
     }
     .worldcup-title em {
         font-style: italic;
-        color: #ffd400;
+        color: #ff2e2e;
         background: none;
         -webkit-text-fill-color: currentColor;
     }
     .worldcup-sub {
-        font-size: 16px; color: rgba(255,255,255,0.85);
+        font-size: 15px; color: rgba(14,15,17,0.7);
         max-width: 540px;
     }
 
