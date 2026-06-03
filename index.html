@@ -1481,58 +1481,66 @@
         object-fit: cover; border-radius: 8px;
     }
 
-    /* Country bar across the top of the World Cup page */
+    /* Country bar — full width, above the worldcup hero */
     .country-bar {
         background: var(--bg-alt);
         border-bottom: 1px solid var(--border);
         padding: 12px 0;
+        width: 100%;
     }
     body.worldcup-mode .country-bar {
-        background: rgba(255,255,255,0.6);
+        background: rgba(255,255,255,0.65);
         backdrop-filter: blur(12px);
         border-bottom-color: rgba(14,15,17,0.06);
     }
-    .country-bar-inner {
-        max-width: 1280px; margin: 0 auto;
-        padding: 0 24px;
-    }
-    /* Flag-only country pills */
+    /* Flat flags — no circle backgrounds */
     .countries-flagrow {
-        gap: 10px;
+        gap: 14px;
+        padding: 4px 24px;
+        margin: 0;
+        mask-image: linear-gradient(90deg, transparent 0, black 32px, black calc(100% - 32px), transparent 100%);
+        -webkit-mask-image: linear-gradient(90deg, transparent 0, black 32px, black calc(100% - 32px), transparent 100%);
     }
     .countries-flagrow .country {
-        padding: 0;
-        background: transparent;
-        border: 2px solid transparent;
-        border-radius: 50%;
+        padding: 4px 6px;
+        background: transparent !important;
+        border: none !important;
+        border-radius: 6px;
+        box-shadow: none !important;
+        opacity: 0.55;
+        position: relative;
     }
     .countries-flagrow .country .name { display: none; }
     .countries-flagrow .country .flag {
-        width: 42px; height: 42px;
-        font-size: 30px;
-        background: var(--surface-2);
-        border-radius: 50%;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        width: auto; height: auto;
+        font-size: 34px;
+        background: transparent !important;
+        box-shadow: none !important;
+        border-radius: 0;
+        filter: drop-shadow(0 2px 6px rgba(0,0,0,0.15));
+        transition: transform 0.25s cubic-bezier(.2,.7,.2,1);
     }
-    .countries-flagrow .country:hover { transform: translateY(-2px); border-color: transparent; }
-    .countries-flagrow .country:hover .flag {
-        transform: scale(1.08);
-        box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+    .countries-flagrow .country:hover {
+        opacity: 1;
+        transform: translateY(-2px);
     }
+    .countries-flagrow .country:hover .flag { transform: scale(1.08); }
     .countries-flagrow .country.active {
-        background: transparent;
-        border-color: var(--red);
-        box-shadow: 0 0 0 1px var(--red), 0 6px 14px rgba(255,45,58,0.35);
+        opacity: 1;
+        transform: translateY(-1px);
+    }
+    .countries-flagrow .country.active::after {
+        content: '';
+        position: absolute;
+        left: 8px; right: 8px; bottom: -4px;
+        height: 3px;
+        background: linear-gradient(90deg, #ff2e2e, #ffd400);
+        border-radius: 2px;
     }
     .countries-flagrow .country.active .flag {
-        background: var(--surface-2);
-        transform: rotate(0) scale(1);
+        transform: scale(1.12);
+        filter: drop-shadow(0 4px 12px rgba(255,46,46,0.35));
     }
-    body.worldcup-mode .countries-flagrow .country.active {
-        border-color: #ff2e2e;
-        box-shadow: 0 0 0 1px #ff2e2e, 0 6px 14px rgba(255,46,46,0.35);
-    }
-    body.worldcup-mode .countries-flagrow .country .flag { background: white; }
 
     /* Bottom borough banner with lock chips — sits below the split */
     .borough-foot {
@@ -1770,21 +1778,7 @@
             #2563eb 70% 84%,
             #a855f7 84% 100%);
     }
-    .worldcup-confetti {
-        position: absolute; inset: 0;
-        background-image:
-            radial-gradient(circle at 15% 35%, #ff3140 4px, transparent 5px),
-            radial-gradient(circle at 85% 25%, #ffffff 4px, transparent 5px),
-            radial-gradient(circle at 70% 70%, #e8b923 4px, transparent 5px),
-            radial-gradient(circle at 25% 80%, #ff3140 3px, transparent 4px),
-            radial-gradient(circle at 92% 90%, #ffffff 4px, transparent 5px),
-            radial-gradient(circle at 8% 12%, #e8b923 3px, transparent 4px),
-            radial-gradient(circle at 55% 18%, #ff3140 3px, transparent 4px),
-            radial-gradient(circle at 45% 92%, #ffffff 4px, transparent 5px);
-        background-size: 100% 100%;
-        opacity: 0.9;
-        pointer-events: none;
-    }
+    .worldcup-confetti { display: none; }
     .worldcup-hero-inner {
         position: relative; z-index: 1;
         max-width: 1280px; margin: 0 auto;
@@ -1814,6 +1808,9 @@
         -webkit-background-clip: text; background-clip: text;
         color: transparent;
         -webkit-text-fill-color: transparent;
+        display: inline-block;
+        padding-right: 0.18em;
+        margin-right: -0.18em;
     }
     .wc-fanhub-cta {
         display: inline-flex; align-items: center; gap: 8px;
@@ -2967,9 +2964,19 @@
     /* ===== Polls ===== */
     .polls-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-        gap: 16px; margin-top: 24px;
+        grid-auto-flow: column;
+        grid-auto-columns: minmax(320px, 340px);
+        gap: 14px; margin-top: 24px;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scroll-behavior: smooth;
+        scrollbar-width: none;
+        padding-bottom: 8px;
+        mask-image: linear-gradient(90deg, transparent 0, black 24px, black calc(100% - 24px), transparent 100%);
+        -webkit-mask-image: linear-gradient(90deg, transparent 0, black 24px, black calc(100% - 24px), transparent 100%);
     }
+    .polls-grid::-webkit-scrollbar { display: none; }
+    .polls-grid > * { scroll-snap-align: start; }
     .poll-card {
         background: var(--surface); border: 1px solid var(--border);
         padding: 22px; border-radius: 12px;
@@ -3537,6 +3544,10 @@
 <!-- ============ EVENTS PAGE ============ -->
 <section class="page" data-page="events">
 
+    <div class="country-bar worldcup-only">
+        <div class="countries countries-flagrow" id="countries"></div>
+    </div>
+
     <div class="worldcup-hero worldcup-only">
         <div class="worldcup-stripes"></div>
         <div class="worldcup-hero-inner">
@@ -3547,13 +3558,6 @@
                 <span>Join the Fan Hub</span>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
             </button>
-        </div>
-        <div class="worldcup-confetti"></div>
-    </div>
-
-    <div class="country-bar worldcup-only">
-        <div class="country-bar-inner">
-            <div class="countries countries-flagrow" id="countries"></div>
         </div>
     </div>
 
@@ -3571,7 +3575,6 @@
                 <option>Tonight</option><option>Tomorrow</option><option>This weekend</option>
             </select>
         </div>
-        <div id="events-sport-chip" style="margin-left:auto"></div>
     </div>
 
     <div class="split">
