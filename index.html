@@ -679,6 +679,30 @@
         width: 100%;
         text-align: left;
     }
+    .ai-quota {
+        display: inline-flex; align-items: center; gap: 8px;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.14);
+        color: rgba(255,255,255,0.85);
+        padding: 6px 12px; border-radius: 999px;
+        font-size: 11px; font-weight: 700;
+        letter-spacing: 1px; text-transform: uppercase;
+        margin: 4px 0 16px;
+    }
+    .ai-quota.used { background: rgba(255,45,58,0.12); border-color: rgba(255,45,58,0.45); color: #ffb1b8; }
+    .ai-quota.pro  { background: linear-gradient(135deg, rgba(168,85,247,0.2), rgba(255,62,181,0.2)); border-color: rgba(255,62,181,0.45); color: #ffd5ee; }
+    .ai-quota .dot {
+        width: 6px; height: 6px; border-radius: 50%;
+        background: var(--green); box-shadow: 0 0 8px var(--green);
+        animation: pulse 1.6s infinite;
+    }
+    .ai-quota.used .dot, .ai-quota.pro .dot { display: none; }
+    .ai-quota a {
+        background: var(--grad-2);
+        -webkit-background-clip: text; background-clip: text;
+        color: transparent;
+        font-weight: 900; cursor: pointer;
+    }
     .matchday-quick {
         display: flex; flex-wrap: wrap; gap: 6px;
         justify-content: center;
@@ -3818,6 +3842,7 @@
             </div>
             <h1 class="matchday-title">Match the <span class="grad">vibe</span></h1>
             <p class="matchday-sub">Describe the game, your crew, and the vibe — we'll find the perfect spot.</p>
+            <div class="ai-quota" id="ai-quota"></div>
 
             <div class="prompt-box matchday-prompt-box">
                 <div class="prompt-files" id="matchday-files"></div>
@@ -3968,7 +3993,7 @@
             <div class="paywall-feature"><span class="check">✓</span><span><strong>Every watch-party location</strong> in all 5 boroughs</span></div>
             <div class="paywall-feature"><span class="check">✓</span><span>Post-game parade routes & start points</span></div>
             <div class="paywall-feature"><span class="check">✓</span><span>Pickup-game locations in every park</span></div>
-            <div class="paywall-feature"><span class="check">✓</span><span>Unlimited AI matchday plans, city-wide</span></div>
+            <div class="paywall-feature"><span class="check">✓</span><span><strong>Unlimited AI vibe matches</strong> (free tier gets 1)</span></div>
         </div>
         <div class="paywall-price">$4.99<span class="small">PER MONTH · CANCEL ANYTIME</span></div>
         <div class="paywall-actions">
@@ -4901,6 +4926,7 @@ function openAI() {
     modal.classList.add('open');
     document.body.style.overflow = 'hidden';
     setupMatchdayPrompt();
+    refreshAIQuotaUI();
     setTimeout(() => {
         document.getElementById('matchday-prompt')?.focus();
         matchdayMap?.invalidateSize();
@@ -4963,10 +4989,45 @@ function initMatchdayMap() {
     }).addTo(matchdayMap);
 }
 
+let aiUsesUsed = 0;
+const AI_FREE_LIMIT = 1;
+
+function isAISubscriber() {
+    return unlockedBoroughs.size > 1;
+}
+
+function refreshAIQuotaUI() {
+    const el = document.getElementById('ai-quota');
+    if (!el) return;
+    if (isAISubscriber()) {
+        el.className = 'ai-quota pro';
+        el.innerHTML = `✦ PRO · Unlimited vibe matches`;
+        return;
+    }
+    const left = Math.max(0, AI_FREE_LIMIT - aiUsesUsed);
+    if (left > 0) {
+        el.className = 'ai-quota';
+        el.innerHTML = `<span class="dot"></span>${left} free vibe match · then \$4.99/mo`;
+    } else {
+        el.className = 'ai-quota used';
+        el.innerHTML = `🔒 Free match used · <a onclick="closeMatchdayModal();openPaywall()">Subscribe for unlimited</a>`;
+    }
+}
+
 function buildMatchday() {
     const ta = document.getElementById('matchday-prompt');
     const prompt = (ta?.value || '').trim();
     if (!prompt) { ta?.focus(); return; }
+
+    if (!isAISubscriber() && aiUsesUsed >= AI_FREE_LIMIT) {
+        closeMatchdayModal();
+        setTimeout(openPaywall, 250);
+        toast('Your free vibe match is used — subscribe for unlimited');
+        return;
+    }
+    aiUsesUsed++;
+    refreshAIQuotaUI();
+
     const lower = prompt.toLowerCase();
 
     // Detect borough
@@ -5404,10 +5465,11 @@ function closePaywall() { document.getElementById('paywall').classList.remove('o
 function unlockBoroughs() {
     ['Manhattan','Queens','Bronx','Staten Island'].forEach(b => unlockedBoroughs.add(b));
     closePaywall();
-    toast('All boroughs unlocked');
+    toast('Subscription active — vibe match unlimited');
     document.getElementById('borough-banner').innerHTML = '';
     applyFilters();
     if (activeRoute === 'fanhub') renderFanHub();
+    refreshAIQuotaUI();
 }
 
 function renderBoroughBanner() {
