@@ -1,59 +1,579 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>My Webpage</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Lineup — Find Watch Parties Near You</title>
+<style>
+    :root {
+        --bg-dark: #1a0f08;
+        --bg-panel: #2b1810;
+        --bg-card: #3a2418;
+        --wood: #5c3a1e;
+        --accent: #d4a017;
+        --accent-bright: #f4c842;
+        --red: #c8362d;
+        --green: #2d8a3e;
+        --text: #f5e9d4;
+        --text-dim: #b8a888;
+        --neon: #00e0ff;
+    }
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #8c8ae3;
-            padding: 20px;
-            line-height: 1.6;
-        }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        h1 {
-            color: #333;
-        }
+    body {
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        background: var(--bg-dark);
+        background-image:
+            repeating-linear-gradient(45deg, rgba(92,58,30,0.08) 0 2px, transparent 2px 12px),
+            radial-gradient(circle at 20% 10%, rgba(212,160,23,0.08), transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(200,54,45,0.08), transparent 50%);
+        color: var(--text);
+        min-height: 100vh;
+        line-height: 1.5;
+    }
 
-        .container {
-            background: white;
-            padding: 20px;
-            max-width: 700px;
-            margin: auto;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
+    /* Header */
+    header {
+        background: linear-gradient(180deg, #0f0805 0%, var(--bg-panel) 100%);
+        border-bottom: 4px solid var(--accent);
+        padding: 24px 32px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        position: relative;
+        overflow: hidden;
+    }
 
-        img {
-            width: 100%;
-            border-radius: 10px;
-            margin-top: 15px;
-        }
+    header::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(circle at 10% 50%, var(--red) 2px, transparent 3px),
+            radial-gradient(circle at 90% 50%, var(--green) 2px, transparent 3px);
+        background-size: 60px 100%;
+        opacity: 0.15;
+    }
 
-        a {
-            color: blue;
-            text-decoration: none;
-            font-weight: bold;
-        }
+    .brand {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        max-width: 1280px;
+        margin: 0 auto;
+        position: relative;
+    }
 
-        a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    .logo {
+        font-size: 42px;
+        line-height: 1;
+    }
+
+    .brand h1 {
+        font-family: 'Georgia', serif;
+        font-size: 32px;
+        letter-spacing: 2px;
+        color: var(--accent-bright);
+        text-shadow: 0 0 20px rgba(244,200,66,0.4), 2px 2px 0 #000;
+        text-transform: uppercase;
+    }
+
+    .brand .tag {
+        color: var(--text-dim);
+        font-style: italic;
+        font-size: 14px;
+        margin-left: auto;
+    }
+
+    /* Hero / Search */
+    .hero {
+        max-width: 1280px;
+        margin: 32px auto 24px;
+        padding: 0 32px;
+    }
+
+    .hero-card {
+        background:
+            linear-gradient(135deg, rgba(212,160,23,0.08), transparent),
+            var(--bg-panel);
+        border: 2px solid var(--wood);
+        border-radius: 12px;
+        padding: 28px;
+        box-shadow: inset 0 0 40px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.5);
+    }
+
+    .hero h2 {
+        font-family: Georgia, serif;
+        font-size: 28px;
+        color: var(--accent-bright);
+        margin-bottom: 6px;
+    }
+
+    .hero p {
+        color: var(--text-dim);
+        margin-bottom: 20px;
+    }
+
+    .search-grid {
+        display: grid;
+        grid-template-columns: 2fr 1.5fr 1.5fr auto;
+        gap: 12px;
+    }
+
+    @media (max-width: 800px) {
+        .search-grid { grid-template-columns: 1fr 1fr; }
+        .search-grid button { grid-column: 1 / -1; }
+    }
+
+    .field label {
+        display: block;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: var(--accent);
+        margin-bottom: 6px;
+        font-weight: bold;
+    }
+
+    .field input, .field select {
+        width: 100%;
+        padding: 12px 14px;
+        background: #1a0f08;
+        color: var(--text);
+        border: 1.5px solid var(--wood);
+        border-radius: 6px;
+        font-size: 15px;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .field input:focus, .field select:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(212,160,23,0.2);
+    }
+
+    .search-btn {
+        padding: 12px 28px;
+        background: linear-gradient(180deg, var(--accent-bright), var(--accent));
+        color: #1a0f08;
+        border: none;
+        border-radius: 6px;
+        font-size: 15px;
+        font-weight: bold;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        cursor: pointer;
+        align-self: end;
+        box-shadow: 0 4px 0 #8a6810, 0 6px 12px rgba(0,0,0,0.4);
+        transition: transform 0.1s, box-shadow 0.1s;
+    }
+
+    .search-btn:hover { transform: translateY(-1px); }
+    .search-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #8a6810; }
+
+    /* Filter chips */
+    .chips {
+        max-width: 1280px;
+        margin: 0 auto 16px;
+        padding: 0 32px;
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .chips .label {
+        color: var(--text-dim);
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-right: 8px;
+    }
+
+    .chip {
+        padding: 6px 14px;
+        background: var(--bg-card);
+        color: var(--text-dim);
+        border: 1px solid var(--wood);
+        border-radius: 20px;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.15s;
+        user-select: none;
+    }
+
+    .chip:hover { color: var(--text); border-color: var(--accent); }
+    .chip.active {
+        background: var(--accent);
+        color: #1a0f08;
+        border-color: var(--accent-bright);
+        font-weight: bold;
+    }
+
+    /* Results */
+    .results {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 16px 32px 48px;
+    }
+
+    .results-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+        border-bottom: 2px dashed var(--wood);
+    }
+
+    .results-header h3 {
+        font-family: Georgia, serif;
+        font-size: 22px;
+        color: var(--accent-bright);
+    }
+
+    .results-header .count {
+        color: var(--text-dim);
+        font-size: 14px;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 20px;
+    }
+
+    .card {
+        background: var(--bg-card);
+        border: 1.5px solid var(--wood);
+        border-radius: 10px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+        transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    }
+
+    .card:hover {
+        transform: translateY(-3px);
+        border-color: var(--accent);
+        box-shadow: 0 10px 24px rgba(0,0,0,0.6), 0 0 0 1px var(--accent);
+    }
+
+    .card-banner {
+        height: 90px;
+        background: linear-gradient(135deg, var(--red), #6a1a14);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        font-size: 48px;
+        border-bottom: 3px solid var(--accent);
+    }
+
+    .card-banner.nfl { background: linear-gradient(135deg, #013369, #0a4a8f); }
+    .card-banner.nba { background: linear-gradient(135deg, #c8102e, #1d428a); }
+    .card-banner.mlb { background: linear-gradient(135deg, #002d72, #d50032); }
+    .card-banner.nhl { background: linear-gradient(135deg, #111, #444); }
+    .card-banner.soccer { background: linear-gradient(135deg, #2d8a3e, #1a5a26); }
+    .card-banner.ufc { background: linear-gradient(135deg, #d20a0a, #1a1a1a); }
+    .card-banner.f1 { background: linear-gradient(135deg, #e10600, #15151e); }
+    .card-banner.college { background: linear-gradient(135deg, #8a4a0e, var(--accent)); }
+
+    .live-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: var(--red);
+        color: white;
+        padding: 3px 10px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: bold;
+        letter-spacing: 1px;
+        animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.6; }
+    }
+
+    .card-body {
+        padding: 18px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card .sport {
+        font-size: 11px;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        font-weight: bold;
+        margin-bottom: 4px;
+    }
+
+    .card .match {
+        font-family: Georgia, serif;
+        font-size: 18px;
+        color: var(--text);
+        margin-bottom: 10px;
+        line-height: 1.3;
+    }
+
+    .card .venue {
+        font-size: 15px;
+        color: var(--accent-bright);
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+
+    .card .meta {
+        font-size: 13px;
+        color: var(--text-dim);
+        margin-bottom: 4px;
+        display: flex;
+        gap: 6px;
+        align-items: center;
+    }
+
+    .card .meta .icon { width: 16px; display: inline-block; }
+
+    .card-footer {
+        margin-top: auto;
+        padding-top: 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px dashed var(--wood);
+        margin-top: 14px;
+    }
+
+    .perks {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    .perk {
+        font-size: 10px;
+        background: var(--bg-panel);
+        color: var(--accent);
+        padding: 3px 7px;
+        border-radius: 3px;
+        border: 1px solid var(--wood);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .rsvp {
+        background: var(--green);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 5px;
+        font-weight: bold;
+        font-size: 13px;
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: background 0.15s;
+    }
+
+    .rsvp:hover { background: #3aa84e; }
+    .rsvp.going { background: var(--accent); color: #1a0f08; }
+
+    .empty {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--text-dim);
+    }
+
+    .empty .big { font-size: 64px; margin-bottom: 16px; }
+
+    footer {
+        text-align: center;
+        padding: 24px;
+        color: var(--text-dim);
+        font-size: 13px;
+        border-top: 1px solid var(--wood);
+        background: var(--bg-panel);
+    }
+
+    footer .neon {
+        color: var(--neon);
+        text-shadow: 0 0 8px var(--neon);
+        font-family: Georgia, serif;
+        font-style: italic;
+    }
+</style>
 </head>
-
 <body>
-    <div class="container">
-        <h1>Computing for the Web</h1>
 
-        <p>This is my webpage, welcome!</p>
-
-        <img src="https://potomac.edu/wp-content/uploads/2022/02/what-can-you-do-with-a-computer-science-degree-e1643881127644.jpg" alt="Computing for the Web">
-
-        <p>Here is the course syllabus:  
-            <a href="https://cmc.instructure.com/courses/2845/assignments/syllabus" target="_blank">Canvas</a>
-        </p>
+<header>
+    <div class="brand">
+        <div class="logo">🍺</div>
+        <h1>The Lineup</h1>
+        <span class="tag">Find the game. Find your crowd.</span>
     </div>
+</header>
+
+<section class="hero">
+    <div class="hero-card">
+        <h2>Find watch parties near you</h2>
+        <p>Every sport. Every bar. Every big game. Pull up a stool.</p>
+        <div class="search-grid">
+            <div class="field">
+                <label for="loc">📍 Your location</label>
+                <input id="loc" type="text" placeholder="City, ZIP, or neighborhood" value="Brooklyn, NY">
+            </div>
+            <div class="field">
+                <label for="sport">🏆 Sport</label>
+                <select id="sport">
+                    <option value="">All sports</option>
+                    <option>NFL</option>
+                    <option>NBA</option>
+                    <option>MLB</option>
+                    <option>NHL</option>
+                    <option>Soccer</option>
+                    <option>UFC</option>
+                    <option>F1</option>
+                    <option>College</option>
+                </select>
+            </div>
+            <div class="field">
+                <label for="when">📅 When</label>
+                <select id="when">
+                    <option value="">Anytime</option>
+                    <option>Tonight</option>
+                    <option>Tomorrow</option>
+                    <option>This weekend</option>
+                </select>
+            </div>
+            <button class="search-btn" onclick="render()">Search 🍻</button>
+        </div>
+    </div>
+</section>
+
+<div class="chips" id="chips">
+    <span class="label">Quick filters:</span>
+</div>
+
+<section class="results">
+    <div class="results-header">
+        <h3>🍗 Tonight's Lineup</h3>
+        <span class="count" id="count"></span>
+    </div>
+    <div class="grid" id="grid"></div>
+</section>
+
+<footer>
+    <p>🍻 <span class="neon">The Lineup</span> — Watch parties, wings, and a cold one. © 2026</p>
+</footer>
+
+<script>
+const parties = [
+    { id:1, sport:'NFL', match:'Bills vs. Chiefs', venue:'The Pourhouse', neighborhood:'Williamsburg', distance:0.4, time:'Sun 4:25 PM', perks:['Wings','Buckets','Big Screen'], live:true, when:'This weekend' },
+    { id:2, sport:'NBA', match:'Knicks vs. Celtics', venue:"Foley's Bar & Grill", neighborhood:'Midtown', distance:1.2, time:'Tonight 7:30 PM', perks:['Happy Hour','Trivia'], live:true, when:'Tonight' },
+    { id:3, sport:'Soccer', match:'Arsenal vs. Liverpool', venue:'The Football Factory', neighborhood:'East Village', distance:2.1, time:'Sat 9:00 AM', perks:['Pints','English Breakfast'], live:false, when:'This weekend' },
+    { id:4, sport:'NHL', match:'Rangers vs. Devils', venue:'Stout NYC', neighborhood:'Hell\'s Kitchen', distance:1.8, time:'Tonight 7:00 PM', perks:['Buckets','Booths'], live:true, when:'Tonight' },
+    { id:5, sport:'MLB', match:'Yankees vs. Red Sox', venue:'Standings Bar', neighborhood:'East Village', distance:2.3, time:'Tomorrow 1:05 PM', perks:['Outdoor','Wings'], live:false, when:'Tomorrow' },
+    { id:6, sport:'UFC', match:'UFC 312: Main Card', venue:'Iron Bar', neighborhood:'Midtown', distance:1.5, time:'Sat 10:00 PM', perks:['PPV','Reserved Tables'], live:false, when:'This weekend' },
+    { id:7, sport:'NFL', match:'Cowboys vs. Eagles', venue:'Brother Jimmy\'s BBQ', neighborhood:'Upper East Side', distance:3.0, time:'Sun 8:20 PM', perks:['Wings','BBQ','Buckets'], live:false, when:'This weekend' },
+    { id:8, sport:'F1', match:'Monaco Grand Prix', venue:'Boilermaker', neighborhood:'East Village', distance:2.0, time:'Sun 9:00 AM', perks:['Brunch','Espresso Martinis'], live:false, when:'This weekend' },
+    { id:9, sport:'NBA', match:'Lakers vs. Warriors', venue:'The Ainsworth', neighborhood:'Chelsea', distance:1.7, time:'Tonight 10:00 PM', perks:['200" Screen','Bottle Service'], live:true, when:'Tonight' },
+    { id:10, sport:'College', match:'Michigan vs. Ohio State', venue:'Tonic Times Square', neighborhood:'Midtown', distance:1.6, time:'Sat 12:00 PM', perks:['Alumni Section','Pitchers'], live:false, when:'This weekend' },
+    { id:11, sport:'Soccer', match:'Real Madrid vs. Barcelona', venue:'Banc Cafe', neighborhood:'Hell\'s Kitchen', distance:1.9, time:'Sun 3:00 PM', perks:['Tapas','Sangria'], live:false, when:'This weekend' },
+    { id:12, sport:'NFL', match:'49ers vs. Seahawks', venue:'The Greens', neighborhood:'Williamsburg', distance:0.6, time:'Sun 1:00 PM', perks:['Mini Golf','Wings'], live:false, when:'This weekend' },
+];
+
+const sportEmoji = { NFL:'🏈', NBA:'🏀', MLB:'⚾', NHL:'🏒', Soccer:'⚽', UFC:'🥊', F1:'🏎️', College:'🎓' };
+const sportClass = { NFL:'nfl', NBA:'nba', MLB:'mlb', NHL:'nhl', Soccer:'soccer', UFC:'ufc', F1:'f1', College:'college' };
+
+const quickFilters = ['Live Now','Wings','Buckets','Happy Hour','Outdoor','Within 1 mi'];
+let activeChips = new Set();
+let going = new Set();
+
+function buildChips() {
+    const c = document.getElementById('chips');
+    quickFilters.forEach(f => {
+        const el = document.createElement('span');
+        el.className = 'chip';
+        el.textContent = f;
+        el.onclick = () => {
+            if (activeChips.has(f)) { activeChips.delete(f); el.classList.remove('active'); }
+            else { activeChips.add(f); el.classList.add('active'); }
+            render();
+        };
+        c.appendChild(el);
+    });
+}
+
+function matchesFilters(p) {
+    const sport = document.getElementById('sport').value;
+    const when = document.getElementById('when').value;
+    if (sport && p.sport !== sport) return false;
+    if (when && p.when !== when) return false;
+    for (const f of activeChips) {
+        if (f === 'Live Now' && !p.live) return false;
+        else if (f === 'Within 1 mi' && p.distance > 1) return false;
+        else if (['Wings','Buckets','Happy Hour','Outdoor'].includes(f) && !p.perks.some(pk => pk.toLowerCase().includes(f.toLowerCase()))) return false;
+    }
+    return true;
+}
+
+function render() {
+    const grid = document.getElementById('grid');
+    const filtered = parties.filter(matchesFilters).sort((a,b) => a.distance - b.distance);
+    document.getElementById('count').textContent = `${filtered.length} ${filtered.length === 1 ? 'spot' : 'spots'} nearby`;
+    grid.innerHTML = '';
+
+    if (filtered.length === 0) {
+        grid.innerHTML = `<div class="empty" style="grid-column:1/-1">
+            <div class="big">🍺</div>
+            <h3>No watch parties match those filters</h3>
+            <p>Try widening your search or clearing a chip.</p>
+        </div>`;
+        return;
+    }
+
+    filtered.forEach(p => {
+        const isGoing = going.has(p.id);
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+            <div class="card-banner ${sportClass[p.sport]}">
+                ${sportEmoji[p.sport]}
+                ${p.live ? '<span class="live-badge">● LIVE</span>' : ''}
+            </div>
+            <div class="card-body">
+                <div class="sport">${p.sport}</div>
+                <div class="match">${p.match}</div>
+                <div class="venue">🍻 ${p.venue}</div>
+                <div class="meta"><span class="icon">📍</span>${p.neighborhood} · ${p.distance} mi</div>
+                <div class="meta"><span class="icon">🕒</span>${p.time}</div>
+                <div class="card-footer">
+                    <div class="perks">${p.perks.map(x => `<span class="perk">${x}</span>`).join('')}</div>
+                    <button class="rsvp ${isGoing ? 'going' : ''}" onclick="toggleGoing(${p.id})">
+                        ${isGoing ? '✓ Going' : "I'm In"}
+                    </button>
+                </div>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+function toggleGoing(id) {
+    if (going.has(id)) going.delete(id);
+    else going.add(id);
+    render();
+}
+
+buildChips();
+render();
+</script>
+
 </body>
 </html>
