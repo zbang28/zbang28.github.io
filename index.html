@@ -251,8 +251,9 @@
 
     /* ===== App Store style feature cards ===== */
     .home-section-tight {
-        padding-top: 28px;
-        padding-bottom: 8px;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 20px 24px 12px !important;
     }
     .home-inline-head {
         display: flex; align-items: baseline; gap: 12px;
@@ -275,8 +276,14 @@
         text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700;
     }
     .feature-grid-compact {
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
         gap: 12px !important;
+    }
+    @media (max-width: 880px) {
+        .feature-grid-compact { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+    }
+    @media (max-width: 480px) {
+        .feature-grid-compact { grid-template-columns: 1fr !important; }
     }
     .feature-grid-compact .feature-card { border-radius: 16px; }
     .feature-grid-compact .feature-art { aspect-ratio: 16 / 9; }
@@ -538,7 +545,7 @@
             radial-gradient(ellipse 60% 60% at 50% 50%, rgba(255,122,26,0.35), transparent 70%),
             linear-gradient(135deg, #0e0f11 0%, #1a0a2a 50%, #0e0f11 100%);
         color: white;
-        padding: 72px 32px 88px;
+        padding: 40px 32px 44px;
         overflow: hidden;
     }
     .hero::before {
@@ -558,14 +565,14 @@
     }
     .hero-eyebrow {
         display: inline-flex; align-items: center; gap: 8px;
-        padding: 6px 14px;
+        padding: 5px 12px;
         background: rgba(255,255,255,0.1);
         backdrop-filter: blur(10px);
         border: 1px solid rgba(255,255,255,0.18);
         border-radius: 999px;
-        font-size: 12px; font-weight: 700;
+        font-size: 11px; font-weight: 700;
         text-transform: uppercase; letter-spacing: 1.5px;
-        margin-bottom: 22px;
+        margin-bottom: 14px;
     }
     .hero-eyebrow .live-dot {
         width: 8px; height: 8px; border-radius: 50%;
@@ -576,9 +583,9 @@
     .hero h1 {
         font-family: 'Inter', sans-serif;
         font-weight: 900;
-        font-size: clamp(42px, 6.5vw, 76px);
-        line-height: 0.98; letter-spacing: -0.04em;
-        margin-bottom: 16px;
+        font-size: clamp(28px, 4vw, 48px);
+        line-height: 1; letter-spacing: -0.04em;
+        margin-bottom: 18px;
     }
     .hero h1 .gradient {
         background: linear-gradient(135deg, #ffb800 0%, #ff7a1a 50%, #ff3eb5 100%);
