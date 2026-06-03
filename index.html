@@ -1691,7 +1691,6 @@
         <div class="tabs" id="tabs">
             <button class="tab" data-route="home">Home</button>
             <button class="tab" data-route="events">Events</button>
-            <button class="tab" data-route="schedule">Schedule</button>
             <button class="tab" data-route="fanhub">Fan Hub</button>
             <button class="tab" data-route="polls">Polls</button>
             <button class="tab highlight" data-route="worldcup">World Cup</button>
@@ -1816,37 +1815,23 @@
     </div>
 </section>
 
-<!-- ============ SCHEDULE PAGE ============ -->
-<section class="page" data-page="schedule">
-    <div class="page-head">
-        <h1><em>Match</em> Schedule</h1>
-        <p>Upcoming fixtures for the country you support.</p>
-    </div>
-    <div class="page-content">
-        <div class="schedule-grid" id="schedule-grid"></div>
-    </div>
-</section>
-
 <!-- ============ FAN HUB PAGE ============ -->
 <section class="page" data-page="fanhub">
     <div class="page-head">
         <h1><em>Fan</em> Hub</h1>
-        <p>Live chat with your country's supporters. React to the starting lineup.</p>
+        <p>Live chat with your country's supporters.</p>
     </div>
     <div class="page-content">
-        <div class="fanhub-grid">
-            <div class="panel lineup-panel" id="lineup-panel"></div>
-            <div class="panel chat">
-                <div class="panel-head">
-                    <div class="panel-title"><em id="chat-country">Global</em> Chat</div>
-                    <div class="online"><span class="dot"></span><span id="chat-online">2,341 online</span></div>
-                </div>
-                <div class="chat-body" id="chat-body"></div>
-                <form class="chat-input" onsubmit="sendChat(event)">
-                    <input id="chat-input" placeholder="Say something to fellow supporters...">
-                    <button type="submit">Send</button>
-                </form>
+        <div class="panel chat" style="max-width:720px;margin:0 auto">
+            <div class="panel-head">
+                <div class="panel-title"><em id="chat-country">Global</em> Chat</div>
+                <div class="online"><span class="dot"></span><span id="chat-online">2,341 online</span></div>
             </div>
+            <div class="chat-body" id="chat-body"></div>
+            <form class="chat-input" onsubmit="sendChat(event)">
+                <input id="chat-input" placeholder="Say something to fellow supporters...">
+                <button type="submit">Send</button>
+            </form>
         </div>
     </div>
 </section>
@@ -2067,8 +2052,7 @@ function route(name) {
     document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.route === name && !t.classList.contains('highlight')));
     if (location.hash !== '#/' + name) history.replaceState(null, '', '#/' + name);
     window.scrollTo(0, 0);
-    if (name === 'schedule') renderSchedule();
-    if (name === 'fanhub') { renderLineup(); renderChat(); }
+    if (name === 'fanhub') renderChat();
     if (name === 'polls') renderPolls();
     if (name === 'events') { renderSportChip(); applyFilters(); if (currentView === 'map') setTimeout(() => mapInstance?.invalidateSize(), 50); }
     if (name === 'worldcup') { activeSport = 'Soccer'; route('events'); return; }
@@ -2079,7 +2063,7 @@ function initRouting() {
         t.addEventListener('click', () => route(t.dataset.route));
     });
     const hash = location.hash.replace('#/', '');
-    route(['home','events','schedule','fanhub','polls'].includes(hash) ? hash : 'home');
+    route(['home','events','fanhub','polls'].includes(hash) ? hash : 'home');
 }
 
 // ============ COUNTRIES ============
@@ -2100,8 +2084,7 @@ function buildCountries() {
                 el.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
             }
             applyFilters();
-            if (activeRoute === 'schedule') renderSchedule();
-            if (activeRoute === 'fanhub') { renderLineup(); renderChat(); }
+            if (activeRoute === 'fanhub') renderChat();
             if (activeRoute === 'polls') renderPolls();
         };
         c.appendChild(el);
@@ -2776,7 +2759,7 @@ applyFilters();
 initRouting();
 window.addEventListener('hashchange', () => {
     const hash = location.hash.replace('#/', '');
-    if (['home','events','schedule','fanhub','polls'].includes(hash)) route(hash);
+    if (['home','events','fanhub','polls'].includes(hash)) route(hash);
 });
 </script>
 
