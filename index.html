@@ -989,6 +989,136 @@
         display: flex; gap: 10px; flex-wrap: wrap;
         align-items: center;
     }
+
+    /* Reusable inline dropdown (in filters row) */
+    .drop { position: relative; }
+    .drop-btn {
+        background: var(--surface); border: 1px solid var(--border);
+        padding: 8px 12px 8px 14px; border-radius: 999px;
+        font: inherit; font-size: 13px; font-weight: 700;
+        color: var(--text);
+        display: inline-flex; align-items: center; gap: 8px;
+        cursor: pointer;
+        transition: border-color 0.15s, color 0.15s;
+    }
+    .drop-btn:hover { border-color: var(--text); }
+    .drop.open .drop-btn {
+        background: var(--grad-1);
+        color: white;
+        border-color: transparent;
+        box-shadow: 0 4px 14px rgba(255,45,58,0.35);
+    }
+    .drop-caret {
+        display: inline-block; font-size: 10px;
+        transition: transform 0.2s ease;
+    }
+    .drop.open .drop-caret { transform: rotate(180deg); }
+    .drop-badge {
+        background: var(--grad-1); color: white;
+        font-size: 10px; font-weight: 900;
+        padding: 2px 7px; border-radius: 999px;
+        min-width: 18px; text-align: center;
+    }
+    .drop.open .drop-badge { background: rgba(255,255,255,0.25); }
+
+    .drop-menu {
+        position: absolute; top: calc(100% + 8px); left: 0;
+        min-width: 220px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 6px;
+        box-shadow: 0 16px 36px rgba(14,15,17,0.18);
+        opacity: 0;
+        transform: translateY(-6px) scale(0.97);
+        pointer-events: none;
+        transition: opacity 0.18s, transform 0.22s cubic-bezier(.2,.7,.2,1);
+        z-index: 60;
+    }
+    .drop-menu-wide { min-width: 240px; }
+    .drop.open .drop-menu {
+        opacity: 1; transform: none; pointer-events: auto;
+    }
+    body.worldcup-mode .drop-menu { background: var(--surface); border-color: var(--border); }
+
+    .drop-item {
+        display: flex; align-items: center; justify-content: space-between;
+        gap: 12px; width: 100%;
+        background: transparent; border: none;
+        padding: 10px 12px;
+        font: inherit; font-size: 14px; font-weight: 600;
+        color: var(--text);
+        border-radius: 10px;
+        cursor: pointer;
+        text-align: left;
+        transition: background 0.15s;
+    }
+    .drop-item:hover { background: var(--surface-2); }
+    .drop-item.active {
+        background: var(--surface-2);
+        color: var(--text);
+    }
+    .drop-item.active::before {
+        content: '✓';
+        margin-right: 4px;
+        color: var(--green);
+        font-weight: 900;
+    }
+    .drop-item-count {
+        font-size: 11px; font-weight: 800;
+        color: var(--text-mute);
+        background: var(--surface-2);
+        padding: 2px 7px; border-radius: 999px;
+    }
+    .drop.open .drop-item:hover .drop-item-count,
+    .drop-item.active .drop-item-count { background: var(--bg); color: var(--text-dim); }
+
+    .drop-check {
+        display: flex; align-items: center; gap: 10px;
+        padding: 9px 12px;
+        border-radius: 10px;
+        font-size: 14px; font-weight: 600;
+        cursor: pointer;
+        color: var(--text);
+        transition: background 0.15s;
+    }
+    .drop-check:hover { background: var(--surface-2); }
+    .drop-check input {
+        appearance: none; -webkit-appearance: none;
+        width: 18px; height: 18px;
+        border: 1.5px solid var(--border-2);
+        border-radius: 5px;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: all 0.15s;
+    }
+    .drop-check input:checked {
+        background: var(--grad-1);
+        border-color: transparent;
+    }
+    .drop-check input:checked::after {
+        content: '✓';
+        position: absolute; inset: 0;
+        display: grid; place-items: center;
+        color: white; font-size: 12px; font-weight: 900;
+        line-height: 1;
+    }
+    .drop-divider {
+        height: 1px; background: var(--border);
+        margin: 6px 4px;
+    }
+    .drop-clear {
+        width: 100%;
+        background: transparent; border: none;
+        padding: 9px 12px;
+        font: inherit; font-size: 13px; font-weight: 700;
+        color: var(--red); cursor: pointer;
+        border-radius: 10px;
+        text-align: left;
+        transition: background 0.15s;
+    }
+    .drop-clear:hover { background: var(--surface-2); }
     .filter {
         background: var(--surface); border: 1px solid var(--border);
         padding: 8px 14px; border-radius: 999px;
@@ -2117,15 +2247,46 @@
 
     <div id="borough-banner"></div>
 
-    <div class="subtabs-wrap">
-        <div class="subtabs" id="subtabs"></div>
-    </div>
-
     <div class="filters">
-        <button class="filter" onclick="toggleQuickFilter(this,'Live Now')">Live</button>
-        <button class="filter" onclick="toggleQuickFilter(this,'Free')">Free</button>
-        <button class="filter" onclick="toggleQuickFilter(this,'Outdoor')">Outdoor</button>
-        <button class="filter" onclick="toggleQuickFilter(this,'Within 1 mi')">≤ 1 mi</button>
+        <!-- Event type dropdown -->
+        <div class="drop" id="drop-type">
+            <button class="drop-btn" type="button" onclick="toggleDrop('drop-type', event)">
+                <span id="drop-type-label">Watch parties</span>
+                <span class="drop-caret">▾</span>
+            </button>
+            <div class="drop-menu">
+                <button class="drop-item" data-type="watch-party" onclick="pickEventType('watch-party')">
+                    <span class="drop-item-name">Watch parties</span>
+                    <span class="drop-item-count" data-count-type="watch-party">0</span>
+                </button>
+                <button class="drop-item" data-type="parade" onclick="pickEventType('parade')">
+                    <span class="drop-item-name">Parades</span>
+                    <span class="drop-item-count" data-count-type="parade">0</span>
+                </button>
+                <button class="drop-item" data-type="pickup" onclick="pickEventType('pickup')">
+                    <span class="drop-item-name">Pickup games</span>
+                    <span class="drop-item-count" data-count-type="pickup">0</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Quick filters dropdown -->
+        <div class="drop" id="drop-filters">
+            <button class="drop-btn" type="button" onclick="toggleDrop('drop-filters', event)">
+                <span>Filters</span>
+                <span class="drop-badge" id="drop-filter-count" style="display:none">0</span>
+                <span class="drop-caret">▾</span>
+            </button>
+            <div class="drop-menu drop-menu-wide">
+                <label class="drop-check"><input type="checkbox" data-filter="Live Now" onchange="toggleQuickFilterCheck(this)"><span>Live now</span></label>
+                <label class="drop-check"><input type="checkbox" data-filter="Free" onchange="toggleQuickFilterCheck(this)"><span>Free</span></label>
+                <label class="drop-check"><input type="checkbox" data-filter="Outdoor" onchange="toggleQuickFilterCheck(this)"><span>Outdoor</span></label>
+                <label class="drop-check"><input type="checkbox" data-filter="Within 1 mi" onchange="toggleQuickFilterCheck(this)"><span>Within 1 mi</span></label>
+                <div class="drop-divider"></div>
+                <button class="drop-clear" onclick="clearQuickFilters()">Clear all</button>
+            </div>
+        </div>
+
         <div class="filter">
             <select id="sport-select" onchange="applyFilters()">
                 <option value="">All sports</option>
@@ -2466,28 +2627,65 @@ function buildCountries() {
 
 // ============ SUBTABS ============
 function buildSubtabs() {
-    const c = document.getElementById('subtabs');
-    subtabs.forEach(st => {
-        const count = parties.filter(p => p.eventType === st.id).length;
-        const btn = document.createElement('button');
-        btn.className = 'subtab' + (st.id === activeSubtab ? ' active' : '');
-        btn.dataset.id = st.id;
-        btn.innerHTML = `<span>${st.label}</span><span class="count">${count}</span>`;
-        btn.onclick = () => {
-            activeSubtab = st.id;
-            document.querySelectorAll('.subtab').forEach(x => x.classList.remove('active'));
-            btn.classList.add('active');
-            applyFilters();
-        };
-        c.appendChild(btn);
+    // Populate the type dropdown counts + active state
+    refreshTypeDrop();
+}
+
+function refreshTypeDrop() {
+    const labels = { 'watch-party':'Watch parties', 'parade':'Parades', 'pickup':'Pickup games' };
+    const lbl = document.getElementById('drop-type-label');
+    if (lbl) lbl.textContent = labels[activeSubtab];
+    document.querySelectorAll('#drop-type .drop-item').forEach(it => {
+        it.classList.toggle('active', it.dataset.type === activeSubtab);
+    });
+    document.querySelectorAll('[data-count-type]').forEach(el => {
+        const t = el.dataset.countType;
+        el.textContent = parties.filter(p => p.eventType === t).length;
     });
 }
 
-// ============ FILTERS ============
-function toggleQuickFilter(btn, name) {
-    if (activeQuickFilters.has(name)) { activeQuickFilters.delete(name); btn.classList.remove('active'); }
-    else { activeQuickFilters.add(name); btn.classList.add('active'); }
+function pickEventType(type) {
+    activeSubtab = type;
+    refreshTypeDrop();
+    closeAllDrops();
     applyFilters();
+}
+
+// Generic drop toggle
+function toggleDrop(id, e) {
+    if (e) e.stopPropagation();
+    const drop = document.getElementById(id);
+    const open = !drop.classList.contains('open');
+    closeAllDrops();
+    if (open) drop.classList.add('open');
+}
+function closeAllDrops() {
+    document.querySelectorAll('.drop.open').forEach(d => d.classList.remove('open'));
+}
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.drop')) closeAllDrops();
+});
+
+// ============ FILTERS ============
+function toggleQuickFilterCheck(input) {
+    const name = input.dataset.filter;
+    if (input.checked) activeQuickFilters.add(name);
+    else activeQuickFilters.delete(name);
+    refreshFilterBadge();
+    applyFilters();
+}
+function clearQuickFilters() {
+    activeQuickFilters.clear();
+    document.querySelectorAll('.drop-check input').forEach(i => i.checked = false);
+    refreshFilterBadge();
+    applyFilters();
+}
+function refreshFilterBadge() {
+    const badge = document.getElementById('drop-filter-count');
+    if (!badge) return;
+    const n = activeQuickFilters.size;
+    badge.textContent = n;
+    badge.style.display = n ? '' : 'none';
 }
 
 function matchesFilters(p) {
