@@ -1480,21 +1480,58 @@
         object-fit: cover; border-radius: 8px;
     }
 
-    /* Country strip floating on top of the map */
-    .country-strip.floating-strip {
-        position: absolute;
-        top: 16px; left: 16px; right: 16px;
-        z-index: 1000;
-        background: rgba(255,255,255,0.94);
-        backdrop-filter: blur(14px);
-        border: 1px solid rgba(14,15,17,0.08);
-        border-radius: 14px;
-        padding: 12px 16px;
-        box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+    /* Country bar across the top of the World Cup page */
+    .country-bar {
+        background: var(--bg-alt);
+        border-bottom: 1px solid var(--border);
+        padding: 12px 0;
     }
-    .country-strip.floating-strip .country-strip-inner {
-        padding: 0; max-width: none;
+    body.worldcup-mode .country-bar {
+        background: rgba(255,255,255,0.6);
+        backdrop-filter: blur(12px);
+        border-bottom-color: rgba(14,15,17,0.06);
     }
+    .country-bar-inner {
+        max-width: 1280px; margin: 0 auto;
+        padding: 0 24px;
+    }
+    /* Flag-only country pills */
+    .countries-flagrow {
+        gap: 10px;
+    }
+    .countries-flagrow .country {
+        padding: 0;
+        background: transparent;
+        border: 2px solid transparent;
+        border-radius: 50%;
+    }
+    .countries-flagrow .country .name { display: none; }
+    .countries-flagrow .country .flag {
+        width: 42px; height: 42px;
+        font-size: 30px;
+        background: var(--surface-2);
+        border-radius: 50%;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+    .countries-flagrow .country:hover { transform: translateY(-2px); border-color: transparent; }
+    .countries-flagrow .country:hover .flag {
+        transform: scale(1.08);
+        box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+    }
+    .countries-flagrow .country.active {
+        background: transparent;
+        border-color: var(--red);
+        box-shadow: 0 0 0 1px var(--red), 0 6px 14px rgba(255,45,58,0.35);
+    }
+    .countries-flagrow .country.active .flag {
+        background: var(--surface-2);
+        transform: rotate(0) scale(1);
+    }
+    body.worldcup-mode .countries-flagrow .country.active {
+        border-color: #ff2e2e;
+        box-shadow: 0 0 0 1px #ff2e2e, 0 6px 14px rgba(255,46,46,0.35);
+    }
+    body.worldcup-mode .countries-flagrow .country .flag { background: white; }
 
     /* Bottom borough banner with lock chips */
     .borough-foot {
@@ -2133,6 +2170,11 @@
     .vs-flag {
         font-size: 38px;
         line-height: 1;
+        filter: drop-shadow(0 2px 6px rgba(0,0,0,0.25));
+    }
+    .vs-logo {
+        width: 48px; height: 48px;
+        object-fit: contain;
         filter: drop-shadow(0 2px 6px rgba(0,0,0,0.25));
     }
     .vs-label {
@@ -3363,7 +3405,6 @@
     <div class="home-section">
         <div class="home-section-head">
             <h2>Inside <em>Lineup</em></h2>
-            <div class="sub">Everything the app does, in one place</div>
         </div>
         <div class="feature-grid">
 
@@ -3437,6 +3478,12 @@
         <div class="worldcup-confetti"></div>
     </div>
 
+    <div class="country-bar worldcup-only">
+        <div class="country-bar-inner">
+            <div class="countries countries-flagrow" id="countries"></div>
+        </div>
+    </div>
+
     <div class="filters">
         <div class="filter events-only">
             <select id="sport-select" onchange="applyFilters()">
@@ -3505,13 +3552,6 @@
         </div>
         <div class="split-map">
             <div id="events-map"></div>
-            <div class="country-strip worldcup-only floating-strip">
-                <div class="country-strip-inner">
-                    <span class="country-strip-label">Supporting</span>
-                    <div class="countries" id="countries"></div>
-                </div>
-            </div>
-
             <!-- Google-style venue detail panel -->
             <aside class="venue-panel" id="venue-panel" aria-hidden="true">
                 <button class="venue-close" onclick="closeVenue()" aria-label="Close">
@@ -3955,7 +3995,7 @@ function photoFor(p) {
     return matchPhotos[p.match] || photos[p.sport] || photos.Soccer;
 }
 
-// Per-team color + short name. Used to render Team A vs Team B card art.
+// Per-team color + short name + logo URL. Used to render Team A vs Team B card art.
 const teamData = {
     // Nations (use country flags)
     'Argentina':       { color:'#75aadb', flag:'🇦🇷' },
@@ -3966,32 +4006,32 @@ const teamData = {
     'Spain':           { color:'#aa151b', flag:'🇪🇸' },
     'Uruguay':         { color:'#7b8fa8', flag:'🇺🇾' },
     // Soccer clubs
-    'Arsenal':         { color:'#ef0107', label:'ARS' },
-    'Liverpool':       { color:'#c8102e', label:'LIV' },
-    'Real Madrid':     { color:'#ffffff', label:'RMA', text:'#0e0f11' },
-    'Barcelona':       { color:'#a50044', label:'FCB' },
+    'Arsenal':         { color:'#ef0107', label:'ARS', logo:'https://upload.wikimedia.org/wikipedia/en/thumb/5/53/Arsenal_FC.svg/200px-Arsenal_FC.svg.png' },
+    'Liverpool':       { color:'#c8102e', label:'LIV', logo:'https://upload.wikimedia.org/wikipedia/en/thumb/0/0c/Liverpool_FC.svg/200px-Liverpool_FC.svg.png' },
+    'Real Madrid':     { color:'#ffffff', label:'RMA', text:'#0e0f11', logo:'https://upload.wikimedia.org/wikipedia/en/thumb/5/56/Real_Madrid_CF.svg/200px-Real_Madrid_CF.svg.png' },
+    'Barcelona':       { color:'#a50044', label:'FCB', logo:'https://upload.wikimedia.org/wikipedia/en/thumb/4/47/FC_Barcelona_%28crest%29.svg/200px-FC_Barcelona_%28crest%29.svg.png' },
     // NBA
-    'Knicks':          { color:'#006bb6', label:'NYK' },
-    'Celtics':         { color:'#007a33', label:'BOS' },
-    'Lakers':          { color:'#552583', label:'LAL' },
-    'Warriors':        { color:'#1d428a', label:'GSW' },
-    'Nets':            { color:'#000000', label:'BKN' },
-    'Heat':            { color:'#98002e', label:'MIA' },
+    'Knicks':          { color:'#006bb6', label:'NYK', logo:'https://upload.wikimedia.org/wikipedia/en/thumb/2/25/New_York_Knicks_logo.svg/200px-New_York_Knicks_logo.svg.png' },
+    'Celtics':         { color:'#007a33', label:'BOS', logo:'https://upload.wikimedia.org/wikipedia/en/thumb/8/8f/Boston_Celtics.svg/200px-Boston_Celtics.svg.png' },
+    'Lakers':          { color:'#552583', label:'LAL', logo:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Los_Angeles_Lakers_logo.svg/200px-Los_Angeles_Lakers_logo.svg.png' },
+    'Warriors':        { color:'#1d428a', label:'GSW', logo:'https://upload.wikimedia.org/wikipedia/en/thumb/0/01/Golden_State_Warriors_logo.svg/200px-Golden_State_Warriors_logo.svg.png' },
+    'Nets':            { color:'#000000', label:'BKN', logo:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Brooklyn_Nets_newlogo.svg/200px-Brooklyn_Nets_newlogo.svg.png' },
+    'Heat':            { color:'#98002e', label:'MIA', logo:'https://upload.wikimedia.org/wikipedia/en/thumb/f/fb/Miami_Heat_logo.svg/200px-Miami_Heat_logo.svg.png' },
     // NFL
-    'Bills':           { color:'#00338d', label:'BUF' },
-    'Chiefs':          { color:'#e31837', label:'KC' },
-    'Cowboys':         { color:'#003594', label:'DAL' },
-    'Eagles':          { color:'#004c54', label:'PHI' },
-    '49ers':           { color:'#aa0000', label:'SF' },
-    'Seahawks':        { color:'#002244', label:'SEA' },
+    'Bills':           { color:'#00338d', label:'BUF', logo:'https://upload.wikimedia.org/wikipedia/en/thumb/7/77/Buffalo_Bills_logo.svg/200px-Buffalo_Bills_logo.svg.png' },
+    'Chiefs':          { color:'#e31837', label:'KC',  logo:'https://upload.wikimedia.org/wikipedia/en/thumb/e/e1/Kansas_City_Chiefs_logo.svg/200px-Kansas_City_Chiefs_logo.svg.png' },
+    'Cowboys':         { color:'#003594', label:'DAL', logo:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Dallas_Cowboys.svg/200px-Dallas_Cowboys.svg.png' },
+    'Eagles':          { color:'#004c54', label:'PHI', logo:'https://upload.wikimedia.org/wikipedia/en/thumb/8/8e/Philadelphia_Eagles_logo.svg/200px-Philadelphia_Eagles_logo.svg.png' },
+    '49ers':           { color:'#aa0000', label:'SF',  logo:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/San_Francisco_49ers_logo.svg/200px-San_Francisco_49ers_logo.svg.png' },
+    'Seahawks':        { color:'#002244', label:'SEA', logo:'https://upload.wikimedia.org/wikipedia/en/thumb/8/8e/Seattle_Seahawks_logo.svg/200px-Seattle_Seahawks_logo.svg.png' },
     // MLB
-    'Yankees':         { color:'#0c2340', label:'NYY' },
-    'Red Sox':         { color:'#bd3039', label:'BOS' },
+    'Yankees':         { color:'#0c2340', label:'NYY', logo:'https://upload.wikimedia.org/wikipedia/en/thumb/2/25/NewYorkYankees_PrimaryLogo.svg/200px-NewYorkYankees_PrimaryLogo.svg.png' },
+    'Red Sox':         { color:'#bd3039', label:'BOS', logo:'https://upload.wikimedia.org/wikipedia/en/thumb/6/6d/RedSoxPrimary_HangingSocks.svg/200px-RedSoxPrimary_HangingSocks.svg.png' },
     // NHL
-    'Rangers':         { color:'#0033a0', label:'NYR' },
-    'Devils':          { color:'#c8102e', label:'NJD' },
-    'Islanders':       { color:'#00539b', label:'NYI' },
-    'Bruins':          { color:'#fcb514', label:'BOS', text:'#0e0f11' },
+    'Rangers':         { color:'#0033a0', label:'NYR', logo:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/New_York_Rangers.svg/200px-New_York_Rangers.svg.png' },
+    'Devils':          { color:'#c8102e', label:'NJD', logo:'https://upload.wikimedia.org/wikipedia/en/thumb/9/93/Logo_New_Jersey_Devils.svg/200px-Logo_New_Jersey_Devils.svg.png' },
+    'Islanders':       { color:'#00539b', label:'NYI', logo:'https://upload.wikimedia.org/wikipedia/en/thumb/4/42/Logo_New_York_Islanders.svg/200px-Logo_New_York_Islanders.svg.png' },
+    'Bruins':          { color:'#fcb514', label:'BOS', text:'#0e0f11', logo:'https://upload.wikimedia.org/wikipedia/en/thumb/1/1f/Boston_Bruins.svg/200px-Boston_Bruins.svg.png' },
 };
 
 function cardArtHTML(p) {
@@ -4004,9 +4044,14 @@ function cardArtHTML(p) {
         if (A && B) {
             const renderSide = (T, name) => {
                 const txt = T.text || '#ffffff';
-                const inner = T.flag
-                    ? `<span class="vs-flag">${T.flag}</span>`
-                    : `<span class="vs-label" style="color:${txt}">${T.label || name.slice(0,3).toUpperCase()}</span>`;
+                let inner;
+                if (T.logo) {
+                    inner = `<img class="vs-logo" src="${T.logo}" alt="${name}" loading="lazy">`;
+                } else if (T.flag) {
+                    inner = `<span class="vs-flag">${T.flag}</span>`;
+                } else {
+                    inner = `<span class="vs-label" style="color:${txt}">${T.label || name.slice(0,3).toUpperCase()}</span>`;
+                }
                 return `<div class="vs-half" style="background:${T.color}">${inner}</div>`;
             };
             return `<div class="vs-art">
@@ -4078,7 +4123,8 @@ function buildCountries() {
     countries.forEach(co => {
         const el = document.createElement('button');
         el.className = 'country';
-        el.innerHTML = `<span class="flag">${co.flag}</span><span>${co.name}</span>`;
+        el.innerHTML = `<span class="flag">${co.flag}</span><span class="name">${co.name}</span>`;
+        el.title = co.name;
         el.onclick = () => {
             if (activeCountry?.code === co.code) {
                 activeCountry = null;
@@ -4181,10 +4227,17 @@ function isLocked(p) { return !unlockedBoroughs.has(p.borough); }
 let activeCardId = null;
 let lastFiltered = [];
 
+function isWorldCupEvent(p) {
+    if (p.sport !== 'Soccer') return false;
+    const nations = countries.map(c => c.name);
+    return nations.some(n => p.match.includes(n));
+}
+
 function applyFilters() {
     if (activeRoute !== 'events' && activeRoute !== 'worldcup') return;
     const filtered = parties
         .filter(p => p.eventType === activeSubtab)
+        .filter(p => activeRoute !== 'worldcup' || isWorldCupEvent(p))
         .filter(matchesFilters)
         .sort((a,b) => a.distance - b.distance);
 
