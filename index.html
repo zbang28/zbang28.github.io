@@ -3,239 +3,382 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Lineup — Find Watch Parties Near You</title>
+<title>The Lineup — Watch Parties Near You</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
     :root {
-        --bg-dark: #1a0f08;
-        --bg-panel: #2b1810;
-        --bg-card: #3a2418;
-        --wood: #5c3a1e;
-        --accent: #d4a017;
-        --accent-bright: #f4c842;
-        --red: #c8362d;
-        --green: #2d8a3e;
-        --text: #f5e9d4;
-        --text-dim: #b8a888;
-        --neon: #00e0ff;
+        --bg: #08090c;
+        --bg-2: #0e1014;
+        --surface: #14171d;
+        --surface-2: #1c2029;
+        --border: #262b35;
+        --text: #f4f4f5;
+        --text-dim: #9aa0ad;
+        --text-mute: #6b7280;
+        --accent: #ff6b1a;
+        --accent-2: #ffb800;
+        --court: #00d96f;
+        --court-glow: rgba(0,217,111,0.4);
+        --red: #ff3b30;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
+    html, body { background: var(--bg); }
+
     body {
-        font-family: 'Helvetica Neue', Arial, sans-serif;
-        background: var(--bg-dark);
-        background-image:
-            repeating-linear-gradient(45deg, rgba(92,58,30,0.08) 0 2px, transparent 2px 12px),
-            radial-gradient(circle at 20% 10%, rgba(212,160,23,0.08), transparent 50%),
-            radial-gradient(circle at 80% 80%, rgba(200,54,45,0.08), transparent 50%);
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
         color: var(--text);
         min-height: 100vh;
         line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
     }
 
-    /* Header */
-    header {
-        background: linear-gradient(180deg, #0f0805 0%, var(--bg-panel) 100%);
-        border-bottom: 4px solid var(--accent);
-        padding: 24px 32px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-        position: relative;
-        overflow: hidden;
+    /* Stadium-light backdrop */
+    .backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        background:
+            radial-gradient(ellipse 80% 50% at 50% -10%, rgba(255,107,26,0.18), transparent 60%),
+            radial-gradient(ellipse 60% 40% at 10% 30%, rgba(0,217,111,0.10), transparent 60%),
+            radial-gradient(ellipse 60% 40% at 90% 70%, rgba(255,184,0,0.08), transparent 60%),
+            var(--bg);
     }
 
-    header::before {
+    .backdrop::before {
         content: '';
         position: absolute;
         inset: 0;
-        background:
-            radial-gradient(circle at 10% 50%, var(--red) 2px, transparent 3px),
-            radial-gradient(circle at 90% 50%, var(--green) 2px, transparent 3px);
-        background-size: 60px 100%;
-        opacity: 0.15;
+        background-image:
+            radial-gradient(circle at 12% 18%, rgba(255,255,255,0.4) 0.5px, transparent 1.5px),
+            radial-gradient(circle at 88% 28%, rgba(255,255,255,0.3) 0.5px, transparent 1.5px),
+            radial-gradient(circle at 30% 75%, rgba(255,255,255,0.25) 0.5px, transparent 1.5px),
+            radial-gradient(circle at 70% 85%, rgba(255,255,255,0.3) 0.5px, transparent 1.5px),
+            radial-gradient(circle at 50% 50%, rgba(255,255,255,0.2) 0.5px, transparent 1.5px);
+        background-size: 250px 250px, 300px 300px, 280px 280px, 320px 320px, 200px 200px;
+        opacity: 0.6;
+    }
+
+    /* Floating sports orbs */
+    .orb {
+        position: fixed;
+        z-index: -1;
+        font-size: 80px;
+        opacity: 0.05;
+        pointer-events: none;
+        animation: float 18s ease-in-out infinite;
+        filter: blur(0.5px);
+    }
+    .orb:nth-child(1) { top: 12%; left: 4%; animation-delay: 0s; }
+    .orb:nth-child(2) { top: 25%; right: 6%; animation-delay: -4s; font-size: 100px; }
+    .orb:nth-child(3) { bottom: 18%; left: 8%; animation-delay: -8s; font-size: 70px; }
+    .orb:nth-child(4) { bottom: 30%; right: 4%; animation-delay: -12s; font-size: 90px; }
+    .orb:nth-child(5) { top: 55%; left: 50%; animation-delay: -6s; font-size: 60px; }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0) rotate(0deg); }
+        50% { transform: translateY(-30px) rotate(15deg); }
+    }
+
+    /* Nav */
+    nav {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        backdrop-filter: blur(20px);
+        background: rgba(8,9,12,0.7);
+        border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 18px 32px;
+        display: flex;
+        align-items: center;
+        gap: 32px;
     }
 
     .brand {
         display: flex;
         align-items: center;
-        gap: 16px;
-        max-width: 1280px;
+        gap: 10px;
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 26px;
+        letter-spacing: 3px;
+        color: var(--text);
+    }
+
+    .brand-mark {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        display: grid;
+        place-items: center;
+        font-size: 18px;
+        box-shadow: 0 0 24px rgba(255,107,26,0.5);
+    }
+
+    .nav-links {
+        display: flex;
+        gap: 28px;
+        margin-left: 16px;
+    }
+
+    .nav-links a {
+        color: var(--text-dim);
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        transition: color 0.15s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-cta {
+        margin-left: auto;
+        padding: 10px 18px;
+        background: var(--text);
+        color: var(--bg);
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    @media (max-width: 720px) {
+        .nav-links { display: none; }
+        .nav-inner { padding: 16px 20px; }
+    }
+
+    /* Hero */
+    .hero {
+        max-width: 1320px;
         margin: 0 auto;
+        padding: 80px 32px 48px;
+        text-align: center;
         position: relative;
     }
 
-    .logo {
-        font-size: 42px;
-        line-height: 1;
+    .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 14px;
+        background: rgba(255,107,26,0.1);
+        border: 1px solid rgba(255,107,26,0.3);
+        border-radius: 999px;
+        color: var(--accent);
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 24px;
     }
 
-    .brand h1 {
-        font-family: 'Georgia', serif;
-        font-size: 32px;
-        letter-spacing: 2px;
-        color: var(--accent-bright);
-        text-shadow: 0 0 20px rgba(244,200,66,0.4), 2px 2px 0 #000;
+    .eyebrow .dot {
+        width: 6px; height: 6px; border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 10px var(--accent);
+        animation: pulse 1.6s infinite;
+    }
+
+    .hero h1 {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: clamp(56px, 9vw, 128px);
+        line-height: 0.92;
+        letter-spacing: 1px;
+        margin-bottom: 24px;
         text-transform: uppercase;
     }
 
-    .brand .tag {
-        color: var(--text-dim);
+    .hero h1 .accent {
+        background: linear-gradient(180deg, var(--accent-2), var(--accent));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
         font-style: italic;
-        font-size: 14px;
-        margin-left: auto;
     }
 
-    /* Hero / Search */
-    .hero {
-        max-width: 1280px;
-        margin: 32px auto 24px;
-        padding: 0 32px;
-    }
-
-    .hero-card {
-        background:
-            linear-gradient(135deg, rgba(212,160,23,0.08), transparent),
-            var(--bg-panel);
-        border: 2px solid var(--wood);
-        border-radius: 12px;
-        padding: 28px;
-        box-shadow: inset 0 0 40px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.5);
-    }
-
-    .hero h2 {
-        font-family: Georgia, serif;
-        font-size: 28px;
-        color: var(--accent-bright);
-        margin-bottom: 6px;
-    }
-
-    .hero p {
+    .hero p.lede {
+        font-size: clamp(16px, 1.6vw, 19px);
         color: var(--text-dim);
-        margin-bottom: 20px;
+        max-width: 560px;
+        margin: 0 auto 40px;
     }
 
-    .search-grid {
+    /* Search bar */
+    .search {
+        max-width: 920px;
+        margin: 0 auto;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 12px;
         display: grid;
-        grid-template-columns: 2fr 1.5fr 1.5fr auto;
-        gap: 12px;
+        grid-template-columns: 1.4fr 1fr 1fr auto;
+        gap: 8px;
+        box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.02) inset;
     }
 
-    @media (max-width: 800px) {
-        .search-grid { grid-template-columns: 1fr 1fr; }
-        .search-grid button { grid-column: 1 / -1; }
+    @media (max-width: 760px) {
+        .search { grid-template-columns: 1fr 1fr; }
+        .search .go { grid-column: 1 / -1; }
     }
+
+    .field {
+        position: relative;
+        background: var(--surface-2);
+        border-radius: 10px;
+        padding: 10px 14px;
+        transition: background 0.15s;
+    }
+
+    .field:focus-within { background: #232833; }
 
     .field label {
         display: block;
         font-size: 11px;
+        font-weight: 600;
+        color: var(--text-mute);
         text-transform: uppercase;
-        letter-spacing: 1.5px;
-        color: var(--accent);
-        margin-bottom: 6px;
-        font-weight: bold;
+        letter-spacing: 1.2px;
+        margin-bottom: 4px;
     }
 
     .field input, .field select {
         width: 100%;
-        padding: 12px 14px;
-        background: #1a0f08;
+        background: transparent;
+        border: none;
         color: var(--text);
-        border: 1.5px solid var(--wood);
-        border-radius: 6px;
         font-size: 15px;
-        transition: border-color 0.2s, box-shadow 0.2s;
-    }
-
-    .field input:focus, .field select:focus {
+        font-weight: 500;
+        font-family: inherit;
         outline: none;
-        border-color: var(--accent);
-        box-shadow: 0 0 0 3px rgba(212,160,23,0.2);
+        cursor: pointer;
     }
 
-    .search-btn {
-        padding: 12px 28px;
-        background: linear-gradient(180deg, var(--accent-bright), var(--accent));
+    .field select option { background: var(--surface-2); color: var(--text); }
+
+    .go {
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
         color: #1a0f08;
         border: none;
-        border-radius: 6px;
-        font-size: 15px;
-        font-weight: bold;
-        letter-spacing: 1px;
-        text-transform: uppercase;
+        padding: 0 28px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
         cursor: pointer;
-        align-self: end;
-        box-shadow: 0 4px 0 #8a6810, 0 6px 12px rgba(0,0,0,0.4);
-        transition: transform 0.1s, box-shadow 0.1s;
+        text-transform: uppercase;
+        transition: transform 0.1s, box-shadow 0.15s;
+        box-shadow: 0 8px 24px rgba(255,107,26,0.4);
     }
 
-    .search-btn:hover { transform: translateY(-1px); }
-    .search-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #8a6810; }
+    .go:hover { transform: translateY(-1px); box-shadow: 0 12px 30px rgba(255,107,26,0.55); }
+    .go:active { transform: translateY(1px); }
+
+    /* Stats strip */
+    .stats {
+        max-width: 1320px;
+        margin: 56px auto 0;
+        padding: 0 32px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+    }
+
+    @media (max-width: 720px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+
+    .stat {
+        text-align: center;
+        padding: 20px;
+        border-left: 2px solid var(--border);
+    }
+    .stat:first-child { border-left: none; }
+
+    .stat .num {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 42px;
+        letter-spacing: 2px;
+        color: var(--accent-2);
+    }
+    .stat .lbl {
+        color: var(--text-mute);
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        font-weight: 600;
+    }
+
+    /* Section header */
+    .section {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 64px 32px 32px;
+    }
+
+    .sec-head {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        margin-bottom: 32px;
+        gap: 24px;
+        flex-wrap: wrap;
+    }
+
+    .sec-head h2 {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: clamp(36px, 5vw, 56px);
+        letter-spacing: 2px;
+        line-height: 1;
+        text-transform: uppercase;
+    }
+
+    .sec-head h2 .accent {
+        color: var(--accent);
+    }
+
+    .sec-head .sub {
+        color: var(--text-dim);
+        font-size: 14px;
+        font-weight: 500;
+    }
 
     /* Filter chips */
     .chips {
-        max-width: 1280px;
-        margin: 0 auto 16px;
-        padding: 0 32px;
         display: flex;
         gap: 8px;
         flex-wrap: wrap;
-        align-items: center;
-    }
-
-    .chips .label {
-        color: var(--text-dim);
-        font-size: 13px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-right: 8px;
+        margin-bottom: 28px;
     }
 
     .chip {
-        padding: 6px 14px;
-        background: var(--bg-card);
+        padding: 8px 16px;
+        background: var(--surface);
         color: var(--text-dim);
-        border: 1px solid var(--wood);
-        border-radius: 20px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
         font-size: 13px;
+        font-weight: 500;
         cursor: pointer;
         transition: all 0.15s;
         user-select: none;
     }
-
-    .chip:hover { color: var(--text); border-color: var(--accent); }
+    .chip:hover { color: var(--text); border-color: #3a4150; }
     .chip.active {
-        background: var(--accent);
-        color: #1a0f08;
-        border-color: var(--accent-bright);
-        font-weight: bold;
+        background: var(--text);
+        color: var(--bg);
+        border-color: var(--text);
+        font-weight: 600;
     }
 
-    /* Results */
-    .results {
-        max-width: 1280px;
-        margin: 0 auto;
-        padding: 16px 32px 48px;
-    }
-
-    .results-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: baseline;
-        margin-bottom: 16px;
-        padding-bottom: 12px;
-        border-bottom: 2px dashed var(--wood);
-    }
-
-    .results-header h3 {
-        font-family: Georgia, serif;
-        font-size: 22px;
-        color: var(--accent-bright);
-    }
-
-    .results-header .count {
-        color: var(--text-dim);
-        font-size: 14px;
-    }
-
+    /* Cards */
     .grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -243,112 +386,161 @@
     }
 
     .card {
-        background: var(--bg-card);
-        border: 1.5px solid var(--wood);
-        border-radius: 10px;
+        position: relative;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
         overflow: hidden;
+        transition: transform 0.25s cubic-bezier(.2,.7,.2,1), border-color 0.2s, box-shadow 0.25s;
         display: flex;
         flex-direction: column;
-        box-shadow: 0 6px 16px rgba(0,0,0,0.4);
-        transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
     }
 
     .card:hover {
-        transform: translateY(-3px);
-        border-color: var(--accent);
-        box-shadow: 0 10px 24px rgba(0,0,0,0.6), 0 0 0 1px var(--accent);
+        transform: translateY(-6px);
+        border-color: #3a4150;
+        box-shadow: 0 24px 48px rgba(0,0,0,0.5), 0 0 0 1px var(--accent);
     }
 
-    .card-banner {
-        height: 90px;
-        background: linear-gradient(135deg, var(--red), #6a1a14);
+    .card-img {
+        position: relative;
+        height: 180px;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        background: #000;
+    }
+
+    .card-img::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(ellipse 70% 50% at 50% 100%, var(--glow, rgba(255,107,26,0.4)), transparent 70%),
+            linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.7) 100%);
+    }
+
+    .card-img::after {
+        content: '';
+        position: absolute;
+        top: -20%;
+        left: 20%;
+        width: 60%;
+        height: 70%;
+        background: radial-gradient(ellipse, rgba(255,255,255,0.15), transparent 60%);
+        filter: blur(20px);
+    }
+
+    .card-emoji {
+        font-size: 96px;
+        position: relative;
+        z-index: 1;
+        filter: drop-shadow(0 8px 24px rgba(0,0,0,0.6));
+        transition: transform 0.4s cubic-bezier(.2,.7,.2,1);
+    }
+
+    .card:hover .card-emoji { transform: scale(1.1) rotate(-6deg); }
+
+    .badges {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        right: 14px;
+        display: flex;
+        justify-content: space-between;
+        z-index: 2;
+    }
+
+    .badge {
+        font-family: 'Bebas Neue', sans-serif;
+        letter-spacing: 1.5px;
+        font-size: 12px;
+        padding: 5px 10px;
+        background: rgba(0,0,0,0.6);
+        backdrop-filter: blur(8px);
+        border-radius: 6px;
+        border: 1px solid rgba(255,255,255,0.1);
+        color: var(--text);
+    }
+
+    .badge.live {
+        background: var(--red);
+        border-color: transparent;
+        color: white;
         display: flex;
         align-items: center;
-        justify-content: center;
-        position: relative;
-        font-size: 48px;
-        border-bottom: 3px solid var(--accent);
+        gap: 6px;
     }
 
-    .card-banner.nfl { background: linear-gradient(135deg, #013369, #0a4a8f); }
-    .card-banner.nba { background: linear-gradient(135deg, #c8102e, #1d428a); }
-    .card-banner.mlb { background: linear-gradient(135deg, #002d72, #d50032); }
-    .card-banner.nhl { background: linear-gradient(135deg, #111, #444); }
-    .card-banner.soccer { background: linear-gradient(135deg, #2d8a3e, #1a5a26); }
-    .card-banner.ufc { background: linear-gradient(135deg, #d20a0a, #1a1a1a); }
-    .card-banner.f1 { background: linear-gradient(135deg, #e10600, #15151e); }
-    .card-banner.college { background: linear-gradient(135deg, #8a4a0e, var(--accent)); }
-
-    .live-badge {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background: var(--red);
-        color: white;
-        padding: 3px 10px;
-        border-radius: 4px;
-        font-size: 11px;
-        font-weight: bold;
-        letter-spacing: 1px;
-        animation: pulse 1.5s infinite;
+    .badge.live .dot {
+        width: 6px; height: 6px;
+        background: white;
+        border-radius: 50%;
+        animation: pulse 1.4s infinite;
     }
 
     @keyframes pulse {
         0%, 100% { opacity: 1; }
-        50% { opacity: 0.6; }
+        50% { opacity: 0.4; }
     }
 
     .card-body {
-        padding: 18px;
+        padding: 20px;
         flex: 1;
         display: flex;
         flex-direction: column;
+        gap: 12px;
     }
 
-    .card .sport {
-        font-size: 11px;
-        color: var(--accent);
+    .card-match {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 24px;
+        letter-spacing: 1px;
+        line-height: 1.1;
         text-transform: uppercase;
-        letter-spacing: 1.5px;
-        font-weight: bold;
-        margin-bottom: 4px;
     }
 
-    .card .match {
-        font-family: Georgia, serif;
-        font-size: 18px;
-        color: var(--text);
-        margin-bottom: 10px;
-        line-height: 1.3;
+    .card-venue {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px;
+        background: var(--surface-2);
+        border-radius: 10px;
     }
 
-    .card .venue {
+    .venue-mark {
+        width: 36px;
+        height: 36px;
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        border-radius: 8px;
+        display: grid;
+        place-items: center;
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+
+    .venue-info { flex: 1; min-width: 0; }
+    .venue-name {
+        font-weight: 600;
         font-size: 15px;
-        color: var(--accent-bright);
-        font-weight: bold;
-        margin-bottom: 8px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .venue-loc {
+        font-size: 12px;
+        color: var(--text-mute);
     }
 
-    .card .meta {
-        font-size: 13px;
+    .card-meta {
+        display: flex;
+        gap: 14px;
         color: var(--text-dim);
-        margin-bottom: 4px;
-        display: flex;
-        gap: 6px;
-        align-items: center;
+        font-size: 13px;
+        font-weight: 500;
     }
-
-    .card .meta .icon { width: 16px; display: inline-block; }
-
-    .card-footer {
-        margin-top: auto;
-        padding-top: 14px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-top: 1px dashed var(--wood);
-        margin-top: 14px;
-    }
+    .card-meta span { display: inline-flex; align-items: center; gap: 5px; }
 
     .perks {
         display: flex;
@@ -357,139 +549,189 @@
     }
 
     .perk {
-        font-size: 10px;
-        background: var(--bg-panel);
-        color: var(--accent);
-        padding: 3px 7px;
-        border-radius: 3px;
-        border: 1px solid var(--wood);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+        font-size: 11px;
+        background: transparent;
+        color: var(--text-dim);
+        padding: 4px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        font-weight: 500;
+    }
+
+    .card-foot {
+        margin-top: auto;
+        display: flex;
+        gap: 8px;
+        padding-top: 14px;
+        border-top: 1px solid var(--border);
     }
 
     .rsvp {
-        background: var(--green);
-        color: white;
+        flex: 1;
+        background: var(--text);
+        color: var(--bg);
         border: none;
-        padding: 8px 16px;
-        border-radius: 5px;
-        font-weight: bold;
+        padding: 12px;
+        border-radius: 10px;
+        font-weight: 700;
         font-size: 13px;
         cursor: pointer;
         text-transform: uppercase;
         letter-spacing: 1px;
-        transition: background 0.15s;
+        transition: background 0.15s, transform 0.1s;
+        font-family: inherit;
+    }
+    .rsvp:hover { background: #e5e5e7; transform: translateY(-1px); }
+    .rsvp.going {
+        background: var(--court);
+        color: #001a0c;
+        box-shadow: 0 0 24px var(--court-glow);
     }
 
-    .rsvp:hover { background: #3aa84e; }
-    .rsvp.going { background: var(--accent); color: #1a0f08; }
+    .icon-btn {
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        color: var(--text-dim);
+        padding: 0 14px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: all 0.15s;
+    }
+    .icon-btn:hover { color: var(--text); border-color: #3a4150; }
 
     .empty {
+        grid-column: 1 / -1;
         text-align: center;
-        padding: 60px 20px;
+        padding: 80px 20px;
         color: var(--text-dim);
     }
-
-    .empty .big { font-size: 64px; margin-bottom: 16px; }
+    .empty .big { font-size: 80px; margin-bottom: 16px; opacity: 0.6; }
+    .empty h3 { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 2px; margin-bottom: 8px; }
 
     footer {
-        text-align: center;
-        padding: 24px;
-        color: var(--text-dim);
+        max-width: 1320px;
+        margin: 80px auto 0;
+        padding: 40px 32px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+        color: var(--text-mute);
         font-size: 13px;
-        border-top: 1px solid var(--wood);
-        background: var(--bg-panel);
     }
 
-    footer .neon {
-        color: var(--neon);
-        text-shadow: 0 0 8px var(--neon);
-        font-family: Georgia, serif;
-        font-style: italic;
-    }
+    footer .brand { font-size: 22px; }
 </style>
 </head>
 <body>
 
-<header>
-    <div class="brand">
-        <div class="logo">🍺</div>
-        <h1>The Lineup</h1>
-        <span class="tag">Find the game. Find your crowd.</span>
+<div class="backdrop"></div>
+<div class="orb">🏀</div>
+<div class="orb">⚽</div>
+<div class="orb">🏈</div>
+<div class="orb">⚾</div>
+<div class="orb">🏒</div>
+
+<nav>
+    <div class="nav-inner">
+        <div class="brand">
+            <div class="brand-mark">🍺</div>
+            The Lineup
+        </div>
+        <div class="nav-links">
+            <a href="#tonight">Tonight</a>
+            <a href="#tonight">Bars</a>
+            <a href="#tonight">Sports</a>
+            <a href="#tonight">Host</a>
+        </div>
+        <button class="nav-cta">Sign in</button>
     </div>
-</header>
+</nav>
 
 <section class="hero">
-    <div class="hero-card">
-        <h2>Find watch parties near you</h2>
-        <p>Every sport. Every bar. Every big game. Pull up a stool.</p>
-        <div class="search-grid">
-            <div class="field">
-                <label for="loc">📍 Your location</label>
-                <input id="loc" type="text" placeholder="City, ZIP, or neighborhood" value="Brooklyn, NY">
-            </div>
-            <div class="field">
-                <label for="sport">🏆 Sport</label>
-                <select id="sport">
-                    <option value="">All sports</option>
-                    <option>NFL</option>
-                    <option>NBA</option>
-                    <option>MLB</option>
-                    <option>NHL</option>
-                    <option>Soccer</option>
-                    <option>UFC</option>
-                    <option>F1</option>
-                    <option>College</option>
-                </select>
-            </div>
-            <div class="field">
-                <label for="when">📅 When</label>
-                <select id="when">
-                    <option value="">Anytime</option>
-                    <option>Tonight</option>
-                    <option>Tomorrow</option>
-                    <option>This weekend</option>
-                </select>
-            </div>
-            <button class="search-btn" onclick="render()">Search 🍻</button>
+    <div class="eyebrow"><span class="dot"></span>Live now · 47 watch parties</div>
+    <h1>Find your <span class="accent">crowd.</span><br>Catch the <span class="accent">game.</span></h1>
+    <p class="lede">The fastest way to find a sports bar showing the match you care about — wings hot, beer cold, crowd loud.</p>
+
+    <div class="search">
+        <div class="field">
+            <label>Location</label>
+            <input id="loc" type="text" placeholder="City, ZIP, or neighborhood" value="Brooklyn, NY">
         </div>
+        <div class="field">
+            <label>Sport</label>
+            <select id="sport">
+                <option value="">All sports</option>
+                <option>NFL</option><option>NBA</option><option>MLB</option><option>NHL</option>
+                <option>Soccer</option><option>UFC</option><option>F1</option><option>College</option>
+            </select>
+        </div>
+        <div class="field">
+            <label>When</label>
+            <select id="when">
+                <option value="">Anytime</option>
+                <option>Tonight</option><option>Tomorrow</option><option>This weekend</option>
+            </select>
+        </div>
+        <button class="go" onclick="render()">Search</button>
+    </div>
+
+    <div class="stats">
+        <div class="stat"><div class="num">2,400+</div><div class="lbl">Bars</div></div>
+        <div class="stat"><div class="num">12</div><div class="lbl">Sports</div></div>
+        <div class="stat"><div class="num">180</div><div class="lbl">Cities</div></div>
+        <div class="stat"><div class="num">47</div><div class="lbl">Live now</div></div>
     </div>
 </section>
 
-<div class="chips" id="chips">
-    <span class="label">Quick filters:</span>
-</div>
-
-<section class="results">
-    <div class="results-header">
-        <h3>🍗 Tonight's Lineup</h3>
-        <span class="count" id="count"></span>
+<section class="section" id="tonight">
+    <div class="sec-head">
+        <h2>Tonight's <span class="accent">Lineup</span></h2>
+        <div class="sub" id="count"></div>
     </div>
+
+    <div class="chips" id="chips"></div>
+
     <div class="grid" id="grid"></div>
 </section>
 
 <footer>
-    <p>🍻 <span class="neon">The Lineup</span> — Watch parties, wings, and a cold one. © 2026</p>
+    <div class="brand">
+        <div class="brand-mark">🍺</div>
+        The Lineup
+    </div>
+    <div>© 2026 — Watch parties, wings, and a cold one.</div>
 </footer>
 
 <script>
 const parties = [
-    { id:1, sport:'NFL', match:'Bills vs. Chiefs', venue:'The Pourhouse', neighborhood:'Williamsburg', distance:0.4, time:'Sun 4:25 PM', perks:['Wings','Buckets','Big Screen'], live:true, when:'This weekend' },
+    { id:1, sport:'NFL', match:'Bills vs. Chiefs', venue:'The Pourhouse', neighborhood:'Williamsburg', distance:0.4, time:'Sun 4:25 PM', perks:['Wings','Buckets','200" Screen'], live:true, when:'This weekend' },
     { id:2, sport:'NBA', match:'Knicks vs. Celtics', venue:"Foley's Bar & Grill", neighborhood:'Midtown', distance:1.2, time:'Tonight 7:30 PM', perks:['Happy Hour','Trivia'], live:true, when:'Tonight' },
-    { id:3, sport:'Soccer', match:'Arsenal vs. Liverpool', venue:'The Football Factory', neighborhood:'East Village', distance:2.1, time:'Sat 9:00 AM', perks:['Pints','English Breakfast'], live:false, when:'This weekend' },
-    { id:4, sport:'NHL', match:'Rangers vs. Devils', venue:'Stout NYC', neighborhood:'Hell\'s Kitchen', distance:1.8, time:'Tonight 7:00 PM', perks:['Buckets','Booths'], live:true, when:'Tonight' },
+    { id:3, sport:'Soccer', match:'Arsenal vs. Liverpool', venue:'The Football Factory', neighborhood:'East Village', distance:2.1, time:'Sat 9:00 AM', perks:['Pints','Breakfast'], live:false, when:'This weekend' },
+    { id:4, sport:'NHL', match:'Rangers vs. Devils', venue:'Stout NYC', neighborhood:"Hell's Kitchen", distance:1.8, time:'Tonight 7:00 PM', perks:['Buckets','Booths'], live:true, when:'Tonight' },
     { id:5, sport:'MLB', match:'Yankees vs. Red Sox', venue:'Standings Bar', neighborhood:'East Village', distance:2.3, time:'Tomorrow 1:05 PM', perks:['Outdoor','Wings'], live:false, when:'Tomorrow' },
-    { id:6, sport:'UFC', match:'UFC 312: Main Card', venue:'Iron Bar', neighborhood:'Midtown', distance:1.5, time:'Sat 10:00 PM', perks:['PPV','Reserved Tables'], live:false, when:'This weekend' },
-    { id:7, sport:'NFL', match:'Cowboys vs. Eagles', venue:'Brother Jimmy\'s BBQ', neighborhood:'Upper East Side', distance:3.0, time:'Sun 8:20 PM', perks:['Wings','BBQ','Buckets'], live:false, when:'This weekend' },
-    { id:8, sport:'F1', match:'Monaco Grand Prix', venue:'Boilermaker', neighborhood:'East Village', distance:2.0, time:'Sun 9:00 AM', perks:['Brunch','Espresso Martinis'], live:false, when:'This weekend' },
+    { id:6, sport:'UFC', match:'UFC 312 Main Card', venue:'Iron Bar', neighborhood:'Midtown', distance:1.5, time:'Sat 10:00 PM', perks:['PPV','Reserved'], live:false, when:'This weekend' },
+    { id:7, sport:'NFL', match:'Cowboys vs. Eagles', venue:"Brother Jimmy's BBQ", neighborhood:'Upper East Side', distance:3.0, time:'Sun 8:20 PM', perks:['Wings','BBQ','Buckets'], live:false, when:'This weekend' },
+    { id:8, sport:'F1', match:'Monaco Grand Prix', venue:'Boilermaker', neighborhood:'East Village', distance:2.0, time:'Sun 9:00 AM', perks:['Brunch','Espresso'], live:false, when:'This weekend' },
     { id:9, sport:'NBA', match:'Lakers vs. Warriors', venue:'The Ainsworth', neighborhood:'Chelsea', distance:1.7, time:'Tonight 10:00 PM', perks:['200" Screen','Bottle Service'], live:true, when:'Tonight' },
-    { id:10, sport:'College', match:'Michigan vs. Ohio State', venue:'Tonic Times Square', neighborhood:'Midtown', distance:1.6, time:'Sat 12:00 PM', perks:['Alumni Section','Pitchers'], live:false, when:'This weekend' },
-    { id:11, sport:'Soccer', match:'Real Madrid vs. Barcelona', venue:'Banc Cafe', neighborhood:'Hell\'s Kitchen', distance:1.9, time:'Sun 3:00 PM', perks:['Tapas','Sangria'], live:false, when:'This weekend' },
+    { id:10, sport:'College', match:'Michigan vs. Ohio State', venue:'Tonic Times Square', neighborhood:'Midtown', distance:1.6, time:'Sat 12:00 PM', perks:['Alumni','Pitchers'], live:false, when:'This weekend' },
+    { id:11, sport:'Soccer', match:'Real Madrid vs. Barcelona', venue:'Banc Cafe', neighborhood:"Hell's Kitchen", distance:1.9, time:'Sun 3:00 PM', perks:['Tapas','Sangria'], live:false, when:'This weekend' },
     { id:12, sport:'NFL', match:'49ers vs. Seahawks', venue:'The Greens', neighborhood:'Williamsburg', distance:0.6, time:'Sun 1:00 PM', perks:['Mini Golf','Wings'], live:false, when:'This weekend' },
 ];
 
-const sportEmoji = { NFL:'🏈', NBA:'🏀', MLB:'⚾', NHL:'🏒', Soccer:'⚽', UFC:'🥊', F1:'🏎️', College:'🎓' };
-const sportClass = { NFL:'nfl', NBA:'nba', MLB:'mlb', NHL:'nhl', Soccer:'soccer', UFC:'ufc', F1:'f1', College:'college' };
+const sportData = {
+    NFL:     { emoji:'🏈', glow:'rgba(0,128,255,0.45)' },
+    NBA:     { emoji:'🏀', glow:'rgba(255,107,26,0.55)' },
+    MLB:     { emoji:'⚾', glow:'rgba(255,255,255,0.35)' },
+    NHL:     { emoji:'🏒', glow:'rgba(0,200,255,0.45)' },
+    Soccer:  { emoji:'⚽', glow:'rgba(0,217,111,0.5)' },
+    UFC:     { emoji:'🥊', glow:'rgba(255,59,48,0.5)' },
+    F1:      { emoji:'🏎️', glow:'rgba(255,59,48,0.45)' },
+    College: { emoji:'🎓', glow:'rgba(255,184,0,0.45)' },
+};
 
 const quickFilters = ['Live Now','Wings','Buckets','Happy Hour','Outdoor','Within 1 mi'];
 let activeChips = new Set();
@@ -498,7 +740,7 @@ let going = new Set();
 function buildChips() {
     const c = document.getElementById('chips');
     quickFilters.forEach(f => {
-        const el = document.createElement('span');
+        const el = document.createElement('div');
         el.className = 'chip';
         el.textContent = f;
         el.onclick = () => {
@@ -518,7 +760,8 @@ function matchesFilters(p) {
     for (const f of activeChips) {
         if (f === 'Live Now' && !p.live) return false;
         else if (f === 'Within 1 mi' && p.distance > 1) return false;
-        else if (['Wings','Buckets','Happy Hour','Outdoor'].includes(f) && !p.perks.some(pk => pk.toLowerCase().includes(f.toLowerCase()))) return false;
+        else if (['Wings','Buckets','Happy Hour','Outdoor'].includes(f)
+                 && !p.perks.some(pk => pk.toLowerCase().includes(f.toLowerCase()))) return false;
     }
     return true;
 }
@@ -526,38 +769,51 @@ function matchesFilters(p) {
 function render() {
     const grid = document.getElementById('grid');
     const filtered = parties.filter(matchesFilters).sort((a,b) => a.distance - b.distance);
-    document.getElementById('count').textContent = `${filtered.length} ${filtered.length === 1 ? 'spot' : 'spots'} nearby`;
+    document.getElementById('count').textContent =
+        `${filtered.length} ${filtered.length === 1 ? 'spot' : 'spots'} near you`;
     grid.innerHTML = '';
 
     if (filtered.length === 0) {
-        grid.innerHTML = `<div class="empty" style="grid-column:1/-1">
+        grid.innerHTML = `<div class="empty">
             <div class="big">🍺</div>
-            <h3>No watch parties match those filters</h3>
-            <p>Try widening your search or clearing a chip.</p>
+            <h3>No watch parties match</h3>
+            <p>Try clearing a filter or widening your search.</p>
         </div>`;
         return;
     }
 
     filtered.forEach(p => {
+        const s = sportData[p.sport];
         const isGoing = going.has(p.id);
-        const card = document.createElement('div');
+        const card = document.createElement('article');
         card.className = 'card';
         card.innerHTML = `
-            <div class="card-banner ${sportClass[p.sport]}">
-                ${sportEmoji[p.sport]}
-                ${p.live ? '<span class="live-badge">● LIVE</span>' : ''}
+            <div class="card-img" style="--glow:${s.glow}">
+                <div class="badges">
+                    <div class="badge">${p.sport}</div>
+                    ${p.live ? '<div class="badge live"><span class="dot"></span>LIVE</div>' : ''}
+                </div>
+                <div class="card-emoji">${s.emoji}</div>
             </div>
             <div class="card-body">
-                <div class="sport">${p.sport}</div>
-                <div class="match">${p.match}</div>
-                <div class="venue">🍻 ${p.venue}</div>
-                <div class="meta"><span class="icon">📍</span>${p.neighborhood} · ${p.distance} mi</div>
-                <div class="meta"><span class="icon">🕒</span>${p.time}</div>
-                <div class="card-footer">
-                    <div class="perks">${p.perks.map(x => `<span class="perk">${x}</span>`).join('')}</div>
+                <div class="card-match">${p.match}</div>
+                <div class="card-venue">
+                    <div class="venue-mark">🍺</div>
+                    <div class="venue-info">
+                        <div class="venue-name">${p.venue}</div>
+                        <div class="venue-loc">${p.neighborhood} · ${p.distance} mi</div>
+                    </div>
+                </div>
+                <div class="card-meta">
+                    <span>🕒 ${p.time}</span>
+                </div>
+                <div class="perks">${p.perks.map(x => `<span class="perk">${x}</span>`).join('')}</div>
+                <div class="card-foot">
                     <button class="rsvp ${isGoing ? 'going' : ''}" onclick="toggleGoing(${p.id})">
-                        ${isGoing ? '✓ Going' : "I'm In"}
+                        ${isGoing ? "✓ You're In" : "I'm In"}
                     </button>
+                    <button class="icon-btn" title="Save">♡</button>
+                    <button class="icon-btn" title="Share">↗</button>
                 </div>
             </div>
         `;
