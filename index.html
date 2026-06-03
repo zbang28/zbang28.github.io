@@ -332,6 +332,51 @@
     }
     .hero .lede { color: rgba(255,255,255,0.85); font-size: 17px; margin-bottom: 32px; }
 
+    .browse-map-btn {
+        position: relative;
+        display: inline-flex; align-items: center;
+        gap: 14px;
+        background: #0e0f11; color: white;
+        border: 2px solid rgba(255,255,255,0.1);
+        padding: 8px 8px 8px 32px;
+        border-radius: 999px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 800; font-size: 16px;
+        letter-spacing: -0.01em;
+        cursor: pointer;
+        box-shadow:
+            0 16px 32px rgba(0,0,0,0.45),
+            inset 0 1px 0 rgba(255,255,255,0.12);
+        transition: transform 0.25s cubic-bezier(.2,.7,.2,1), box-shadow 0.25s;
+        overflow: hidden;
+    }
+    .browse-map-btn::before {
+        content: ''; position: absolute; inset: 0;
+        background: linear-gradient(120deg, transparent 40%, rgba(255,255,255,0.08) 50%, transparent 60%);
+        transform: translateX(-120%);
+        transition: transform 0.6s ease;
+    }
+    .browse-map-btn:hover {
+        transform: translateY(-2px);
+        box-shadow:
+            0 22px 40px rgba(0,0,0,0.55),
+            0 0 0 2px rgba(0,217,111,0.5);
+    }
+    .browse-map-btn:hover::before { transform: translateX(120%); }
+    .browse-map-btn:active { transform: translateY(0) scale(0.98); }
+
+    .browse-map-arrow {
+        display: inline-grid; place-items: center;
+        width: 42px; height: 42px;
+        border-radius: 50%;
+        background: var(--green); color: #0e0f11;
+        font-size: 18px; font-weight: 900;
+        line-height: 1;
+        box-shadow: 0 4px 12px rgba(0,217,111,0.5);
+        transition: transform 0.25s cubic-bezier(.2,.7,.2,1);
+    }
+    .browse-map-btn:hover .browse-map-arrow { transform: translateX(3px) rotate(-8deg); }
+
     .hero-search {
         display: flex; gap: 0;
         background: white; color: var(--text);
@@ -1585,6 +1630,10 @@
             <div class="hero-eyebrow"><span class="live-dot"></span><span id="hero-live-count">47 live · 12,840 fans tonight</span></div>
             <h1>Pick a <span class="gradient">sport.</span><br>Find your <span class="gradient">crowd.</span></h1>
             <p class="lede">Choose your game below — we'll show you every watch party, parade, and pickup happening near you.</p>
+            <button class="browse-map-btn" onclick="openMapView()">
+                <span>Browse the map</span>
+                <span class="browse-map-arrow">→</span>
+            </button>
         </div>
     </div>
 
@@ -2545,6 +2594,15 @@ function buildFeatured() {
 function pickSport(sport) {
     activeSport = sport;
     route('events');
+}
+
+function openMapView() {
+    activeSport = null;
+    route('events');
+    setTimeout(() => {
+        const wrap = document.querySelector('.split');
+        if (wrap) wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
 }
 
 function renderSportChip() {
