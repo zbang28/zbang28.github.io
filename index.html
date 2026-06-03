@@ -525,24 +525,11 @@
     /* ===== Matchday page ===== */
     .matchday-head {
         position: relative;
-        background:
-            radial-gradient(ellipse 70% 60% at 20% 0%, rgba(168,85,247,0.35), transparent 60%),
-            radial-gradient(ellipse 70% 60% at 90% 100%, rgba(255,62,181,0.3), transparent 60%),
-            linear-gradient(135deg, #1a0a2c 0%, #0e0f11 70%);
-        padding: 36px 24px 44px;
-        color: white;
+        background: var(--bg-alt);
+        border-bottom: 1px solid var(--border);
+        padding: 32px 24px 40px;
+        color: var(--text);
         overflow: hidden;
-    }
-    .matchday-head::before {
-        content: ''; position: absolute; inset: 0;
-        background-image:
-            radial-gradient(circle at 12% 25%, white 1.5px, transparent 2.5px),
-            radial-gradient(circle at 78% 18%, white 1.2px, transparent 2px),
-            radial-gradient(circle at 35% 80%, white 1.3px, transparent 2.2px),
-            radial-gradient(circle at 88% 75%, white 1px, transparent 1.8px);
-        background-size: 180px 200px, 220px 240px, 200px 220px, 240px 200px;
-        opacity: 0.5;
-        pointer-events: none;
     }
     .matchday-head-inner {
         position: relative; z-index: 1;
@@ -550,29 +537,29 @@
         text-align: center;
     }
     .matchday-back {
-        background: rgba(255,255,255,0.08);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255,255,255,0.15);
-        color: white;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--text);
         padding: 7px 14px;
         border-radius: 999px;
         font: inherit; font-size: 12px; font-weight: 700;
         cursor: pointer;
-        margin-bottom: 24px;
+        margin-bottom: 22px;
         float: left;
     }
-    .matchday-back:hover { background: rgba(255,255,255,0.16); }
+    .matchday-back:hover { border-color: var(--text-dim); }
     .matchday-eyebrow {
         display: inline-flex; align-items: center; gap: 6px;
-        background: var(--grad-2);
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--text);
         padding: 5px 12px;
         border-radius: 999px;
-        font-size: 11px; font-weight: 900;
+        font-size: 11px; font-weight: 800;
         letter-spacing: 2px; text-transform: uppercase;
         margin-bottom: 14px;
-        box-shadow: 0 6px 18px rgba(255,62,181,0.4);
     }
-    .matchday-eyebrow .spark { font-size: 14px; }
+    .matchday-eyebrow .spark { font-size: 14px; color: var(--red); }
     .matchday-title {
         font-family: 'Inter', sans-serif;
         font-weight: 900;
@@ -581,12 +568,12 @@
         margin-bottom: 10px;
     }
     .matchday-title .grad {
-        background: var(--grad-2);
+        background: var(--grad-1);
         -webkit-background-clip: text; background-clip: text;
         color: transparent;
     }
     .matchday-sub {
-        color: rgba(255,255,255,0.75);
+        color: var(--text-dim);
         font-size: 15px;
         max-width: 480px; margin: 0 auto 20px;
     }
@@ -596,42 +583,65 @@
         justify-content: center;
         margin-top: 14px;
     }
-    .matchday-quick .ai-sugg {
-        background: rgba(255,255,255,0.08);
-        border-color: rgba(255,255,255,0.18);
-        color: rgba(255,255,255,0.85);
-    }
-    .matchday-quick .ai-sugg:hover {
-        background: rgba(255,255,255,0.16);
-        color: white; border-color: white;
-    }
 
     .matchday-result {
-        display: grid;
-        grid-template-columns: minmax(360px, 460px) 1fr;
-        height: calc(100vh - 64px);
         position: relative;
-        margin-top: 0;
-    }
-    @media (max-width: 880px) {
-        .matchday-result { grid-template-columns: 1fr; height: auto; }
-        .matchday-map-wrap { height: 420px; }
-    }
-    .matchday-stops {
-        overflow-y: auto;
-        padding: 24px;
-        background: var(--bg);
-        border-right: 1px solid var(--border);
-        display: flex; flex-direction: column; gap: 14px;
+        height: calc(100vh - 64px);
     }
     .matchday-map-wrap {
-        position: relative;
+        position: absolute; inset: 0;
         background: var(--surface-2);
-        height: 100%;
     }
     #matchday-map { width: 100%; height: 100%; }
+    .matchday-stops {
+        position: absolute;
+        top: 16px; left: 16px; bottom: 16px;
+        width: 380px;
+        max-width: calc(100% - 32px);
+        overflow-y: auto;
+        background: rgba(14,15,17,0.92);
+        backdrop-filter: blur(14px);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 18px;
+        padding: 20px;
+        display: flex; flex-direction: column; gap: 12px;
+        z-index: 1000;
+        color: white;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+    .matchday-stops::-webkit-scrollbar { width: 6px; }
+    .matchday-stops::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+    @media (max-width: 700px) {
+        .matchday-stops { width: auto; right: 16px; bottom: 16px; top: 50%; }
+    }
+    .matchday-new {
+        align-self: flex-start;
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.18);
+        color: white;
+        padding: 7px 14px;
+        border-radius: 999px;
+        font-size: 12px; font-weight: 700;
+        cursor: pointer;
+        margin-bottom: 4px;
+    }
+    .matchday-new:hover { background: rgba(255,255,255,0.16); }
+    /* Stop card in dark floating panel */
+    .matchday-stops .stop-card {
+        background: rgba(255,255,255,0.06);
+        border-color: rgba(255,255,255,0.12);
+        color: white;
+    }
+    .matchday-stops .stop-card:hover {
+        border-color: var(--stop-color, var(--red));
+        background: rgba(255,255,255,0.1);
+    }
+    .matchday-stops .stop-card-venue { color: white; }
+    .matchday-stops .stop-card-meta { color: rgba(255,255,255,0.65); }
+    .matchday-stops .stop-card-tag { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.75); }
+    .matchday-stops .stop-card-num::after { background: rgba(255,255,255,0.12); }
     .matchday-map-legend {
-        position: absolute; top: 16px; left: 16px; z-index: 1000;
+        position: absolute; bottom: 24px; right: 16px; z-index: 1000;
         background: rgba(14,15,17,0.85);
         backdrop-filter: blur(10px);
         border: 1px solid rgba(255,255,255,0.1);
@@ -3181,7 +3191,7 @@
 
 <!-- ============ MATCHDAY PAGE ============ -->
 <section class="page" data-page="matchday">
-    <div class="matchday-head">
+    <div class="matchday-head" id="matchday-head">
         <div class="matchday-head-inner">
             <button class="matchday-back" onclick="route('home')">← Back</button>
             <div class="matchday-eyebrow">
@@ -4166,6 +4176,9 @@ function buildMatchday() {
 
     if (stops.length < 2) { toast('Not enough venues to plan a route'); return; }
 
+    // Hide the prompt header — map takes the full page
+    document.getElementById('matchday-head').style.display = 'none';
+
     // Show result panel
     const result = document.getElementById('matchday-result');
     result.style.display = '';
@@ -4173,10 +4186,11 @@ function buildMatchday() {
     // Render stops
     const wrap = document.getElementById('matchday-stops');
     wrap.innerHTML = `
-        <div style="font-size:11px;font-weight:800;color:var(--text-mute);letter-spacing:2px;text-transform:uppercase;margin-bottom:2px">
+        <button class="matchday-new" onclick="resetMatchday()">← New plan</button>
+        <div style="font-size:10px;font-weight:800;color:rgba(255,255,255,0.55);letter-spacing:2px;text-transform:uppercase">
             ${country.flag} ${country.name} · ${targetBorough}
         </div>
-        <div style="font-family:'Inter',sans-serif;font-weight:900;font-size:22px;letter-spacing:-0.03em;margin-bottom:14px;color:var(--text)">
+        <div style="font-family:'Inter',sans-serif;font-weight:900;font-size:20px;letter-spacing:-0.03em;margin-bottom:8px;color:white">
             Your matchday in ${stops.length} stops
         </div>
     ` + stops.map((s, i) => `
@@ -4242,6 +4256,14 @@ function zoomMatchdayStop(i) {
     if (!s || !matchdayMap) return;
     matchdayMap.flyTo([s.p.lat, s.p.lng], 15, { duration: 0.7 });
     setTimeout(() => matchdayMarkers[i]?.openPopup(), 700);
+}
+
+function resetMatchday() {
+    document.getElementById('matchday-head').style.display = '';
+    document.getElementById('matchday-result').style.display = 'none';
+    const ta = document.getElementById('matchday-prompt');
+    if (ta) { ta.value = ''; autosizeTextarea(ta); refreshMatchdaySend(); ta.focus(); }
+    window.scrollTo(0, 0);
 }
 function closeAI() { document.getElementById('ai-modal').classList.remove('open'); }
 function fillPrompt(el) {
