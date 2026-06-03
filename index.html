@@ -803,6 +803,94 @@
     }
     .country:hover .flag { transform: scale(1.06); }
 
+    /* ===== Worldcup-only visibility (controlled via JS) ===== */
+    .worldcup-only { display: none; }
+
+    /* ===== World Cup vibrant hero ===== */
+    .worldcup-hero {
+        position: relative;
+        overflow: hidden;
+        background:
+            radial-gradient(ellipse 60% 80% at 80% 0%, rgba(255,184,0,0.25), transparent 60%),
+            radial-gradient(ellipse 50% 80% at 20% 100%, rgba(168,85,247,0.25), transparent 60%),
+            linear-gradient(135deg, #0e0f11 0%, #1a0a2c 50%, #0e0f11 100%);
+        color: white;
+        padding: 56px 32px;
+    }
+    .worldcup-stripes {
+        position: absolute;
+        top: 0; left: 0; right: 0; height: 8px;
+        background: linear-gradient(90deg,
+            #ff2d3a 0% 14%,
+            #ff7a1a 14% 28%,
+            #ffb800 28% 42%,
+            #00d96f 42% 56%,
+            #06d6f7 56% 70%,
+            #2563eb 70% 84%,
+            #a855f7 84% 100%);
+    }
+    .worldcup-confetti {
+        position: absolute; inset: 0;
+        background-image:
+            radial-gradient(circle at 15% 35%, #ff2d3a 3px, transparent 4px),
+            radial-gradient(circle at 85% 25%, #ffb800 3px, transparent 4px),
+            radial-gradient(circle at 70% 70%, #00d96f 3px, transparent 4px),
+            radial-gradient(circle at 25% 80%, #06d6f7 3px, transparent 4px),
+            radial-gradient(circle at 92% 90%, #a855f7 3px, transparent 4px),
+            radial-gradient(circle at 8% 12%, #ff7a1a 2px, transparent 3px),
+            radial-gradient(circle at 55% 18%, #ff3eb5 2px, transparent 3px),
+            radial-gradient(circle at 45% 92%, #2563eb 3px, transparent 4px);
+        background-size: 100% 100%;
+        opacity: 0.7;
+        pointer-events: none;
+    }
+    .worldcup-hero-inner {
+        position: relative; z-index: 1;
+        max-width: 1280px; margin: 0 auto;
+    }
+    .worldcup-eyebrow {
+        display: inline-block;
+        padding: 6px 14px;
+        background: white; color: #0e0f11;
+        font-family: 'Inter', sans-serif;
+        font-weight: 900; font-size: 11px;
+        letter-spacing: 3px;
+        border-radius: 999px;
+        margin-bottom: 18px;
+    }
+    .worldcup-title {
+        font-family: 'Inter', sans-serif;
+        font-weight: 900;
+        font-size: clamp(48px, 7vw, 88px);
+        line-height: 0.92; letter-spacing: -0.04em;
+        margin-bottom: 14px;
+    }
+    .worldcup-title em {
+        font-style: normal;
+        background: linear-gradient(135deg, #ff2d3a, #ff7a1a 40%, #ffb800 80%);
+        -webkit-background-clip: text; background-clip: text;
+        color: transparent;
+    }
+    .worldcup-sub {
+        font-size: 16px; color: rgba(255,255,255,0.78);
+        max-width: 540px;
+    }
+
+    /* World Cup nav tab — rainbow underline */
+    .tab.highlight {
+        position: relative;
+        color: white !important;
+        font-weight: 900;
+    }
+    .tab.highlight::before {
+        content: '';
+        position: absolute;
+        left: 6px; right: 6px; bottom: 4px;
+        height: 3px; border-radius: 2px;
+        background: linear-gradient(90deg, #ff2d3a, #ffb800, #00d96f, #06d6f7, #a855f7);
+        opacity: 0.95;
+    }
+
     /* ===== Borough banner ===== */
     .borough-banner {
         background: linear-gradient(135deg, #fff8e6, #ffeed4);
@@ -1963,7 +2051,17 @@
 <!-- ============ EVENTS PAGE ============ -->
 <section class="page" data-page="events">
 
-    <div class="country-strip">
+    <div class="worldcup-hero worldcup-only">
+        <div class="worldcup-stripes"></div>
+        <div class="worldcup-hero-inner">
+            <div class="worldcup-eyebrow">FIFA · 2026 · NORTH AMERICA</div>
+            <h1 class="worldcup-title">World <em>Cup</em><br>2026.</h1>
+            <p class="worldcup-sub">Every match. Every country. Find the watch party where your flag flies highest.</p>
+        </div>
+        <div class="worldcup-confetti"></div>
+    </div>
+
+    <div class="country-strip worldcup-only">
         <div class="country-strip-inner">
             <span class="country-strip-label">Supporting:</span>
             <div class="countries" id="countries"></div>
@@ -2264,13 +2362,26 @@ let chatExtra = {};
 // ============ ROUTING ============
 function route(name) {
     activeRoute = name;
-    document.querySelectorAll('.page').forEach(p => p.classList.toggle('active', p.dataset.page === name));
-    document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.route === name && !t.classList.contains('highlight')));
+    const pageKey = name === 'worldcup' ? 'events' : name;
+    document.querySelectorAll('.page').forEach(p => p.classList.toggle('active', p.dataset.page === pageKey));
+    document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.route === name));
+    // Toggle worldcup-only elements
+    document.querySelectorAll('.worldcup-only').forEach(el => {
+        el.style.display = name === 'worldcup' ? '' : 'none';
+    });
+    // Lock sport to Soccer on worldcup, otherwise clear any sport filter
+    if (name === 'worldcup') activeSport = 'Soccer';
+    else if (name === 'events' && !window._pickedSport) activeSport = null;
+    window._pickedSport = false;
+
     if (location.hash !== '#/' + name) history.replaceState(null, '', '#/' + name);
     window.scrollTo(0, 0);
     if (name === 'fanhub') renderFanHub();
-    if (name === 'events') { renderSportChip(); applyFilters(); if (currentView === 'map') setTimeout(() => mapInstance?.invalidateSize(), 50); }
-    if (name === 'worldcup') { activeSport = 'Soccer'; route('events'); return; }
+    if (name === 'events' || name === 'worldcup') {
+        renderSportChip();
+        applyFilters();
+        if (currentView === 'map') setTimeout(() => mapInstance?.invalidateSize(), 50);
+    }
 }
 
 function initRouting() {
@@ -2278,7 +2389,7 @@ function initRouting() {
         t.addEventListener('click', () => route(t.dataset.route));
     });
     const hash = location.hash.replace('#/', '');
-    route(['home','events','fanhub'].includes(hash) ? hash : 'home');
+    route(['home','events','fanhub','worldcup'].includes(hash) ? hash : 'home');
 }
 
 // ============ COUNTRIES ============
@@ -2354,7 +2465,7 @@ let activeCardId = null;
 let lastFiltered = [];
 
 function applyFilters() {
-    if (activeRoute !== 'events') return;
+    if (activeRoute !== 'events' && activeRoute !== 'worldcup') return;
     const filtered = parties
         .filter(p => p.eventType === activeSubtab)
         .filter(matchesFilters)
@@ -2916,6 +3027,7 @@ function buildFeatured() {
 
 function pickSport(sport) {
     activeSport = sport;
+    window._pickedSport = true;
     route('events');
 }
 
@@ -2986,7 +3098,7 @@ applyFilters();
 initRouting();
 window.addEventListener('hashchange', () => {
     const hash = location.hash.replace('#/', '');
-    if (['home','events','fanhub'].includes(hash)) route(hash);
+    if (['home','events','fanhub','worldcup'].includes(hash)) route(hash);
 });
 </script>
 
