@@ -1250,6 +1250,24 @@
     }
     @media (max-width: 900px) { .fanhub-grid { grid-template-columns: 1fr; } }
 
+    .fanhub-polls-head {
+        margin-top: 56px; margin-bottom: 12px;
+        display: flex; align-items: baseline; justify-content: space-between;
+        gap: 16px; flex-wrap: wrap;
+    }
+    .fanhub-polls-head h2 {
+        font-family: 'Inter', sans-serif;
+        font-weight: 900; font-size: clamp(28px, 3vw, 36px);
+        letter-spacing: -0.03em; line-height: 1;
+    }
+    .fanhub-polls-head h2 em {
+        font-style: normal;
+        background: var(--grad-1);
+        -webkit-background-clip: text; background-clip: text;
+        color: transparent;
+    }
+    .fanhub-polls-head p { color: var(--text-dim); font-size: 14px; }
+
     .panel {
         background: var(--surface); border: 1px solid var(--border);
         border-radius: 12px; overflow: hidden;
@@ -1692,7 +1710,6 @@
             <button class="tab" data-route="home">Home</button>
             <button class="tab" data-route="events">Events</button>
             <button class="tab" data-route="fanhub">Fan Hub</button>
-            <button class="tab" data-route="polls">Polls</button>
             <button class="tab highlight" data-route="worldcup">World Cup</button>
         </div>
         <div class="nav-right">
@@ -1736,7 +1753,7 @@
                         <span class="browse-item-arrow">→</span>
                     </button>
                     <div class="browse-divider"></div>
-                    <button class="browse-item" onclick="openMapView();route('polls')">
+                    <button class="browse-item" onclick="closeBrowseMenu();route('fanhub');">
                         <span class="browse-item-label">
                             <span class="browse-item-name">Community polls</span>
                             <span class="browse-item-sub">Vote on best spots</span>
@@ -1835,16 +1852,11 @@
                 </form>
             </div>
         </div>
-    </div>
-</section>
 
-<!-- ============ POLLS PAGE ============ -->
-<section class="page" data-page="polls">
-    <div class="page-head">
-        <h1><em>Community</em> Polls</h1>
-        <p>Vote on where the best watch parties should happen next.</p>
-    </div>
-    <div class="page-content">
+        <div class="fanhub-polls-head">
+            <h2><em>Community</em> Polls</h2>
+            <p>Vote on where the best watch parties should happen next.</p>
+        </div>
         <div class="polls-grid" id="polls-grid"></div>
     </div>
 </section>
@@ -2054,8 +2066,7 @@ function route(name) {
     document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.route === name && !t.classList.contains('highlight')));
     if (location.hash !== '#/' + name) history.replaceState(null, '', '#/' + name);
     window.scrollTo(0, 0);
-    if (name === 'fanhub') { renderLineup(); renderChat(); }
-    if (name === 'polls') renderPolls();
+    if (name === 'fanhub') { renderLineup(); renderChat(); renderPolls(); }
     if (name === 'events') { renderSportChip(); applyFilters(); if (currentView === 'map') setTimeout(() => mapInstance?.invalidateSize(), 50); }
     if (name === 'worldcup') { activeSport = 'Soccer'; route('events'); return; }
 }
@@ -2065,7 +2076,7 @@ function initRouting() {
         t.addEventListener('click', () => route(t.dataset.route));
     });
     const hash = location.hash.replace('#/', '');
-    route(['home','events','fanhub','polls'].includes(hash) ? hash : 'home');
+    route(['home','events','fanhub'].includes(hash) ? hash : 'home');
 }
 
 // ============ COUNTRIES ============
@@ -2086,8 +2097,7 @@ function buildCountries() {
                 el.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
             }
             applyFilters();
-            if (activeRoute === 'fanhub') { renderLineup(); renderChat(); }
-            if (activeRoute === 'polls') renderPolls();
+            if (activeRoute === 'fanhub') { renderLineup(); renderChat(); renderPolls(); }
         };
         c.appendChild(el);
     });
@@ -2612,7 +2622,6 @@ function unlockBoroughs() {
     toast('All boroughs unlocked');
     document.getElementById('borough-banner').innerHTML = '';
     applyFilters();
-    if (activeRoute === 'polls') renderPolls();
 }
 
 function renderBoroughBanner() {
@@ -2761,7 +2770,7 @@ applyFilters();
 initRouting();
 window.addEventListener('hashchange', () => {
     const hash = location.hash.replace('#/', '');
-    if (['home','events','fanhub','polls'].includes(hash)) route(hash);
+    if (['home','events','fanhub'].includes(hash)) route(hash);
 });
 </script>
 
