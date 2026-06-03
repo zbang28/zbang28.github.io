@@ -3,70 +3,44 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Lineup — Watch Parties Near You</title>
+<title>The Lineup — Find watch parties near you</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
     :root {
-        --bg: #0a0a0c;
-        --bg-2: #111114;
-        --surface: #16171c;
-        --surface-2: #1d1f26;
-        --border: #2a2d36;
-        --text: #f7f7f8;
-        --text-dim: #a3a6b1;
-        --text-mute: #6b6f7a;
-
-        --red: #e51b23;
-        --red-bright: #ff2630;
-        --amber: #ffb800;
-        --orange: #ff6b1a;
-        --green: #00d96f;
-        --blue: #3b82f6;
-        --purple: #a855f7;
-        --pink: #ec4899;
-        --cyan: #06b6d4;
+        --bg: #0b0c0e;
+        --bg-2: #111317;
+        --surface: #15171c;
+        --surface-2: #1c1f25;
+        --border: #23262d;
+        --border-2: #2c3038;
+        --text: #f4f5f7;
+        --text-dim: #9aa0ab;
+        --text-mute: #6b6f78;
+        --accent: #e85d2c;
+        --accent-hover: #f06d3f;
+        --green: #2ec97a;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { background: var(--bg); }
 
     body {
-        font-family: 'Inter', system-ui, sans-serif;
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
         color: var(--text);
-        min-height: 100vh;
-        line-height: 1.5;
+        line-height: 1.55;
+        font-size: 15px;
         -webkit-font-smoothing: antialiased;
-        overflow-x: hidden;
+        font-feature-settings: 'ss01', 'cv11';
     }
 
-    /* Vibrant backdrop */
-    .backdrop {
-        position: fixed;
-        inset: 0;
-        z-index: -2;
-        background:
-            radial-gradient(ellipse 60% 50% at 85% 10%, rgba(229,27,35,0.20), transparent 60%),
-            radial-gradient(ellipse 50% 40% at 10% 30%, rgba(168,85,247,0.15), transparent 60%),
-            radial-gradient(ellipse 50% 50% at 50% 100%, rgba(0,217,111,0.10), transparent 60%),
-            radial-gradient(ellipse 40% 30% at 90% 90%, rgba(255,184,0,0.12), transparent 60%),
-            var(--bg);
-    }
-
-    .grain {
-        position: fixed;
-        inset: 0;
-        z-index: -1;
-        pointer-events: none;
-        opacity: 0.4;
-        background-image:
-            radial-gradient(circle at 15% 20%, rgba(255,255,255,0.5) 0.5px, transparent 1px),
-            radial-gradient(circle at 70% 60%, rgba(255,255,255,0.4) 0.5px, transparent 1px),
-            radial-gradient(circle at 40% 90%, rgba(255,255,255,0.3) 0.5px, transparent 1px);
-        background-size: 200px 200px, 250px 250px, 180px 180px;
+    .container {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 0 28px;
     }
 
     /* Nav */
@@ -74,240 +48,169 @@
         position: sticky;
         top: 0;
         z-index: 100;
-        background: rgba(10,10,12,0.85);
-        backdrop-filter: blur(20px);
+        background: rgba(11,12,14,0.85);
+        backdrop-filter: blur(14px);
         border-bottom: 1px solid var(--border);
     }
 
     .nav-inner {
-        max-width: 1340px;
-        margin: 0 auto;
-        padding: 16px 28px;
         display: flex;
         align-items: center;
-        gap: 28px;
+        gap: 36px;
+        height: 64px;
     }
 
     .brand {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 10px;
+        font-weight: 600;
+        font-size: 16px;
+        letter-spacing: -0.01em;
+        color: var(--text);
+        text-decoration: none;
     }
 
     .brand-mark {
-        width: 38px;
-        height: 38px;
-        background: var(--red);
+        width: 26px;
+        height: 26px;
+        border-radius: 7px;
+        background: var(--accent);
         display: grid;
         place-items: center;
         color: white;
-        font-family: 'Archivo Black', sans-serif;
-        font-size: 22px;
-        letter-spacing: -1px;
-        transform: skewX(-8deg);
-        box-shadow: 4px 4px 0 #000;
-    }
-
-    .brand-name {
-        font-family: 'Anton', sans-serif;
-        font-size: 26px;
-        letter-spacing: 2px;
-        text-transform: uppercase;
+        font-weight: 700;
+        font-size: 13px;
     }
 
     .nav-links {
         display: flex;
         gap: 28px;
-        margin-left: 12px;
     }
 
     .nav-links a {
         color: var(--text-dim);
         text-decoration: none;
-        font-size: 13px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1px;
+        font-size: 14px;
+        font-weight: 500;
+        transition: color 0.15s;
     }
     .nav-links a:hover { color: var(--text); }
 
     .nav-right { margin-left: auto; display: flex; gap: 10px; align-items: center; }
 
-    .nav-cta {
-        padding: 10px 18px;
-        background: var(--red);
-        color: white;
-        border: none;
-        font-family: 'Anton', sans-serif;
+    .btn {
+        font-family: inherit;
+        font-weight: 500;
         font-size: 14px;
-        letter-spacing: 1.5px;
-        text-transform: uppercase;
+        padding: 8px 16px;
+        border-radius: 8px;
         cursor: pointer;
-        transition: background 0.15s, transform 0.1s;
+        border: 1px solid transparent;
+        transition: all 0.15s;
     }
-    .nav-cta:hover { background: var(--red-bright); transform: translateY(-1px); }
 
-    @media (max-width: 800px) {
+    .btn-ghost {
+        background: transparent;
+        color: var(--text-dim);
+    }
+    .btn-ghost:hover { color: var(--text); }
+
+    .btn-primary {
+        background: var(--text);
+        color: var(--bg);
+        border-color: var(--text);
+    }
+    .btn-primary:hover { background: #e5e6e9; }
+
+    @media (max-width: 760px) {
         .nav-links { display: none; }
     }
 
     /* Hero */
     .hero {
-        max-width: 1340px;
-        margin: 0 auto;
-        padding: 60px 28px 40px;
-        position: relative;
+        padding: 96px 0 56px;
+        max-width: 760px;
     }
 
-    .hero-grid {
-        display: grid;
-        grid-template-columns: 1.4fr 1fr;
-        gap: 40px;
-        align-items: center;
-    }
-
-    @media (max-width: 900px) {
-        .hero-grid { grid-template-columns: 1fr; }
-        .hero-art { display: none; }
-    }
-
-    .kicker {
+    .eyebrow {
         display: inline-flex;
         align-items: center;
-        gap: 10px;
-        padding: 6px 12px;
-        background: var(--red);
-        color: white;
-        font-family: 'Archivo Black', sans-serif;
-        font-size: 11px;
-        letter-spacing: 2px;
-        text-transform: uppercase;
+        gap: 8px;
+        padding: 4px 11px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        color: var(--text-dim);
+        font-size: 12px;
+        font-weight: 500;
         margin-bottom: 24px;
-        transform: skewX(-8deg);
     }
 
-    .kicker > * { transform: skewX(8deg); }
-    .kicker .dot {
-        width: 8px; height: 8px; background: white; border-radius: 50%;
-        animation: pulse 1.4s infinite;
+    .eyebrow .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--green);
+        box-shadow: 0 0 0 3px rgba(46,201,122,0.15);
     }
 
     .hero h1 {
-        font-family: 'Anton', sans-serif;
-        font-size: clamp(64px, 9vw, 132px);
-        line-height: 0.88;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        margin-bottom: 24px;
+        font-family: 'Instrument Serif', Georgia, serif;
+        font-weight: 400;
+        font-size: clamp(48px, 6.5vw, 78px);
+        line-height: 1.02;
+        letter-spacing: -0.025em;
+        margin-bottom: 20px;
+        color: var(--text);
     }
 
-    .hero h1 .stroke {
-        -webkit-text-stroke: 2px var(--text);
-        color: transparent;
-    }
-
-    .hero h1 .red {
-        color: var(--red);
+    .hero h1 em {
         font-style: italic;
-        display: inline-block;
+        color: var(--accent);
     }
 
     .hero p.lede {
-        font-size: clamp(16px, 1.5vw, 19px);
+        font-size: 18px;
         color: var(--text-dim);
-        max-width: 540px;
-        margin-bottom: 36px;
+        max-width: 580px;
+        line-height: 1.55;
     }
-
-    /* Hero art — stack of magazine covers */
-    .hero-art {
-        position: relative;
-        height: 480px;
-    }
-
-    .mag {
-        position: absolute;
-        width: 240px;
-        height: 320px;
-        border: 6px solid var(--text);
-        box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-    }
-
-    .mag .mag-band {
-        background: var(--text);
-        color: var(--bg);
-        padding: 6px 10px;
-        font-family: 'Archivo Black', sans-serif;
-        font-size: 10px;
-        letter-spacing: 2px;
-        text-align: center;
-        text-transform: uppercase;
-    }
-
-    .mag .mag-body {
-        flex: 1;
-        display: grid;
-        place-items: center;
-        font-size: 80px;
-        position: relative;
-    }
-
-    .mag .mag-title {
-        background: var(--text);
-        color: var(--bg);
-        padding: 8px 10px;
-        font-family: 'Anton', sans-serif;
-        font-size: 22px;
-        letter-spacing: 1px;
-        text-align: center;
-        text-transform: uppercase;
-    }
-
-    .mag-1 { background: linear-gradient(160deg, #e51b23, #6a0a0e); top: 20px; left: 0; transform: rotate(-8deg); }
-    .mag-2 { background: linear-gradient(160deg, #00d96f, #0a5a2e); top: 60px; left: 140px; transform: rotate(4deg); z-index: 2; }
-    .mag-3 { background: linear-gradient(160deg, #ffb800, #8a6010); top: 130px; left: 280px; transform: rotate(-3deg); }
 
     /* Search */
-    .search-wrap {
-        max-width: 1340px;
-        margin: 0 auto;
-        padding: 0 28px 32px;
-    }
-
     .search {
+        margin-top: 40px;
         background: var(--surface);
         border: 1px solid var(--border);
-        padding: 14px;
+        border-radius: 14px;
+        padding: 6px;
         display: grid;
         grid-template-columns: 1.3fr 1fr 1fr 1fr auto;
-        gap: 10px;
-        box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+        gap: 2px;
+        max-width: 100%;
     }
 
     @media (max-width: 880px) {
-        .search { grid-template-columns: 1fr 1fr; }
-        .search .go { grid-column: 1 / -1; }
+        .search { grid-template-columns: 1fr 1fr; padding: 8px; gap: 6px; }
+        .search .go { grid-column: 1 / -1; padding: 12px; }
     }
 
     .field {
-        background: var(--surface-2);
         padding: 10px 14px;
+        border-radius: 10px;
         transition: background 0.15s;
+        cursor: pointer;
+        position: relative;
     }
-
-    .field:focus-within { background: #252832; }
+    .field:hover { background: var(--surface-2); }
+    .field:focus-within { background: var(--surface-2); }
 
     .field label {
         display: block;
-        font-family: 'Archivo Black', sans-serif;
-        font-size: 10px;
+        font-size: 11px;
         color: var(--text-mute);
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        margin-bottom: 4px;
+        font-weight: 500;
+        margin-bottom: 2px;
     }
 
     .field input, .field select {
@@ -315,65 +218,69 @@
         background: transparent;
         border: none;
         color: var(--text);
-        font-size: 15px;
+        font-size: 14px;
         font-weight: 500;
         font-family: inherit;
         outline: none;
         cursor: pointer;
+        padding: 0;
     }
 
-    .field select option { background: var(--surface-2); }
+    .field select option { background: var(--surface-2); color: var(--text); }
 
     .go {
-        background: var(--red);
+        background: var(--accent);
         color: white;
         border: none;
-        padding: 0 32px;
-        font-family: 'Anton', sans-serif;
-        font-size: 18px;
-        letter-spacing: 2px;
-        text-transform: uppercase;
+        padding: 0 22px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        font-family: inherit;
         cursor: pointer;
-        transition: background 0.15s, transform 0.1s;
+        transition: background 0.15s;
+        display: grid;
+        place-items: center;
     }
-    .go:hover { background: var(--red-bright); transform: translateY(-1px); }
+    .go:hover { background: var(--accent-hover); }
 
-    /* Marquee strip */
-    .marquee {
-        background: var(--red);
-        color: white;
-        padding: 12px 0;
-        overflow: hidden;
-        position: relative;
-        margin-bottom: 48px;
-        border-top: 1px solid #000;
-        border-bottom: 1px solid #000;
-    }
-
-    .marquee-track {
+    /* Venue type pills */
+    .vtypes {
+        padding: 24px 0 8px;
         display: flex;
-        gap: 48px;
+        gap: 8px;
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+    .vtypes::-webkit-scrollbar { display: none; }
+
+    .vtype {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px 14px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        color: var(--text-dim);
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
         white-space: nowrap;
-        animation: scroll 30s linear infinite;
-        font-family: 'Anton', sans-serif;
-        font-size: 18px;
-        letter-spacing: 3px;
-        text-transform: uppercase;
+        transition: all 0.15s;
+        flex-shrink: 0;
     }
-
-    .marquee-track span { display: inline-flex; align-items: center; gap: 12px; }
-    .marquee-track .sep { font-size: 12px; opacity: 0.7; }
-
-    @keyframes scroll {
-        from { transform: translateX(0); }
-        to { transform: translateX(-50%); }
+    .vtype:hover { color: var(--text); border-color: var(--border-2); }
+    .vtype.active {
+        background: var(--text);
+        color: var(--bg);
+        border-color: var(--text);
     }
+    .vtype .em { font-size: 14px; }
 
     /* Section */
     .section {
-        max-width: 1340px;
-        margin: 0 auto;
-        padding: 16px 28px 32px;
+        padding: 32px 0 24px;
     }
 
     .sec-head {
@@ -385,33 +292,23 @@
         flex-wrap: wrap;
     }
 
-    .sec-head .title {
-        display: flex;
-        align-items: baseline;
-        gap: 14px;
-    }
-
-    .sec-head .bar {
-        width: 8px;
-        height: 38px;
-        background: var(--red);
-        display: inline-block;
-    }
-
     .sec-head h2 {
-        font-family: 'Anton', sans-serif;
-        font-size: clamp(34px, 4.5vw, 52px);
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        line-height: 1;
+        font-family: 'Instrument Serif', Georgia, serif;
+        font-weight: 400;
+        font-size: 32px;
+        letter-spacing: -0.02em;
+        line-height: 1.1;
     }
 
     .sec-head .sub {
-        color: var(--text-dim);
-        font-size: 13px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
+        color: var(--text-mute);
+        font-size: 14px;
+    }
+
+    .sec-controls {
+        display: flex;
+        gap: 12px;
+        align-items: center;
     }
 
     /* View toggle */
@@ -419,123 +316,29 @@
         display: inline-flex;
         background: var(--surface);
         border: 1px solid var(--border);
-        padding: 4px;
+        border-radius: 8px;
+        padding: 3px;
     }
 
     .view-toggle button {
         background: transparent;
         border: none;
         color: var(--text-dim);
-        padding: 8px 16px;
-        font-family: 'Anton', sans-serif;
+        padding: 6px 14px;
+        font-family: inherit;
         font-size: 13px;
-        letter-spacing: 1.5px;
-        text-transform: uppercase;
+        font-weight: 500;
         cursor: pointer;
+        border-radius: 6px;
         transition: all 0.15s;
     }
 
     .view-toggle button.active {
-        background: var(--red);
-        color: white;
-    }
-
-    /* Map */
-    #map {
-        width: 100%;
-        height: 640px;
-        background: var(--surface);
-        border: 1px solid var(--border);
-    }
-
-    .leaflet-popup-content-wrapper, .leaflet-popup-tip {
-        background: var(--surface) !important;
-        color: var(--text) !important;
-        border-radius: 0 !important;
-        border: 1px solid var(--border) !important;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.6) !important;
-    }
-
-    .leaflet-popup-content {
-        margin: 0 !important;
-        width: 240px !important;
-    }
-
-    .map-popup {
-        font-family: 'Inter', sans-serif;
-    }
-
-    .map-popup img {
-        width: 100%;
-        height: 110px;
-        object-fit: cover;
-        display: block;
-    }
-
-    .map-popup .mp-body {
-        padding: 12px 14px;
-    }
-
-    .map-popup .mp-sport {
-        font-family: 'Archivo Black', sans-serif;
-        font-size: 10px;
-        letter-spacing: 2px;
-        color: var(--red);
-        text-transform: uppercase;
-    }
-
-    .map-popup .mp-match {
-        font-family: 'Anton', sans-serif;
-        font-size: 18px;
-        line-height: 1.1;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        margin: 4px 0 8px;
+        background: var(--surface-2);
         color: var(--text);
     }
 
-    .map-popup .mp-venue {
-        font-size: 13px;
-        color: var(--text-dim);
-        font-weight: 600;
-    }
-
-    .map-popup .mp-meta {
-        font-size: 11px;
-        color: var(--text-mute);
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-top: 4px;
-    }
-
-    .leaflet-popup-close-button {
-        color: var(--text-dim) !important;
-        font-size: 20px !important;
-        padding: 6px 8px 0 0 !important;
-    }
-
-    .map-marker {
-        width: 38px;
-        height: 38px;
-        border-radius: 50%;
-        background: var(--red);
-        border: 3px solid white;
-        display: grid;
-        place-items: center;
-        font-size: 18px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-    }
-
-    .map-marker.live {
-        animation: marker-pulse 1.5s infinite;
-    }
-
-    @keyframes marker-pulse {
-        0%, 100% { box-shadow: 0 4px 12px rgba(0,0,0,0.5), 0 0 0 0 rgba(229,27,35,0.7); }
-        50% { box-shadow: 0 4px 12px rgba(0,0,0,0.5), 0 0 0 12px rgba(229,27,35,0); }
-    }
-
-    /* Chips */
+    /* Quick filters */
     .chips {
         display: flex;
         gap: 8px;
@@ -544,258 +347,143 @@
     }
 
     .chip {
-        padding: 9px 16px;
+        padding: 7px 13px;
         background: transparent;
         color: var(--text-dim);
-        border: 1.5px solid var(--border);
-        font-size: 12px;
-        font-weight: 700;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 500;
         cursor: pointer;
         transition: all 0.15s;
-        user-select: none;
-        text-transform: uppercase;
-        letter-spacing: 1px;
     }
-    .chip:hover { color: var(--text); border-color: var(--text-dim); }
+    .chip:hover { color: var(--text); border-color: var(--border-2); }
     .chip.active {
-        background: var(--text);
-        color: var(--bg);
-        border-color: var(--text);
+        background: var(--surface-2);
+        color: var(--text);
+        border-color: var(--border-2);
     }
 
-    /* Cards as mini magazine covers */
+    /* Grid + Cards */
     .grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-        gap: 22px;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
     }
 
     .card {
-        position: relative;
-        background: var(--surface);
-        border: 1px solid var(--border);
+        background: transparent;
+        border-radius: 14px;
         overflow: hidden;
-        transition: transform 0.25s cubic-bezier(.2,.7,.2,1), box-shadow 0.25s;
-        display: flex;
-        flex-direction: column;
         cursor: pointer;
-    }
-
-    .card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 24px 48px rgba(0,0,0,0.6);
-    }
-
-    .card-cover {
-        position: relative;
-        height: 220px;
-        overflow: hidden;
+        transition: transform 0.2s ease;
         display: flex;
         flex-direction: column;
-        background: var(--cover-bg, var(--red));
     }
 
-    .cover-top {
-        background: var(--text);
-        color: var(--bg);
-        padding: 8px 14px;
-        font-family: 'Archivo Black', sans-serif;
-        font-size: 10px;
-        letter-spacing: 2.5px;
-        text-transform: uppercase;
+    .card:hover { transform: translateY(-3px); }
+
+    .card-img {
+        position: relative;
+        aspect-ratio: 4 / 3;
+        border-radius: 14px;
+        overflow: hidden;
+        background: var(--surface);
+        margin-bottom: 14px;
+    }
+
+    .card-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+        display: block;
+    }
+    .card:hover .card-img img { transform: scale(1.04); }
+
+    .img-badges {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        right: 12px;
         display: flex;
         justify-content: space-between;
-    }
-
-    .cover-art {
-        flex: 1;
-        position: relative;
-        overflow: hidden;
-        background-size: cover;
-        background-position: center;
-        transition: transform 0.5s cubic-bezier(.2,.7,.2,1);
-    }
-
-    .card:hover .cover-art { transform: scale(1.06); }
-
-    .cover-art::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background:
-            linear-gradient(180deg, transparent 30%, rgba(0,0,0,0.55) 75%, rgba(0,0,0,0.85)),
-            linear-gradient(135deg, var(--tint, rgba(229,27,35,0.35)), transparent 60%);
-        mix-blend-mode: multiply;
-    }
-
-    .cover-art::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(180deg, transparent 60%, rgba(0,0,0,0.5));
-    }
-
-    .cover-emoji {
-        position: absolute;
-        top: 14px;
-        right: 14px;
-        font-size: 36px;
+        align-items: start;
         z-index: 2;
-        filter: drop-shadow(0 4px 12px rgba(0,0,0,0.7));
     }
 
-    .cover-headline {
-        position: absolute;
-        bottom: 12px;
-        left: 14px;
-        right: 14px;
-        font-family: 'Anton', sans-serif;
-        font-size: 32px;
-        line-height: 0.9;
-        letter-spacing: 1px;
-        text-transform: uppercase;
+    .pill {
+        background: rgba(11,12,14,0.7);
+        backdrop-filter: blur(10px);
+        color: var(--text);
+        font-size: 11px;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .pill.live {
+        background: var(--accent);
         color: white;
-        text-shadow: 0 2px 12px rgba(0,0,0,0.6);
-        z-index: 2;
+        border-color: transparent;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
     }
+    .pill.live .dot { width: 5px; height: 5px; background: white; border-radius: 50%; }
 
-    .cover-headline em {
-        color: var(--amber);
-        font-style: italic;
-        display: inline-block;
-    }
-
-    .live-tag {
-        position: absolute;
-        top: 40px;
-        left: 14px;
-        background: var(--red);
+    .save-btn {
+        background: rgba(11,12,14,0.65);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.1);
         color: white;
-        padding: 4px 9px;
-        font-family: 'Archivo Black', sans-serif;
-        font-size: 10px;
-        letter-spacing: 2px;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        z-index: 2;
-    }
-    .live-tag .dot {
-        width: 6px; height: 6px; background: white; border-radius: 50%;
-        animation: pulse 1.4s infinite;
-    }
-
-    @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.4; }
-    }
-
-    .card-body {
-        padding: 18px;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        flex: 1;
-    }
-
-    .venue-row {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .venue-icon {
-        width: 42px;
-        height: 42px;
-        background: var(--surface-2);
-        border: 1px solid var(--border);
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        cursor: pointer;
         display: grid;
         place-items: center;
-        font-size: 18px;
-        flex-shrink: 0;
+        font-size: 14px;
+        transition: background 0.15s;
+    }
+    .save-btn:hover { background: rgba(11,12,14,0.85); }
+    .save-btn.saved { background: var(--accent); border-color: transparent; }
+
+    .card-body {
+        padding: 0 2px;
     }
 
-    .venue-info { flex: 1; min-width: 0; }
+    .card-title {
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 1.3;
+        color: var(--text);
+        margin-bottom: 4px;
+        letter-spacing: -0.01em;
+    }
 
-    .venue-name {
-        font-weight: 700;
-        font-size: 15px;
-        line-height: 1.2;
+    .card-venue {
+        font-size: 14px;
+        color: var(--text-dim);
         margin-bottom: 2px;
     }
 
-    .venue-type {
-        font-family: 'Archivo Black', sans-serif;
-        font-size: 9px;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        color: var(--vtype-color, var(--text-mute));
-    }
-
-    .venue-loc {
-        font-size: 12px;
-        color: var(--text-mute);
-    }
-
     .card-meta {
-        display: flex;
-        gap: 14px;
-        font-size: 13px;
-        color: var(--text-dim);
-        font-weight: 500;
-    }
-
-    .perks {
-        display: flex;
-        gap: 6px;
-        flex-wrap: wrap;
-    }
-
-    .perk {
-        font-size: 10px;
-        background: transparent;
-        color: var(--text-dim);
-        padding: 4px 9px;
-        border: 1px solid var(--border);
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-
-    .card-foot {
-        margin-top: auto;
-        padding-top: 14px;
-        border-top: 1px solid var(--border);
+        font-size: 14px;
+        color: var(--text-mute);
         display: flex;
         gap: 8px;
+        align-items: center;
     }
+    .card-meta .sep { color: var(--border-2); }
 
-    .rsvp {
-        flex: 1;
-        background: var(--text);
-        color: var(--bg);
-        border: none;
-        padding: 12px;
-        font-family: 'Anton', sans-serif;
-        font-size: 15px;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        cursor: pointer;
-        transition: background 0.15s;
+    .card-price {
+        margin-top: 6px;
+        font-size: 14px;
+        color: var(--text);
+        font-weight: 500;
     }
-    .rsvp:hover { background: #d4d4d8; }
-    .rsvp.going { background: var(--green); color: #001a0c; }
-
-    .icon-btn {
-        background: var(--surface-2);
-        border: 1px solid var(--border);
-        color: var(--text-dim);
-        width: 44px;
-        cursor: pointer;
-        font-size: 16px;
-        transition: all 0.15s;
-    }
-    .icon-btn:hover { color: var(--text); border-color: var(--text-dim); }
 
     .empty {
         grid-column: 1 / -1;
@@ -803,130 +491,109 @@
         padding: 80px 20px;
         color: var(--text-dim);
     }
-    .empty .big { font-size: 80px; margin-bottom: 16px; opacity: 0.6; }
-    .empty h3 { font-family: 'Anton', sans-serif; font-size: 32px; letter-spacing: 2px; margin-bottom: 8px; }
-
-    /* Venue type showcase */
-    .venues-strip {
-        max-width: 1340px;
-        margin: 0 auto;
-        padding: 32px 28px;
+    .empty h3 {
+        font-family: 'Instrument Serif', Georgia, serif;
+        font-size: 28px;
+        font-weight: 400;
+        letter-spacing: -0.02em;
+        margin-bottom: 8px;
+        color: var(--text);
     }
 
-    .venues-row {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-        gap: 12px;
-    }
-
-    .vtype {
-        padding: 18px 12px;
+    /* Map */
+    #map {
+        width: 100%;
+        height: 640px;
         background: var(--surface);
         border: 1px solid var(--border);
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-    .vtype:hover {
-        border-color: var(--text-dim);
-        transform: translateY(-2px);
-    }
-    .vtype.active {
-        border-color: var(--red);
-        background: rgba(229,27,35,0.08);
-    }
-    .vtype-emoji { font-size: 28px; margin-bottom: 6px; }
-    .vtype-name {
-        font-family: 'Anton', sans-serif;
-        font-size: 14px;
-        letter-spacing: 1.5px;
-        text-transform: uppercase;
-    }
-    .vtype-count {
-        font-size: 11px;
-        color: var(--text-mute);
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-top: 2px;
+        border-radius: 14px;
     }
 
+    .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+        background: var(--surface) !important;
+        color: var(--text) !important;
+        border-radius: 12px !important;
+        border: 1px solid var(--border) !important;
+        box-shadow: 0 12px 36px rgba(0,0,0,0.5) !important;
+    }
+    .leaflet-popup-content { margin: 0 !important; width: 240px !important; }
+
+    .map-popup img {
+        width: 100%;
+        height: 130px;
+        object-fit: cover;
+        display: block;
+        border-radius: 12px 12px 0 0;
+    }
+    .map-popup .mp-body { padding: 14px; }
+    .map-popup .mp-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .map-popup .mp-venue { font-size: 13px; color: var(--text-dim); margin-bottom: 2px; }
+    .map-popup .mp-meta { font-size: 12px; color: var(--text-mute); }
+
+    .leaflet-popup-close-button { color: var(--text-dim) !important; font-size: 18px !important; padding: 8px 10px 0 0 !important; }
+
+    .map-marker {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: var(--accent);
+        border: 2.5px solid white;
+        display: grid;
+        place-items: center;
+        font-size: 15px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+
+    /* Footer */
     footer {
-        max-width: 1340px;
-        margin: 80px auto 0;
-        padding: 40px 28px;
+        margin-top: 80px;
+        padding: 40px 0;
         border-top: 1px solid var(--border);
+    }
+
+    .footer-inner {
         display: flex;
         justify-content: space-between;
         align-items: center;
         flex-wrap: wrap;
         gap: 16px;
         color: var(--text-mute);
-        font-size: 12px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        font-weight: 600;
+        font-size: 13px;
     }
 </style>
 </head>
 <body>
 
-<div class="backdrop"></div>
-<div class="grain"></div>
-
 <nav>
-    <div class="nav-inner">
-        <div class="brand">
+    <div class="container nav-inner">
+        <a href="#" class="brand">
             <div class="brand-mark">L</div>
-            <div class="brand-name">The Lineup</div>
-        </div>
+            The Lineup
+        </a>
         <div class="nav-links">
-            <a href="#tonight">Tonight</a>
+            <a href="#tonight">Discover</a>
             <a href="#venues">Venues</a>
             <a href="#tonight">Sports</a>
             <a href="#tonight">Host</a>
         </div>
         <div class="nav-right">
-            <button class="nav-cta">Sign in</button>
+            <button class="btn btn-ghost">Sign in</button>
+            <button class="btn btn-primary">Get started</button>
         </div>
     </div>
 </nav>
 
-<section class="hero">
-    <div class="hero-grid">
-        <div>
-            <div class="kicker"><span class="dot"></span><span>Live · 47 watch parties</span></div>
-            <h1>
-                <span class="stroke">One</span> <span class="red">Game.</span><br>
-                Every <span class="red">Crowd.</span>
-            </h1>
-            <p class="lede">Find watch parties wherever they're happening — sports bars, public parks, breweries, rooftops, plazas, even your neighbor's backyard. Every sport. Every venue. One lineup.</p>
-        </div>
-        <div class="hero-art">
-            <div class="mag mag-1">
-                <div class="mag-band">Issue 047 · Tonight</div>
-                <div class="mag-body">🏀</div>
-                <div class="mag-title">Court Side</div>
-            </div>
-            <div class="mag mag-2">
-                <div class="mag-band">Issue 047 · Weekend</div>
-                <div class="mag-body">⚽</div>
-                <div class="mag-title">In the Park</div>
-            </div>
-            <div class="mag mag-3">
-                <div class="mag-band">Issue 047 · Sunday</div>
-                <div class="mag-body">🏈</div>
-                <div class="mag-title">Big Game</div>
-            </div>
-        </div>
-    </div>
+<section class="container hero">
+    <div class="eyebrow"><span class="dot"></span>47 watch parties live right now</div>
+    <h1>Find where the <em>game</em> is on tonight.</h1>
+    <p class="lede">Discover watch parties at sports bars, parks, breweries, rooftops and beyond — wherever the crowd gathers for every sport.</p>
 </section>
 
-<div class="search-wrap">
+<div class="container">
     <div class="search">
         <div class="field">
-            <label>Location</label>
-            <input id="loc" type="text" placeholder="City, ZIP, neighborhood" value="Brooklyn, NY">
+            <label>Where</label>
+            <input id="loc" type="text" placeholder="City, ZIP or neighborhood" value="Brooklyn, NY">
         </div>
         <div class="field">
             <label>Sport</label>
@@ -937,8 +604,8 @@
             </select>
         </div>
         <div class="field">
-            <label>Venue Type</label>
-            <select id="vtype">
+            <label>Venue</label>
+            <select id="vtype-select">
                 <option value="">All venues</option>
                 <option>Sports Bar</option>
                 <option>Park</option>
@@ -957,33 +624,19 @@
                 <option>Tonight</option><option>Tomorrow</option><option>This weekend</option>
             </select>
         </div>
-        <button class="go" onclick="render()">Search</button>
+        <button class="go" onclick="render()" aria-label="Search">Search</button>
     </div>
+
+    <div class="vtypes" id="vtype-row"></div>
 </div>
 
-<div class="marquee">
-    <div class="marquee-track" id="marquee"></div>
-</div>
-
-<section class="venues-strip" id="venues">
+<section class="container section" id="tonight">
     <div class="sec-head">
-        <div class="title">
-            <span class="bar"></span>
-            <h2>Browse <em style="color:var(--red);font-style:italic">venues</em></h2>
-        </div>
-        <div class="sub">Where the watch parties happen</div>
-    </div>
-    <div class="venues-row" id="vtype-row"></div>
-</section>
-
-<section class="section" id="tonight">
-    <div class="sec-head">
-        <div class="title">
-            <span class="bar"></span>
-            <h2>Tonight's <em style="color:var(--red);font-style:italic">Lineup</em></h2>
-        </div>
-        <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+        <div>
+            <h2>Near you tonight</h2>
             <div class="sub" id="count"></div>
+        </div>
+        <div class="sec-controls">
             <div class="view-toggle">
                 <button id="view-list" class="active" onclick="setView('list')">List</button>
                 <button id="view-map" onclick="setView('map')">Map</button>
@@ -997,31 +650,55 @@
 </section>
 
 <footer>
-    <div class="brand">
-        <div class="brand-mark">L</div>
-        <div class="brand-name">The Lineup</div>
+    <div class="container footer-inner">
+        <div style="display:flex;align-items:center;gap:10px">
+            <div class="brand-mark">L</div>
+            <span style="color:var(--text-dim)">The Lineup</span>
+        </div>
+        <div>© 2026 The Lineup. All rights reserved.</div>
     </div>
-    <div>© 2026 — One Game. Every Crowd.</div>
 </footer>
 
 <script>
 const parties = [
-    { id:1, sport:'NFL', match:'Bills vs. Chiefs', venue:'The Pourhouse', vtype:'Sports Bar', neighborhood:'Williamsburg', distance:0.4, time:'Sun 4:25 PM', perks:['Wings','Buckets','200" Screen'], live:true, when:'This weekend', lat:40.7115, lng:-73.9569 },
-    { id:2, sport:'NBA', match:'Knicks vs. Celtics', venue:'McCarren Park Lawn', vtype:'Park', neighborhood:'Greenpoint', distance:0.8, time:'Tonight 7:30 PM', perks:['Outdoor','Food Trucks','BYO Chair'], live:true, when:'Tonight', lat:40.7205, lng:-73.9520 },
-    { id:3, sport:'Soccer', match:'Arsenal vs. Liverpool', venue:'Other Half Brewery', vtype:'Brewery', neighborhood:'Carroll Gardens', distance:2.1, time:'Sat 9:00 AM', perks:['Craft Beer','Breakfast'], live:false, when:'This weekend', lat:40.6790, lng:-73.9990 },
-    { id:4, sport:'NHL', match:'Rangers vs. Devils', venue:'Westlight Rooftop', vtype:'Rooftop', neighborhood:'Williamsburg', distance:1.1, time:'Tonight 7:00 PM', perks:['Skyline View','Heated'], live:true, when:'Tonight', lat:40.7220, lng:-73.9580 },
-    { id:5, sport:'MLB', match:'Yankees vs. Red Sox', venue:'Domino Park', vtype:'Park', neighborhood:'Williamsburg', distance:0.5, time:'Tomorrow 1:05 PM', perks:['Outdoor','Family Friendly'], live:false, when:'Tomorrow', lat:40.7144, lng:-73.9676 },
-    { id:6, sport:'UFC', match:'UFC 312 Main Card', venue:'Iron Bar', vtype:'Sports Bar', neighborhood:'Midtown', distance:1.5, time:'Sat 10:00 PM', perks:['PPV','Reserved'], live:false, when:'This weekend', lat:40.7549, lng:-73.9840 },
-    { id:7, sport:'NFL', match:'Cowboys vs. Eagles', venue:'Smorgasburg', vtype:'Plaza', neighborhood:'Williamsburg', distance:0.6, time:'Sun 8:20 PM', perks:['Food Vendors','LED Wall'], live:false, when:'This weekend', lat:40.7220, lng:-73.9619 },
-    { id:8, sport:'F1', match:'Monaco Grand Prix', venue:'Threes Brewing', vtype:'Brewery', neighborhood:'Gowanus', distance:2.0, time:'Sun 9:00 AM', perks:['Brunch','Espresso'], live:false, when:'This weekend', lat:40.6798, lng:-73.9870 },
-    { id:9, sport:'NBA', match:'Lakers vs. Warriors', venue:'Brooklyn Bridge Park', vtype:'Park', neighborhood:'DUMBO', distance:1.7, time:'Tonight 10:00 PM', perks:['LED Wall','Bring Blanket'], live:true, when:'Tonight', lat:40.7024, lng:-73.9968 },
-    { id:10, sport:'College', match:'Michigan vs. Ohio State', venue:'Greenpoint Library Plaza', vtype:'Community Center', neighborhood:'Greenpoint', distance:1.6, time:'Sat 12:00 PM', perks:['Free','All Ages'], live:false, when:'This weekend', lat:40.7290, lng:-73.9540 },
-    { id:11, sport:'Soccer', match:'Real Madrid vs. Barcelona', venue:'Banc Cafe', vtype:'Restaurant', neighborhood:"Hell's Kitchen", distance:1.9, time:'Sun 3:00 PM', perks:['Tapas','Sangria'], live:false, when:'This weekend', lat:40.7589, lng:-73.9920 },
-    { id:12, sport:'NFL', match:'49ers vs. Seahawks', venue:'Rockaway Beach', vtype:'Beach', neighborhood:'Rockaway', distance:8.0, time:'Sun 1:00 PM', perks:['Bonfire','Boardwalk'], live:false, when:'This weekend', lat:40.5829, lng:-73.8155 },
-    { id:13, sport:'Soccer', match:'USA vs. Mexico', venue:'Washington Square Park', vtype:'Park', neighborhood:'Greenwich Village', distance:3.2, time:'Tonight 8:00 PM', perks:['Free','Big Crowd'], live:true, when:'Tonight', lat:40.7308, lng:-73.9973 },
-    { id:14, sport:'NBA', match:'Nets vs. Heat', venue:'Brooklyn Brewery', vtype:'Brewery', neighborhood:'Williamsburg', distance:0.7, time:'Tomorrow 8:00 PM', perks:['Craft Beer','Pizza'], live:false, when:'Tomorrow', lat:40.7218, lng:-73.9573 },
-    { id:15, sport:'NHL', match:'Islanders vs. Bruins', venue:'Time Out Market', vtype:'Plaza', neighborhood:'DUMBO', distance:1.5, time:'Sat 7:00 PM', perks:['Food Hall','Multi-Screen'], live:false, when:'This weekend', lat:40.7028, lng:-73.9897 },
+    { id:1, sport:'NFL', match:'Bills vs. Chiefs', venue:'The Pourhouse', vtype:'Sports Bar', neighborhood:'Williamsburg', distance:0.4, time:'Sun · 4:25 PM', perks:['Wings','Buckets','200" Screen'], price:'No cover', live:true, when:'This weekend', lat:40.7115, lng:-73.9569 },
+    { id:2, sport:'NBA', match:'Knicks vs. Celtics', venue:'McCarren Park Lawn', vtype:'Park', neighborhood:'Greenpoint', distance:0.8, time:'Tonight · 7:30 PM', perks:['Outdoor','Food Trucks','BYO Chair'], price:'Free', live:true, when:'Tonight', lat:40.7205, lng:-73.9520 },
+    { id:3, sport:'Soccer', match:'Arsenal vs. Liverpool', venue:'Other Half Brewing', vtype:'Brewery', neighborhood:'Carroll Gardens', distance:2.1, time:'Sat · 9:00 AM', perks:['Craft Beer','Breakfast'], price:'No cover', live:false, when:'This weekend', lat:40.6790, lng:-73.9990 },
+    { id:4, sport:'NHL', match:'Rangers vs. Devils', venue:'Westlight Rooftop', vtype:'Rooftop', neighborhood:'Williamsburg', distance:1.1, time:'Tonight · 7:00 PM', perks:['Skyline View','Heated'], price:'$15 min', live:true, when:'Tonight', lat:40.7220, lng:-73.9580 },
+    { id:5, sport:'MLB', match:'Yankees vs. Red Sox', venue:'Domino Park', vtype:'Park', neighborhood:'Williamsburg', distance:0.5, time:'Tomorrow · 1:05 PM', perks:['Outdoor','Family Friendly'], price:'Free', live:false, when:'Tomorrow', lat:40.7144, lng:-73.9676 },
+    { id:6, sport:'UFC', match:'UFC 312 Main Card', venue:'Iron Bar', vtype:'Sports Bar', neighborhood:'Midtown', distance:1.5, time:'Sat · 10:00 PM', perks:['PPV','Reserved'], price:'$20 cover', live:false, when:'This weekend', lat:40.7549, lng:-73.9840 },
+    { id:7, sport:'NFL', match:'Cowboys vs. Eagles', venue:'Smorgasburg', vtype:'Plaza', neighborhood:'Williamsburg', distance:0.6, time:'Sun · 8:20 PM', perks:['Food Vendors','LED Wall'], price:'Free', live:false, when:'This weekend', lat:40.7220, lng:-73.9619 },
+    { id:8, sport:'F1', match:'Monaco Grand Prix', venue:'Threes Brewing', vtype:'Brewery', neighborhood:'Gowanus', distance:2.0, time:'Sun · 9:00 AM', perks:['Brunch','Espresso'], price:'No cover', live:false, when:'This weekend', lat:40.6798, lng:-73.9870 },
+    { id:9, sport:'NBA', match:'Lakers vs. Warriors', venue:'Brooklyn Bridge Park', vtype:'Park', neighborhood:'DUMBO', distance:1.7, time:'Tonight · 10:00 PM', perks:['LED Wall','Bring Blanket'], price:'Free', live:true, when:'Tonight', lat:40.7024, lng:-73.9968 },
+    { id:10, sport:'College', match:'Michigan vs. Ohio State', venue:'Greenpoint Library Plaza', vtype:'Community Center', neighborhood:'Greenpoint', distance:1.6, time:'Sat · 12:00 PM', perks:['Free','All Ages'], price:'Free', live:false, when:'This weekend', lat:40.7290, lng:-73.9540 },
+    { id:11, sport:'Soccer', match:'Real Madrid vs. Barcelona', venue:'Banc Cafe', vtype:'Restaurant', neighborhood:"Hell's Kitchen", distance:1.9, time:'Sun · 3:00 PM', perks:['Tapas','Sangria'], price:'No cover', live:false, when:'This weekend', lat:40.7589, lng:-73.9920 },
+    { id:12, sport:'NFL', match:'49ers vs. Seahawks', venue:'Rockaway Beach', vtype:'Beach', neighborhood:'Rockaway', distance:8.0, time:'Sun · 1:00 PM', perks:['Bonfire','Boardwalk'], price:'Free', live:false, when:'This weekend', lat:40.5829, lng:-73.8155 },
+    { id:13, sport:'Soccer', match:'USA vs. Mexico', venue:'Washington Square Park', vtype:'Park', neighborhood:'Greenwich Village', distance:3.2, time:'Tonight · 8:00 PM', perks:['Free','Big Crowd'], price:'Free', live:true, when:'Tonight', lat:40.7308, lng:-73.9973 },
+    { id:14, sport:'NBA', match:'Nets vs. Heat', venue:'Brooklyn Brewery', vtype:'Brewery', neighborhood:'Williamsburg', distance:0.7, time:'Tomorrow · 8:00 PM', perks:['Craft Beer','Pizza'], price:'No cover', live:false, when:'Tomorrow', lat:40.7218, lng:-73.9573 },
+    { id:15, sport:'NHL', match:'Islanders vs. Bruins', venue:'Time Out Market', vtype:'Plaza', neighborhood:'DUMBO', distance:1.5, time:'Sat · 7:00 PM', perks:['Food Hall','Multi-Screen'], price:'No cover', live:false, when:'This weekend', lat:40.7028, lng:-73.9897 },
 ];
+
+const sportData = {
+    NFL:     { emoji:'🏈', color:'#013369' },
+    NBA:     { emoji:'🏀', color:'#c8102e' },
+    MLB:     { emoji:'⚾', color:'#002d72' },
+    NHL:     { emoji:'🏒', color:'#1f2937' },
+    Soccer:  { emoji:'⚽', color:'#0f7a3a' },
+    UFC:     { emoji:'🥊', color:'#9b1c1c' },
+    F1:      { emoji:'🏎️', color:'#b91c1c' },
+    College: { emoji:'🎓', color:'#7c2d12' },
+};
+
+const venueData = {
+    'Sports Bar':       { emoji:'🍺' },
+    'Park':             { emoji:'🌳' },
+    'Brewery':          { emoji:'🍻' },
+    'Rooftop':          { emoji:'🌃' },
+    'Restaurant':       { emoji:'🍽️' },
+    'Plaza':            { emoji:'🏛️' },
+    'Community Center': { emoji:'🏘️' },
+    'Beach':            { emoji:'🏖️' },
+};
 
 const photos = {
     NFL:     'https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=800&q=80&auto=format&fit=crop',
@@ -1034,37 +711,18 @@ const photos = {
     College: 'https://images.unsplash.com/photo-1471295253337-3ceaaedca402?w=800&q=80&auto=format&fit=crop',
 };
 
-const sportData = {
-    NFL:     { emoji:'🏈', color:'#013369', tag:'Football' },
-    NBA:     { emoji:'🏀', color:'#c8102e', tag:'Hoops' },
-    MLB:     { emoji:'⚾', color:'#002d72', tag:'Baseball' },
-    NHL:     { emoji:'🏒', color:'#111111', tag:'Hockey' },
-    Soccer:  { emoji:'⚽', color:'#00853f', tag:'Football' },
-    UFC:     { emoji:'🥊', color:'#d20a0a', tag:'MMA' },
-    F1:      { emoji:'🏎️', color:'#e10600', tag:'Racing' },
-    College: { emoji:'🎓', color:'#8a4a0e', tag:'NCAA' },
-};
-
-const venueData = {
-    'Sports Bar':       { emoji:'🍺', color:'#ff6b1a' },
-    'Park':             { emoji:'🌳', color:'#00d96f' },
-    'Brewery':          { emoji:'🍻', color:'#ffb800' },
-    'Rooftop':          { emoji:'🌃', color:'#06b6d4' },
-    'Restaurant':       { emoji:'🍽️', color:'#ec4899' },
-    'Plaza':            { emoji:'🏛️', color:'#a855f7' },
-    'Community Center': { emoji:'🏘️', color:'#3b82f6' },
-    'Beach':            { emoji:'🏖️', color:'#fbbf24' },
-};
-
-const quickFilters = ['Live Now','Free','Outdoor','Wings','Happy Hour','Within 1 mi','Family Friendly'];
+const quickFilters = ['Live now','Free','Outdoor','Family friendly','Within 1 mi','Reservable'];
 let activeChips = new Set();
 let activeVtype = null;
-let going = new Set();
+let saved = new Set();
+let currentView = 'list';
+let mapInstance = null;
+let mapMarkers = [];
 
 function buildChips() {
     const c = document.getElementById('chips');
     quickFilters.forEach(f => {
-        const el = document.createElement('div');
+        const el = document.createElement('button');
         el.className = 'chip';
         el.textContent = f;
         el.onclick = () => {
@@ -1078,134 +736,103 @@ function buildChips() {
 
 function buildVtypeRow() {
     const row = document.getElementById('vtype-row');
-    Object.entries(venueData).forEach(([name, data]) => {
-        const count = parties.filter(p => p.vtype === name).length;
-        const el = document.createElement('div');
+    const all = document.createElement('button');
+    all.className = 'vtype active';
+    all.innerHTML = `<span>All</span>`;
+    all.onclick = () => selectVtype(null, all);
+    row.appendChild(all);
+
+    Object.entries(venueData).forEach(([name, d]) => {
+        const el = document.createElement('button');
         el.className = 'vtype';
-        el.innerHTML = `
-            <div class="vtype-emoji">${data.emoji}</div>
-            <div class="vtype-name">${name}</div>
-            <div class="vtype-count">${count} ${count === 1 ? 'spot' : 'spots'}</div>
-        `;
-        el.onclick = () => {
-            if (activeVtype === name) {
-                activeVtype = null;
-                el.classList.remove('active');
-            } else {
-                document.querySelectorAll('.vtype').forEach(x => x.classList.remove('active'));
-                activeVtype = name;
-                el.classList.add('active');
-            }
-            render();
-        };
+        el.innerHTML = `<span class="em">${d.emoji}</span><span>${name}</span>`;
+        el.onclick = () => selectVtype(name, el);
         row.appendChild(el);
     });
 }
 
-function buildMarquee() {
-    const items = ['🔥 47 watch parties live now', '⚡ Bills vs. Chiefs · Sunday 4:25', '🏀 Lakers vs. Warriors tonight', '⚽ USA vs. Mexico — Washington Square', '🍻 Brooklyn Brewery — Nets vs. Heat', '🏖️ Beach watch party Sunday'];
-    const html = items.map(t => `<span>${t}</span><span class="sep">◆</span>`).join('');
-    document.getElementById('marquee').innerHTML = html + html;
+function selectVtype(name, el) {
+    activeVtype = name;
+    document.querySelectorAll('.vtype').forEach(x => x.classList.remove('active'));
+    el.classList.add('active');
+    render();
 }
 
 function matchesFilters(p) {
     const sport = document.getElementById('sport').value;
     const when = document.getElementById('when').value;
-    const vtype = document.getElementById('vtype').value;
+    const vtypeSel = document.getElementById('vtype-select').value;
     if (sport && p.sport !== sport) return false;
     if (when && p.when !== when) return false;
-    if (vtype && p.vtype !== vtype) return false;
+    if (vtypeSel && p.vtype !== vtypeSel) return false;
     if (activeVtype && p.vtype !== activeVtype) return false;
     for (const f of activeChips) {
-        if (f === 'Live Now' && !p.live) return false;
+        if (f === 'Live now' && !p.live) return false;
         else if (f === 'Within 1 mi' && p.distance > 1) return false;
-        else if (f === 'Free' && !p.perks.some(pk => pk.toLowerCase() === 'free')) return false;
-        else if (['Outdoor','Wings','Happy Hour','Family Friendly'].includes(f)
-                 && !p.perks.some(pk => pk.toLowerCase().includes(f.toLowerCase()))) return false;
+        else if (f === 'Free' && p.price !== 'Free') return false;
+        else if (f === 'Reservable' && !p.perks.some(pk => pk.toLowerCase().includes('reserv'))) return false;
+        else if (['Outdoor','Family friendly'].includes(f)
+                 && !p.perks.some(pk => pk.toLowerCase().includes(f.toLowerCase().replace(' friendly','')))) return false;
     }
     return true;
-}
-
-function shortMatch(m) {
-    return m.replace(' vs. ', ' v ');
 }
 
 function render() {
     const grid = document.getElementById('grid');
     const filtered = parties.filter(matchesFilters).sort((a,b) => a.distance - b.distance);
     document.getElementById('count').textContent =
-        `${filtered.length} ${filtered.length === 1 ? 'spot' : 'spots'} near you`;
-    grid.innerHTML = '';
+        `${filtered.length} ${filtered.length === 1 ? 'spot' : 'spots'} matching your search`;
 
+    if (currentView === 'map' && mapInstance) renderMap();
+
+    grid.innerHTML = '';
     if (filtered.length === 0) {
         grid.innerHTML = `<div class="empty">
-            <div class="big">📭</div>
-            <h3>Nothing in the lineup</h3>
+            <h3>No watch parties found</h3>
             <p>Try clearing a filter or widening your search.</p>
         </div>`;
         return;
     }
 
-    if (currentView === 'map' && mapInstance) renderMap();
-
     filtered.forEach(p => {
         const s = sportData[p.sport];
-        const v = venueData[p.vtype];
-        const isGoing = going.has(p.id);
+        const isSaved = saved.has(p.id);
         const card = document.createElement('article');
         card.className = 'card';
-        card.style.setProperty('--tint', hexToRgba(s.color, 0.55));
-        card.style.setProperty('--vtype-color', v.color);
-
-        const [teamA, teamB] = p.match.split(' vs. ');
-        const headline = teamB
-            ? `${teamA}<br><em>vs ${teamB}</em>`
-            : p.match;
-
         card.innerHTML = `
-            <div class="card-cover">
-                <div class="cover-top">
-                    <span>${s.tag} · Issue 047</span>
-                    <span>${p.time}</span>
+            <div class="card-img">
+                <div class="img-badges">
+                    ${p.live
+                      ? '<span class="pill live"><span class="dot"></span>Live now</span>'
+                      : `<span class="pill">${p.sport}</span>`}
+                    <button class="save-btn ${isSaved ? 'saved' : ''}" onclick="event.stopPropagation();toggleSaved(${p.id})" aria-label="Save">
+                        ${isSaved ? '♥' : '♡'}
+                    </button>
                 </div>
-                ${p.live ? '<div class="live-tag"><span class="dot"></span>LIVE</div>' : ''}
-                <div class="cover-art" style="background-image:url('${photos[p.sport]}')"></div>
-                <div class="cover-emoji">${s.emoji}</div>
-                <div class="cover-headline">${headline}</div>
+                <img src="${photos[p.sport]}" alt="${p.sport}" loading="lazy">
             </div>
             <div class="card-body">
-                <div class="venue-row">
-                    <div class="venue-icon">${v.emoji}</div>
-                    <div class="venue-info">
-                        <div class="venue-name">${p.venue}</div>
-                        <div class="venue-type">${p.vtype} · <span style="color:var(--text-mute)">${p.neighborhood} · ${p.distance} mi</span></div>
-                    </div>
+                <div class="card-title">${p.match}</div>
+                <div class="card-venue">${p.venue} · ${p.vtype}</div>
+                <div class="card-meta">
+                    <span>${p.neighborhood}</span>
+                    <span class="sep">·</span>
+                    <span>${p.distance} mi</span>
+                    <span class="sep">·</span>
+                    <span>${p.time}</span>
                 </div>
-                <div class="perks">${p.perks.map(x => `<span class="perk">${x}</span>`).join('')}</div>
-                <div class="card-foot">
-                    <button class="rsvp ${isGoing ? 'going' : ''}" onclick="event.stopPropagation();toggleGoing(${p.id})">
-                        ${isGoing ? "✓ You're In" : "I'm In"}
-                    </button>
-                    <button class="icon-btn" onclick="event.stopPropagation()" title="Save">♡</button>
-                    <button class="icon-btn" onclick="event.stopPropagation()" title="Share">↗</button>
-                </div>
+                <div class="card-price">${p.price}</div>
             </div>
         `;
         grid.appendChild(card);
     });
 }
 
-function hexToRgba(hex, a) {
-    const n = parseInt(hex.slice(1), 16);
-    const r = (n >> 16) & 0xff;
-    const g = (n >> 8) & 0xff;
-    const b = n & 0xff;
-    return `rgba(${r},${g},${b},${a})`;
+function toggleSaved(id) {
+    if (saved.has(id)) saved.delete(id);
+    else saved.add(id);
+    render();
 }
-
-let currentView = 'list';
-let mapInstance = null;
-let mapMarkers = [];
 
 function setView(v) {
     currentView = v;
@@ -1240,19 +867,18 @@ function renderMap() {
         const s = sportData[p.sport];
         const icon = L.divIcon({
             className: '',
-            html: `<div class="map-marker ${p.live ? 'live' : ''}" style="background:${s.color}">${s.emoji}</div>`,
-            iconSize: [38, 38],
-            iconAnchor: [19, 19]
+            html: `<div class="map-marker" style="background:${s.color}">${s.emoji}</div>`,
+            iconSize: [34, 34],
+            iconAnchor: [17, 17]
         });
         const marker = L.marker([p.lat, p.lng], { icon }).addTo(mapInstance);
         marker.bindPopup(`
             <div class="map-popup">
                 <img src="${photos[p.sport]}" alt="">
                 <div class="mp-body">
-                    <div class="mp-sport">${p.sport} ${p.live ? '· LIVE' : ''}</div>
-                    <div class="mp-match">${p.match}</div>
-                    <div class="mp-venue">${p.venue}</div>
-                    <div class="mp-meta">${p.vtype} · ${p.neighborhood} · ${p.time}</div>
+                    <div class="mp-title">${p.match}</div>
+                    <div class="mp-venue">${p.venue} · ${p.vtype}</div>
+                    <div class="mp-meta">${p.neighborhood} · ${p.time} · ${p.price}</div>
                 </div>
             </div>
         `);
@@ -1263,15 +889,8 @@ function renderMap() {
     mapInstance.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
 }
 
-function toggleGoing(id) {
-    if (going.has(id)) going.delete(id);
-    else going.add(id);
-    render();
-}
-
 buildChips();
 buildVtypeRow();
-buildMarquee();
 render();
 </script>
 
