@@ -832,13 +832,27 @@
     }
 
     /* Matchday route pin (map) */
+    /* Strip Leaflet's default div-icon white box on map markers */
+    .leaflet-marker-icon.pin-wrap,
+    .leaflet-marker-icon.route-pin-wrap,
+    .leaflet-marker-icon.leaflet-div-icon {
+        background: transparent !important;
+        border: 0 !important;
+    }
     .route-pin {
         width: 36px; height: 36px;
         border-radius: 50%;
         border: 3px solid white;
-        display: grid; place-items: center;
-        color: white; font-weight: 900; font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Inter', sans-serif;
+        color: white;
+        font-weight: 900; font-size: 15px;
+        line-height: 1;
         box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+        box-sizing: border-box;
+        text-align: center;
     }
 
     /* Featured rail (smaller tiles) */
@@ -5027,7 +5041,7 @@ function buildMatchday() {
         // Add markers
         stops.forEach((s, i) => {
             const icon = L.divIcon({
-                className: '', iconSize: [36, 36], iconAnchor: [18, 18],
+                className: 'route-pin-wrap', iconSize: [36, 36], iconAnchor: [18, 18],
                 html: `<div class="route-pin" style="background:${s.color}">${i + 1}</div>`
             });
             const m = L.marker([s.p.lat, s.p.lng], { icon }).addTo(matchdayMap);
