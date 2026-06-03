@@ -2860,44 +2860,98 @@
     }
     .ai-response strong:first-child { margin-top: 0; }
 
-    /* Paywall */
-    .paywall .modal { max-width: 440px; background: linear-gradient(180deg, #fff8e6 0%, white 60%); }
-    .paywall-hero { text-align: center; padding: 36px 26px 12px; }
-    .paywall-hero .crown { font-size: 42px; margin-bottom: 8px; }
-    .paywall-hero h3 {
-        font-family: 'Inter', sans-serif; font-weight: 800;
-        font-size: 26px; margin-bottom: 8px; letter-spacing: -0.02em;
+    /* Paywall — dark editorial card so colors don't disappear in either theme */
+    .paywall .modal {
+        max-width: 460px;
+        background: #0e0f11;
+        color: white;
+        border: 1px solid rgba(255,255,255,0.08);
     }
-    .paywall-hero h3 strong {
-        background: var(--grad-1);
-        -webkit-background-clip: text;
-        background-clip: text;
+    .paywall .modal .modal-head { border-bottom-color: rgba(255,255,255,0.08); }
+    .paywall-hero { text-align: center; padding: 32px 26px 8px; position: relative; }
+    .paywall-hero::before {
+        content: ''; position: absolute;
+        top: -80px; right: -80px;
+        width: 240px; height: 240px;
+        background: linear-gradient(135deg, #ff2d3a, #ff7a1a);
+        border-radius: 50%; opacity: 0.25;
+        filter: blur(40px);
+        pointer-events: none;
+    }
+    .paywall-hero h3 {
+        position: relative;
+        font-family: 'Inter', sans-serif; font-weight: 900;
+        font-size: 26px; margin-bottom: 8px; letter-spacing: -0.02em;
+        color: white;
+    }
+    .paywall-hero h3 em {
+        font-style: normal;
+        background: linear-gradient(135deg, #ff2d3a, #ff7a1a);
+        -webkit-background-clip: text; background-clip: text;
         color: transparent;
     }
-    .paywall-hero .sub { color: var(--text-dim); font-size: 14px; max-width: 320px; margin: 0 auto; }
-    .paywall-features { padding: 0 26px 12px; }
+    .paywall-hero h3 strong {
+        font-weight: 900;
+        background: linear-gradient(135deg, #ff2d3a, #ff7a1a);
+        -webkit-background-clip: text; background-clip: text;
+        color: transparent;
+    }
+    .paywall-hero .sub {
+        position: relative;
+        color: rgba(255,255,255,0.65);
+        font-size: 14px; max-width: 340px; margin: 0 auto;
+    }
+    .paywall-features {
+        padding: 16px 26px 10px;
+        margin: 0 26px 4px;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 14px;
+    }
     .paywall-feature {
         display: flex; gap: 12px; align-items: start;
-        padding: 10px 0; font-size: 14px;
+        padding: 8px 0; font-size: 14px;
+        color: rgba(255,255,255,0.85);
     }
-    .paywall-feature .check { color: var(--green); font-weight: 700; }
+    .paywall-feature .check {
+        color: #00d96f; font-weight: 900;
+        flex-shrink: 0;
+    }
+    .paywall-feature strong { color: white; font-weight: 800; }
     .paywall-price {
-        text-align: center; padding: 16px 26px 6px;
-        font-family: 'Anton', sans-serif; font-size: 48px;
-        letter-spacing: 1px; line-height: 1;
+        text-align: center; padding: 18px 26px 4px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 900; font-size: 52px;
+        letter-spacing: -0.04em; line-height: 1;
+        color: white;
     }
-    .paywall-price .small { font-size: 14px; color: var(--text-mute); display: block; letter-spacing: 2px; margin-top: 6px; }
-    .paywall-actions { padding: 14px 26px 24px; display: flex; flex-direction: column; gap: 8px; }
+    .paywall-price .small {
+        font-size: 11px; color: rgba(255,255,255,0.5);
+        display: block; letter-spacing: 2.5px; margin-top: 6px;
+        font-weight: 700;
+    }
+    .paywall-actions {
+        padding: 14px 26px 26px;
+        display: flex; flex-direction: column; gap: 8px;
+    }
     .paywall-pay {
-        background: var(--grad-1); color: white; border: none;
+        background: linear-gradient(135deg, #ff2d3a, #ff7a1a);
+        color: white; border: none;
         padding: 16px; font-family: 'Inter', sans-serif;
-        font-weight: 900; font-size: 15px;
-        letter-spacing: 1px; text-transform: uppercase;
-        border-radius: 10px;
-        box-shadow: 0 8px 24px rgba(255,45,58,0.4);
+        font-weight: 900; font-size: 14px;
+        letter-spacing: 1.5px; text-transform: uppercase;
+        border-radius: 12px;
+        cursor: pointer;
+        box-shadow: 0 12px 28px rgba(255,45,58,0.45);
+        transition: transform 0.18s cubic-bezier(.2,.7,.2,1), box-shadow 0.2s;
     }
-    .paywall-pay:hover { transform: translateY(-1px); }
-    .paywall-skip { background: transparent; color: var(--text-mute); border: none; font-size: 13px; padding: 8px; }
+    .paywall-pay:hover { transform: translateY(-2px); box-shadow: 0 16px 36px rgba(255,45,58,0.55); }
+    .paywall-skip {
+        background: transparent; color: rgba(255,255,255,0.55);
+        border: none; font-size: 13px; padding: 10px;
+        cursor: pointer;
+    }
+    .paywall-skip:hover { color: white; }
 
     /* Empty + footer */
     .empty {
@@ -2945,7 +2999,7 @@
         <div class="tabs" id="tabs">
             <button class="tab" data-route="home">Home</button>
             <button class="tab" data-route="events">Events</button>
-            <button class="tab" data-route="fanhub">Fan Hub<span class="tab-badge">PRO</span></button>
+            <button class="tab" data-route="fanhub">Fan Hub</button>
             <button class="tab highlight" data-route="worldcup">World Cup</button>
         </div>
         <div class="nav-right">
@@ -3033,12 +3087,11 @@
             <article class="feature-card" onclick="route('fanhub')">
                 <div class="feature-art">
                     <img src="https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=900&q=80&auto=format&fit=crop" alt="" loading="lazy">
-                    <div class="feature-badge">PRO</div>
                 </div>
                 <div class="feature-body">
-                    <div class="feature-kicker" style="color:#ff3eb5">FAN HUB · PRO</div>
+                    <div class="feature-kicker" style="color:#ff3eb5">FAN HUB</div>
                     <h3>Lineups, chat, and polls</h3>
-                    <p>An exclusive lounge for verified supporters. Live country chat and the starting XI as it drops.</p>
+                    <p>Talk with fellow supporters, react to the starting XI, and vote on the best watch spots.</p>
                 </div>
             </article>
 
@@ -3366,19 +3419,18 @@
 <div class="modal-bg paywall" id="paywall" onclick="if(event.target===this)closePaywall()">
     <div class="modal">
         <div class="paywall-hero">
-            <h3><em>Unlock the rest of</em> <strong>NYC</strong></h3>
-            <p class="sub">Brooklyn is free, forever. Get every other borough — Manhattan, Queens, the Bronx & Staten Island.</p>
+            <h3>See every <strong>location</strong> across NYC</h3>
+            <p class="sub">Brooklyn is free, forever. Unlock the locations in Manhattan, Queens, the Bronx, and Staten Island — for life.</p>
         </div>
         <div class="paywall-features">
-            <div class="paywall-feature"><span class="check">✓</span><span><strong>Fan Hub Pro</strong> — chat, lineups, polls</span></div>
-            <div class="paywall-feature"><span class="check">✓</span><span>Watch parties in all 5 boroughs</span></div>
-            <div class="paywall-feature"><span class="check">✓</span><span>Post-game parade routes & start times</span></div>
-            <div class="paywall-feature"><span class="check">✓</span><span>Pickup games in every park</span></div>
-            <div class="paywall-feature"><span class="check">✓</span><span>Unlimited AI matchday plans</span></div>
+            <div class="paywall-feature"><span class="check">✓</span><span><strong>Every watch-party location</strong> in all 5 boroughs</span></div>
+            <div class="paywall-feature"><span class="check">✓</span><span>Post-game parade routes & start points</span></div>
+            <div class="paywall-feature"><span class="check">✓</span><span>Pickup-game locations in every park</span></div>
+            <div class="paywall-feature"><span class="check">✓</span><span>Unlimited AI matchday plans, city-wide</span></div>
         </div>
         <div class="paywall-price">$5<span class="small">ONE-TIME · LIFETIME</span></div>
         <div class="paywall-actions">
-            <button class="paywall-pay" onclick="unlockBoroughs()">Unlock Everything</button>
+            <button class="paywall-pay" onclick="unlockBoroughs()">Unlock all locations</button>
             <button class="paywall-skip" onclick="closePaywall()">Maybe later</button>
         </div>
     </div>
@@ -4008,16 +4060,17 @@ function toggleMatchExpand(el) {
 }
 
 // ============ FAN HUB ============
-function isFanHubUnlocked() {
-    return unlockedBoroughs.size > 1;
-}
+function isFanHubUnlocked() { return true; }
 
 function renderFanHub() {
-    const locked = !isFanHubUnlocked();
-    document.getElementById('fanhub-locked').style.display = locked ? 'grid' : 'none';
-    document.getElementById('fanhub-content').style.display = locked ? 'none' : 'block';
-    document.getElementById('fanhub-body').style.display = locked ? 'none' : 'block';
-    if (!locked) { renderLineup(); renderChat(); renderPolls(); }
+    // Fan Hub is free — only locations (boroughs) are locked behind paywall
+    const lock = document.getElementById('fanhub-locked');
+    const head = document.getElementById('fanhub-content');
+    const body = document.getElementById('fanhub-body');
+    if (lock) lock.style.display = 'none';
+    if (head) head.style.display = 'block';
+    if (body) body.style.display = 'block';
+    renderLineup(); renderChat(); renderPolls();
 }
 
 function renderLineup() {
