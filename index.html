@@ -1346,6 +1346,32 @@
         color: var(--text) !important;
         box-shadow: 0 2px 6px rgba(0,0,0,0.25) !important;
     }
+    /* Segmented inline tabs (replaces the dropdowns) */
+    .list-seg {
+        flex: 1;
+        background: transparent;
+        border: none;
+        padding: 9px 12px;
+        color: var(--text-dim);
+        font-family: 'Space Grotesk', 'Inter', sans-serif;
+        font-size: 13px; font-weight: 600;
+        letter-spacing: -0.01em;
+        border-radius: 8px;
+        cursor: pointer;
+        text-align: center;
+        transition: background 0.15s, color 0.15s;
+    }
+    .list-seg:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .list-seg.active {
+        background: var(--bg);
+        color: var(--text);
+        box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    }
+    body.worldcup-mode .list-seg:hover { background: rgba(14,15,17,0.05); }
+    body.worldcup-mode .list-seg.active {
+        background: white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
 
     /* ===== Venue detail panel (Google place style) ===== */
     .venue-panel {
@@ -2148,6 +2174,10 @@
     #events-map .leaflet-tile-pane {
         filter: brightness(1.02);
     }
+    /* Invert dark CARTO tiles to a light map for World Cup mode */
+    body.worldcup-mode #events-map .leaflet-tile-pane {
+        filter: invert(0.92) hue-rotate(180deg) brightness(1.05) saturate(0.85);
+    }
 
     /* ===== Mini cards (compact list items) ===== */
     .mini-list { display: flex; flex-direction: column; gap: 12px; }
@@ -2173,7 +2203,8 @@
     .mini-card .mini-card-meta { color: var(--text-dim); }
     .mini-card .mini-card-meta .sep { color: var(--text-mute); }
     .mini-card .mini-card-price { background: rgba(255,255,255,0.08); color: var(--text); }
-    .mini-card .mini-card-going { color: var(--card-accent, var(--text-dim)); }
+    .mini-card .mini-card-going { color: var(--red) !important; font-weight: 800; }
+    .mini-card .mini-card-going::before { background: var(--red) !important; box-shadow: 0 0 6px var(--red) !important; }
     /* In worldcup-mode (white page) — translucent dark glass */
     body.worldcup-mode .mini-card { background: rgba(14,15,17,0.05); border-color: rgba(14,15,17,0.1); color: #0e0f11; }
     body.worldcup-mode .mini-card:hover { background: rgba(14,15,17,0.08); }
@@ -2310,6 +2341,12 @@
     .mini-card-venue {
         font-size: 13px; font-weight: 700; color: var(--text);
         white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .mini-card-venue.locked-name {
+        color: var(--amber);
+        font-weight: 800;
+        letter-spacing: 0.3px;
+        display: inline-flex; align-items: center;
     }
     .mini-card-meta {
         font-size: 12px; color: var(--text-dim);
@@ -3609,42 +3646,9 @@
             </div>
 
             <div class="list-tab-bar">
-                <div class="drop" id="drop-type">
-                    <button class="drop-btn list-tab" type="button" onclick="toggleDrop('drop-type', event)">
-                        <span id="drop-type-label">Watch parties</span>
-                        <span class="drop-caret">▾</span>
-                    </button>
-                    <div class="drop-menu">
-                        <button class="drop-item" data-type="watch-party" onclick="pickEventType('watch-party')">
-                            <span class="drop-item-name">Watch parties</span>
-                            <span class="drop-item-count" data-count-type="watch-party">0</span>
-                        </button>
-                        <button class="drop-item" data-type="parade" onclick="pickEventType('parade')">
-                            <span class="drop-item-name">Parades</span>
-                            <span class="drop-item-count" data-count-type="parade">0</span>
-                        </button>
-                        <button class="drop-item" data-type="pickup" onclick="pickEventType('pickup')">
-                            <span class="drop-item-name">Pickup games</span>
-                            <span class="drop-item-count" data-count-type="pickup">0</span>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="drop" id="drop-filters">
-                    <button class="drop-btn list-tab" type="button" onclick="toggleDrop('drop-filters', event)">
-                        <span>Filters</span>
-                        <span class="drop-badge" id="drop-filter-count" style="display:none">0</span>
-                        <span class="drop-caret">▾</span>
-                    </button>
-                    <div class="drop-menu drop-menu-wide">
-                        <label class="drop-check"><input type="checkbox" data-filter="Live Now" onchange="toggleQuickFilterCheck(this)"><span>Live now</span></label>
-                        <label class="drop-check"><input type="checkbox" data-filter="Free" onchange="toggleQuickFilterCheck(this)"><span>Free</span></label>
-                        <label class="drop-check"><input type="checkbox" data-filter="Outdoor" onchange="toggleQuickFilterCheck(this)"><span>Outdoor</span></label>
-                        <label class="drop-check"><input type="checkbox" data-filter="Within 1 mi" onchange="toggleQuickFilterCheck(this)"><span>Within 1 mi</span></label>
-                        <div class="drop-divider"></div>
-                        <button class="drop-clear" onclick="clearQuickFilters()">Clear all</button>
-                    </div>
-                </div>
+                <button class="list-seg" data-type="watch-party" onclick="pickEventType('watch-party')">Watch parties</button>
+                <button class="list-seg" data-type="parade" onclick="pickEventType('parade')">Parades</button>
+                <button class="list-seg" data-type="pickup" onclick="pickEventType('pickup')">Pickup</button>
             </div>
 
             <input id="search-input" type="hidden">
@@ -4288,22 +4292,14 @@ function buildSubtabs() {
 }
 
 function refreshTypeDrop() {
-    const labels = { 'watch-party':'Watch parties', 'parade':'Parades', 'pickup':'Pickup games' };
-    const lbl = document.getElementById('drop-type-label');
-    if (lbl) lbl.textContent = labels[activeSubtab];
-    document.querySelectorAll('#drop-type .drop-item').forEach(it => {
-        it.classList.toggle('active', it.dataset.type === activeSubtab);
-    });
-    document.querySelectorAll('[data-count-type]').forEach(el => {
-        const t = el.dataset.countType;
-        el.textContent = parties.filter(p => p.eventType === t).length;
+    document.querySelectorAll('.list-seg').forEach(b => {
+        b.classList.toggle('active', b.dataset.type === activeSubtab);
     });
 }
 
 function pickEventType(type) {
     activeSubtab = type;
     refreshTypeDrop();
-    closeAllDrops();
     applyFilters();
 }
 
@@ -4429,7 +4425,12 @@ function renderMiniList(filtered) {
             </div>
             <div class="mini-card-body">
                 <div class="mini-card-match">${p.match}</div>
-                <div class="mini-card-venue">${p.venue}</div>
+                ${isLocked(p)
+                    ? `<div class="mini-card-venue locked-name">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:5px"><rect x="4" y="11" width="16" height="11" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+                        Exclusive · subscribe to reveal
+                       </div>`
+                    : `<div class="mini-card-venue">${p.venue}</div>`}
                 <div class="mini-card-meta">
                     <span>${p.neighborhood}</span><span class="sep">·</span>
                     <span>${p.distance} mi</span><span class="sep">·</span>
