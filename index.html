@@ -711,6 +711,186 @@
         margin-top: 24px;
     }
 
+    /* ===== Split View (Events main layout) ===== */
+    .split {
+        display: grid;
+        grid-template-columns: minmax(380px, 480px) 1fr;
+        gap: 0;
+        height: calc(100vh - 64px);
+        margin-top: 0;
+    }
+    @media (max-width: 900px) {
+        .split { grid-template-columns: 1fr; height: auto; }
+        .split-map { position: relative !important; height: 420px !important; top: 0 !important; }
+    }
+    .split-list {
+        overflow-y: auto;
+        padding: 20px 24px 80px;
+        background: var(--bg);
+        border-right: 1px solid var(--border);
+    }
+    .split-list-head {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 16px; padding-bottom: 14px;
+        border-bottom: 1px solid var(--border);
+    }
+    .split-list-head h2 {
+        font-family: 'Inter', sans-serif;
+        font-weight: 900; font-size: 20px;
+        letter-spacing: -0.02em;
+    }
+    .split-list-head .count {
+        background: var(--grad-1); color: white;
+        padding: 4px 10px; border-radius: 999px;
+        font-size: 12px; font-weight: 800;
+    }
+    .split-map {
+        position: sticky; top: 64px;
+        height: calc(100vh - 64px);
+        overflow: hidden;
+        background: var(--surface-2);
+    }
+    .split-map #events-map {
+        width: 100%; height: 100%;
+    }
+
+    /* ===== Mini cards (compact list items) ===== */
+    .mini-list { display: flex; flex-direction: column; gap: 10px; }
+    .mini-card {
+        display: grid;
+        grid-template-columns: 110px 1fr;
+        gap: 12px;
+        background: var(--surface);
+        border: 1.5px solid var(--border);
+        border-radius: 14px;
+        overflow: hidden;
+        cursor: pointer;
+        position: relative;
+        transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+    }
+    .mini-card:hover {
+        border-color: var(--red);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(255,45,58,0.12);
+    }
+    .mini-card.active {
+        border-color: var(--red);
+        box-shadow: 0 0 0 2px var(--red), 0 12px 24px rgba(255,45,58,0.2);
+    }
+    .mini-card-img {
+        position: relative; height: 100%; min-height: 110px;
+        background: var(--surface-2);
+        overflow: hidden;
+    }
+    .mini-card-img img {
+        width: 100%; height: 100%; object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+    .mini-card:hover .mini-card-img img { transform: scale(1.08); }
+    .mini-card-img::before {
+        content: ''; position: absolute; inset: 0;
+        background: var(--card-tint, linear-gradient(135deg, rgba(255,45,58,0.4), rgba(168,85,247,0.3)));
+        mix-blend-mode: multiply; z-index: 1;
+    }
+    .mini-card-flag {
+        position: absolute; top: 6px; left: 6px;
+        background: white; padding: 2px 6px;
+        border-radius: 999px; font-size: 14px;
+        z-index: 2; box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    .mini-card-pill {
+        position: absolute; bottom: 6px; left: 6px;
+        z-index: 2;
+        font-size: 9px; font-weight: 800;
+        padding: 3px 7px; border-radius: 999px;
+        text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .mini-card-pill.live {
+        background: var(--grad-1); color: white;
+        display: inline-flex; align-items: center; gap: 4px;
+    }
+    .mini-card-pill.live .dot {
+        width: 4px; height: 4px; background: white;
+        border-radius: 50%; animation: pulse 1.5s infinite;
+    }
+    .mini-card-pill.free { background: var(--green); color: white; }
+    .mini-card-pill.lock { background: var(--amber); color: #1a1408; }
+    .mini-card-body {
+        padding: 10px 12px 10px 0;
+        display: flex; flex-direction: column; gap: 3px;
+        min-width: 0;
+    }
+    .mini-card-match {
+        font-family: 'Inter', sans-serif;
+        font-weight: 800; font-size: 13px;
+        letter-spacing: -0.01em;
+        line-height: 1.2;
+        text-transform: uppercase;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .mini-card-venue {
+        font-size: 13px; font-weight: 700; color: var(--text);
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .mini-card-meta {
+        font-size: 12px; color: var(--text-dim);
+        display: flex; gap: 6px;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .mini-card-meta .sep { color: var(--text-mute); }
+    .mini-card-bottom {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-top: auto; padding-top: 4px;
+    }
+    .mini-card-price {
+        font-size: 12px; font-weight: 800; color: var(--text);
+    }
+    .mini-card-going {
+        font-size: 11px; color: var(--text-mute); font-weight: 700;
+        display: inline-flex; align-items: center; gap: 4px;
+    }
+    .mini-card.locked .mini-card-img::after {
+        content: '🔒'; position: absolute; inset: 0;
+        background: rgba(255,255,255,0.7); backdrop-filter: blur(2px);
+        z-index: 3;
+        display: grid; place-items: center;
+        font-size: 22px;
+    }
+
+    /* Pulse marker */
+    .pin {
+        position: relative;
+        width: 36px; height: 36px;
+        border-radius: 50%;
+        border: 3px solid white;
+        display: grid; place-items: center;
+        color: white; font-size: 14px; font-weight: 800;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+        transition: transform 0.18s ease;
+        cursor: pointer;
+    }
+    .pin::after {
+        content: ''; position: absolute; inset: -6px;
+        border-radius: 50%; border: 2px solid currentColor;
+        opacity: 0; transition: all 0.2s;
+    }
+    .pin.live::before {
+        content: ''; position: absolute; inset: -3px;
+        border-radius: 50%;
+        background: inherit; opacity: 0.4;
+        animation: pinPulse 1.6s infinite;
+        z-index: -1;
+    }
+    .pin.active, .pin:hover {
+        transform: scale(1.25);
+        z-index: 999 !important;
+    }
+    .pin.active::after { opacity: 1; }
+    @keyframes pinPulse {
+        0% { transform: scale(0.95); opacity: 0.5; }
+        100% { transform: scale(1.8); opacity: 0; }
+    }
+
     /* ===== Schedule cards ===== */
     .schedule-grid {
         display: grid;
@@ -1097,19 +1277,10 @@
 
 <!-- ============ EVENTS PAGE ============ -->
 <section class="page" data-page="events">
-    <div class="page-head" style="padding-top:40px">
-        <div id="events-sport-chip" style="margin-bottom:14px"></div>
-        <h1>Every <em>event</em> near you</h1>
-        <p>Watch parties, parades, and pickup games — filter by sport, country, or borough.</p>
-        <form class="hero-search" style="margin-top:24px;max-width:560px;box-shadow:0 8px 24px rgba(0,0,0,0.06);background:white;border:1px solid var(--border)" onsubmit="event.preventDefault();applyFilters()">
-            <input id="search-input" type="text" placeholder="Search teams, venues, or events">
-            <button type="submit">Search</button>
-        </form>
-    </div>
 
     <div class="country-strip">
         <div class="country-strip-inner">
-            <span class="country-strip-label">Who are you supporting?</span>
+            <span class="country-strip-label">Supporting:</span>
             <div class="countries" id="countries"></div>
         </div>
     </div>
@@ -1121,10 +1292,10 @@
     </div>
 
     <div class="filters">
-        <button class="filter" onclick="toggleQuickFilter(this,'Live Now')">🔴 Live now</button>
+        <button class="filter" onclick="toggleQuickFilter(this,'Live Now')">🔴 Live</button>
         <button class="filter" onclick="toggleQuickFilter(this,'Free')">Free</button>
         <button class="filter" onclick="toggleQuickFilter(this,'Outdoor')">Outdoor</button>
-        <button class="filter" onclick="toggleQuickFilter(this,'Within 1 mi')">Within 1 mi</button>
+        <button class="filter" onclick="toggleQuickFilter(this,'Within 1 mi')">≤ 1 mi</button>
         <div class="filter">
             <select id="sport-select" onchange="applyFilters()">
                 <option value="">All sports</option>
@@ -1138,15 +1309,25 @@
                 <option>Tonight</option><option>Tomorrow</option><option>This weekend</option>
             </select>
         </div>
-        <div class="view-toggle">
-            <button id="view-list" class="active" onclick="setView('list')">List</button>
-            <button id="view-map" onclick="setView('map')">Map</button>
-        </div>
+        <div id="events-sport-chip" style="margin-left:auto"></div>
     </div>
 
-    <div class="page-content">
-        <div id="events-list"></div>
-        <div id="map" style="display:none"></div>
+    <div class="split">
+        <div class="split-list" id="split-list-wrap">
+            <div class="split-list-head">
+                <h2 id="split-list-title">Events near you</h2>
+                <span class="count" id="split-count">0</span>
+            </div>
+            <div class="mini-list" id="mini-list">
+                <form class="hero-search" style="margin-bottom:14px;background:var(--surface-2);border:1px solid var(--border);padding:4px;box-shadow:none" onsubmit="event.preventDefault();applyFilters()">
+                    <input id="search-input" type="text" placeholder="Search teams, venues..." style="padding:10px 12px;font-size:14px">
+                    <button type="submit" style="padding:0 16px;font-size:13px">Go</button>
+                </form>
+            </div>
+        </div>
+        <div class="split-map">
+            <div id="events-map"></div>
+        </div>
     </div>
 </section>
 
@@ -1487,6 +1668,9 @@ function matchesFilters(p) {
 
 function isLocked(p) { return !unlockedBoroughs.has(p.borough); }
 
+let activeCardId = null;
+let lastFiltered = [];
+
 function applyFilters() {
     if (activeRoute !== 'events') return;
     const filtered = parties
@@ -1494,55 +1678,106 @@ function applyFilters() {
         .filter(matchesFilters)
         .sort((a,b) => a.distance - b.distance);
 
-    if (currentView === 'map' && mapInstance) {
-        renderMap(filtered);
-        return;
-    }
-    renderDiscoverList(filtered);
+    lastFiltered = filtered;
+    renderMiniList(filtered);
+    if (!mapInstance) initMap();
+    renderMap(filtered);
+    document.getElementById('split-count').textContent = filtered.length;
+    document.getElementById('split-list-title').textContent =
+        activeSubtab === 'parade' ? 'Parades near you'
+        : activeSubtab === 'pickup' ? 'Pickup games near you'
+        : 'Watch parties near you';
 }
 
-function renderDiscoverList(filtered) {
-    const wrap = document.getElementById('events-list');
+function renderMiniList(filtered) {
+    const wrap = document.getElementById('mini-list');
+    const searchForm = wrap.querySelector('form');
+    wrap.innerHTML = '';
+    if (searchForm) wrap.appendChild(searchForm);
+
     if (filtered.length === 0) {
-        wrap.innerHTML = `<div class="empty"><h3>No events match those filters</h3><p>Try clearing a filter or picking a different country.</p></div>`;
+        const empty = document.createElement('div');
+        empty.className = 'empty';
+        empty.innerHTML = `<h3>No events match</h3><p>Try clearing a filter or picking a different country.</p>`;
+        wrap.appendChild(empty);
         return;
     }
 
-    // Group into rows
-    const groups = {};
     filtered.forEach(p => {
-        const key = `${p.borough}`;
-        if (!groups[key]) groups[key] = [];
-        groups[key].push(p);
-    });
-
-    const liveGroup = filtered.filter(p => p.live);
-    const freeGroup = filtered.filter(p => p.perks.some(pk => pk.toLowerCase() === 'free'));
-    const tonightGroup = filtered.filter(p => p.when === 'Tonight');
-
-    const rows = [];
-    if (liveGroup.length) rows.push({ title: `<span class="emoji">🔴</span> <em>Live</em> right now` , items: liveGroup });
-    if (tonightGroup.length) rows.push({ title: `<span class="emoji">🌃</span> <em>Tonight</em> near you`, items: tonightGroup });
-    if (freeGroup.length) rows.push({ title: `<span class="emoji">🎉</span> <em>Free</em> events`, items: freeGroup });
-    Object.entries(groups).forEach(([b, items]) => {
-        if (items.length >= 2) rows.push({ title: `<span class="emoji">📍</span> Popular in <em>${b}</em>`, items });
-    });
-    if (rows.length === 0) rows.push({ title: '<span class="emoji">🏟️</span> All events', items: filtered });
-
-    wrap.innerHTML = rows.map((r, idx) => `
-        <section class="row">
-            <div class="row-head">
-                <h2>${r.title}</h2>
-                <div class="actions">
-                    <button class="row-arrow" onclick="scrollRow('row-${idx}', -1)">‹</button>
-                    <button class="row-arrow" onclick="scrollRow('row-${idx}', 1)">›</button>
+        const card = document.createElement('div');
+        card.className = 'mini-card' + (isLocked(p) ? ' locked' : '') + (activeCardId === p.id ? ' active' : '');
+        card.dataset.id = p.id;
+        const co = countries.find(c => c.code === p.country);
+        const isFree = p.perks.some(pk => pk.toLowerCase() === 'free');
+        const attendees = ((p.id * 37) % 480) + 24;
+        const tints = [
+            'linear-gradient(135deg, rgba(255,45,58,0.5), rgba(255,122,26,0.35))',
+            'linear-gradient(135deg, rgba(168,85,247,0.5), rgba(255,62,181,0.35))',
+            'linear-gradient(135deg, rgba(37,99,235,0.5), rgba(6,214,247,0.35))',
+            'linear-gradient(135deg, rgba(0,217,111,0.5), rgba(255,184,0,0.35))',
+        ];
+        card.style.setProperty('--card-tint', tints[p.id % tints.length]);
+        card.innerHTML = `
+            <div class="mini-card-img">
+                <img src="${photos[p.sport] || photos.Soccer}" alt="" loading="lazy">
+                ${co ? `<span class="mini-card-flag">${co.flag}</span>` : ''}
+                ${p.live ? '<span class="mini-card-pill live"><span class="dot"></span>LIVE</span>'
+                  : isFree ? '<span class="mini-card-pill free">FREE</span>'
+                  : `<span class="mini-card-pill" style="background:rgba(255,255,255,0.95);color:var(--text)">${p.sport}</span>`}
+            </div>
+            <div class="mini-card-body">
+                <div class="mini-card-match">${p.match}</div>
+                <div class="mini-card-venue">${p.venue}</div>
+                <div class="mini-card-meta">
+                    <span>${p.neighborhood}</span><span class="sep">·</span>
+                    <span>${p.distance} mi</span><span class="sep">·</span>
+                    <span>${p.time}</span>
+                </div>
+                <div class="mini-card-bottom">
+                    <span class="mini-card-price">${p.price}</span>
+                    <span class="mini-card-going">👥 ${attendees}</span>
                 </div>
             </div>
-            <div class="scroller" id="row-${idx}">
-                ${r.items.map(cardHTML).join('')}
-            </div>
-        </section>
-    `).join('');
+        `;
+        card.addEventListener('click', () => {
+            if (isLocked(p)) { openPaywall(); return; }
+            focusCard(p.id);
+        });
+        card.addEventListener('mouseenter', () => highlightPin(p.id, true));
+        card.addEventListener('mouseleave', () => highlightPin(p.id, false));
+        wrap.appendChild(card);
+    });
+}
+
+function focusCard(id) {
+    activeCardId = id;
+    const p = parties.find(x => x.id === id);
+    if (!p) return;
+    // update active class on cards
+    document.querySelectorAll('.mini-card').forEach(el => {
+        el.classList.toggle('active', String(el.dataset.id) === String(id));
+    });
+    // update active pin
+    document.querySelectorAll('.pin').forEach(el => {
+        el.classList.toggle('active', String(el.dataset.id) === String(id));
+    });
+    // fly map
+    if (mapInstance) {
+        mapInstance.flyTo({ center:[p.lng, p.lat], zoom: 14, duration: 700 });
+        const m = mapMarkers.find(mm => mm._partyId === id);
+        if (m) m.openPopup();
+    }
+    // scroll card into view
+    const card = document.querySelector(`.mini-card[data-id="${id}"]`);
+    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function highlightPin(id, on) {
+    document.querySelectorAll('.pin').forEach(el => {
+        if (String(el.dataset.id) === String(id)) {
+            el.classList.toggle('active', on || activeCardId === id);
+        }
+    });
 }
 
 function cardHTML(p) {
@@ -1620,39 +1855,53 @@ function setView(v) {
 }
 
 function initMap() {
-    mapInstance = L.map('map', { zoomControl: true, scrollWheelZoom: true })
+    const el = document.getElementById('events-map');
+    if (!el) return;
+    mapInstance = L.map('events-map', { zoomControl: true, scrollWheelZoom: true })
         .setView([40.7128, -73.97], 12);
     L.tileLayer('https://{s}.basemaps.cartocdn.com/voyager/{z}/{x}/{y}{r}.png', {
         attribution:'&copy; OpenStreetMap &copy; CARTO', subdomains:'abcd', maxZoom:19
     }).addTo(mapInstance);
+    setTimeout(() => mapInstance.invalidateSize(), 100);
 }
 
 function renderMap(filtered) {
+    if (!mapInstance) return;
     mapMarkers.forEach(m => mapInstance.removeLayer(m));
     mapMarkers = [];
     if (!filtered || !filtered.length) return;
     filtered.forEach(p => {
         const locked = isLocked(p);
-        const color = locked ? '#8a8d94' : (sportColor[p.sport] || '#e51b23');
+        const color = locked ? '#8a8d94' : (sportColor[p.sport] || '#ff2d3a');
+        const isActive = activeCardId === p.id;
         const icon = L.divIcon({
-            className:'', iconSize:[30,30], iconAnchor:[15,15],
-            html:`<div style="width:30px;height:30px;border-radius:50%;background:${color};border:3px solid white;box-shadow:0 4px 12px rgba(0,0,0,0.25);display:grid;place-items:center;color:white;font-size:13px;font-weight:700">${locked ? '🔒' : p.sport[0]}</div>`
+            className:'pin-wrap', iconSize:[36,36], iconAnchor:[18,18],
+            html:`<div class="pin ${p.live ? 'live' : ''} ${isActive ? 'active' : ''}" data-id="${p.id}" style="background:${color};color:${color}">${locked ? '🔒' : (p.sport === 'Soccer' ? '⚽' : p.sport[0])}</div>`
         });
         const marker = L.marker([p.lat, p.lng], { icon }).addTo(mapInstance);
+        marker._partyId = p.id;
         const co = countries.find(c => c.code === p.country);
         marker.bindPopup(`
-            <div style="font-family:Inter,sans-serif;padding:10px 14px;min-width:220px">
-                <div style="font-size:11px;color:${color};font-weight:700;letter-spacing:1.5px;text-transform:uppercase">${p.sport} ${p.live ? '· LIVE' : ''}</div>
-                <div style="font-weight:700;margin:4px 0">${p.match}</div>
-                <div style="font-size:13px;color:#4a4d54">${p.venue} · ${p.vtype}</div>
-                <div style="font-size:12px;color:#8a8d94;margin-top:4px">${co?co.flag+' ':''}${p.borough} · ${p.time}</div>
+            <div style="font-family:Inter,sans-serif;padding:8px 12px;min-width:220px">
+                <div style="font-size:10px;color:${color};font-weight:800;letter-spacing:1.5px;text-transform:uppercase">${p.sport} ${p.live ? '· LIVE' : ''}</div>
+                <div style="font-weight:900;font-size:15px;letter-spacing:-0.01em;margin:4px 0;text-transform:uppercase">${p.match}</div>
+                <div style="font-weight:700;font-size:13px;color:#0e0f11">${p.venue}</div>
+                <div style="font-size:12px;color:#4a4d54;margin-top:2px">${p.vtype} · ${p.neighborhood}</div>
+                <div style="font-size:12px;color:#8a8d94;margin-top:4px">${co?co.flag+' ':''}${p.borough} · ${p.time} · <strong style="color:#0e0f11">${p.price}</strong></div>
             </div>
-        `);
-        if (locked) marker.on('click', () => setTimeout(openPaywall, 300));
+        `, { offset:[0,-12] });
+        marker.on('click', () => {
+            if (locked) { setTimeout(openPaywall, 200); return; }
+            focusCard(p.id);
+        });
+        marker.on('mouseover', () => highlightPin(p.id, true));
+        marker.on('mouseout', () => highlightPin(p.id, false));
         mapMarkers.push(marker);
     });
-    const bounds = L.latLngBounds(filtered.map(p => [p.lat, p.lng]));
-    mapInstance.fitBounds(bounds, { padding:[40,40], maxZoom:14 });
+    if (!activeCardId) {
+        const bounds = L.latLngBounds(filtered.map(p => [p.lat, p.lng]));
+        mapInstance.fitBounds(bounds, { padding:[40,40], maxZoom:14 });
+    }
 }
 
 // ============ SCHEDULE ============
