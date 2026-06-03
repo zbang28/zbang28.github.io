@@ -1221,9 +1221,11 @@
         display: flex; align-items: center; gap: 12px;
     }
     .country-strip-label {
-        font-size: 12px; color: var(--text-dim);
-        font-weight: 700; text-transform: uppercase;
-        letter-spacing: 1.5px; flex-shrink: 0;
+        font-family: 'Anton', 'Inter', sans-serif;
+        font-weight: 400;
+        font-size: 18px; color: var(--text);
+        text-transform: uppercase;
+        letter-spacing: 2px; flex-shrink: 0;
     }
     .countries {
         display: flex; gap: 8px; overflow-x: auto;
@@ -1242,7 +1244,11 @@
         border: 1.5px solid var(--border);
         padding: 7px 14px 7px 7px;
         border-radius: 999px;
-        font-size: 13px; font-weight: 700;
+        font-family: 'Anton', 'Inter', sans-serif;
+        font-weight: 400;
+        font-size: 14px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
         color: var(--text-dim);
         white-space: nowrap; flex-shrink: 0;
         scroll-snap-align: start;
@@ -1289,6 +1295,80 @@
     .worldcup-only { display: none; }
     .worldcup-only.worldcup-on { display: block; }
     body.worldcup-mode .events-only { display: none !important; }
+
+    /* Country strip floating on top of the map */
+    .country-strip.floating-strip {
+        position: absolute;
+        top: 16px; left: 16px; right: 16px;
+        z-index: 1000;
+        background: rgba(255,255,255,0.94);
+        backdrop-filter: blur(14px);
+        border: 1px solid rgba(14,15,17,0.08);
+        border-radius: 14px;
+        padding: 12px 16px;
+        box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+    }
+    .country-strip.floating-strip .country-strip-inner {
+        padding: 0; max-width: none;
+    }
+
+    /* Bottom borough banner with lock chips */
+    .borough-foot {
+        position: relative;
+        background: #0e0f11;
+        color: white;
+        padding: 14px 24px;
+        border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .borough-foot-inner {
+        max-width: 1280px; margin: 0 auto;
+        display: flex; align-items: center; gap: 14px;
+        flex-wrap: wrap;
+    }
+    .borough-foot-label {
+        font-family: 'Anton', 'Inter', sans-serif;
+        font-weight: 400;
+        font-size: 14px; letter-spacing: 2px;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.55);
+        margin-right: 4px;
+    }
+    .borough-chip {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.1);
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-family: 'Anton', 'Inter', sans-serif;
+        font-weight: 400;
+        font-size: 13px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: white;
+    }
+    .borough-chip.free {
+        background: linear-gradient(135deg, #00d96f, #00a85a);
+        border-color: transparent;
+        color: white;
+        box-shadow: 0 4px 12px rgba(0,217,111,0.35);
+    }
+    .borough-chip.free .check {
+        font-size: 12px; font-weight: 900;
+    }
+    .borough-chip.locked { color: rgba(255,255,255,0.55); }
+    .borough-chip.locked .lock-svg { color: var(--amber); }
+    .borough-foot-cta {
+        margin-left: auto;
+        background: linear-gradient(135deg, #ff2d3a, #ff7a1a);
+        color: white;
+        border: none;
+        padding: 9px 18px;
+        border-radius: 999px;
+        font: inherit; font-size: 13px; font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 6px 18px rgba(255,45,58,0.4);
+    }
+    .borough-foot-cta:hover { transform: translateY(-1px); }
 
     /* ===== Worldcup mode: white base with multi-color tournament accents ===== */
     body.worldcup-mode {
@@ -3132,15 +3212,6 @@
         <div class="worldcup-confetti"></div>
     </div>
 
-    <div class="country-strip worldcup-only">
-        <div class="country-strip-inner">
-            <span class="country-strip-label">Supporting:</span>
-            <div class="countries" id="countries"></div>
-        </div>
-    </div>
-
-    <div id="borough-banner"></div>
-
     <div class="filters">
         <!-- Event type dropdown -->
         <div class="drop" id="drop-type">
@@ -3212,8 +3283,16 @@
         </div>
         <div class="split-map">
             <div id="events-map"></div>
+            <div class="country-strip worldcup-only floating-strip">
+                <div class="country-strip-inner">
+                    <span class="country-strip-label">Supporting</span>
+                    <div class="countries" id="countries"></div>
+                </div>
+            </div>
         </div>
     </div>
+
+    <div id="borough-banner"></div>
 </section>
 
 <!-- ============ FAN HUB PAGE ============ -->
@@ -4497,12 +4576,23 @@ function unlockBoroughs() {
 }
 
 function renderBoroughBanner() {
-    if (unlockedBoroughs.size > 1) return;
-    document.getElementById('borough-banner').innerHTML = `
-        <div class="borough-banner">
-            <div class="borough-banner-inner">
-                <div class="text"><strong>Brooklyn is free.</strong> Unlock Manhattan, Queens, the Bronx & Staten Island for a one-time $5.</div>
-                <button class="btn-pay" onclick="openPaywall()">Unlock all 5 boroughs · $5</button>
+    const wrap = document.getElementById('borough-banner');
+    if (!wrap) return;
+    if (unlockedBoroughs.size > 1) { wrap.innerHTML = ''; return; }
+    const boroughs = ['Brooklyn','Manhattan','Queens','Bronx','Staten Island'];
+    const lockSvg = `<svg class="lock-svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="11" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>`;
+    const chips = boroughs.map(b => {
+        if (unlockedBoroughs.has(b)) {
+            return `<span class="borough-chip free"><span class="check">✓</span>${b} · FREE</span>`;
+        }
+        return `<span class="borough-chip locked">${lockSvg}${b}</span>`;
+    }).join('');
+    wrap.innerHTML = `
+        <div class="borough-foot">
+            <div class="borough-foot-inner">
+                <span class="borough-foot-label">Boroughs</span>
+                ${chips}
+                <button class="borough-foot-cta" onclick="openPaywall()">Unlock all · $5</button>
             </div>
         </div>
     `;
