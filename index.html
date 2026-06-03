@@ -131,12 +131,18 @@
     }
     .nav-btn:hover { border-color: rgba(255,255,255,0.5); }
     .nav-btn.ai {
-        background: var(--grad-2);
+        background: linear-gradient(135deg, #2563eb 0%, #a855f7 40%, #ff3eb5 75%, #ff7a1a 100%);
+        background-size: 200% 200%;
+        animation: ai-shift 8s ease-in-out infinite;
         border-color: transparent;
         font-weight: 800;
-        box-shadow: 0 4px 14px rgba(255,62,181,0.4);
+        box-shadow: 0 4px 14px rgba(168,85,247,0.45);
     }
     .nav-btn.ai:hover { transform: translateY(-1px); }
+    @keyframes ai-shift {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
 
     @media (max-width: 900px) {
         .nav-btn .lbl { display: none; }
@@ -3824,7 +3830,6 @@
   <div class="matchday-sheet">
     <div class="matchday-head" id="matchday-head">
         <div class="matchday-head-inner">
-            <button class="matchday-back" onclick="closeMatchdayModal()">← Close</button>
             <div class="matchday-eyebrow">
                 <span class="spark">✦</span> AI Matchday Planner
             </div>
