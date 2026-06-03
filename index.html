@@ -3,31 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Lineup — Watch Parties, Parades & Pickup</title>
+<title>The Lineup — Find watch parties, parades & pickup</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
     :root {
-        --bg: #fafaf7;
-        --bg-2: #ffffff;
+        --bg: #ffffff;
+        --bg-alt: #f7f6f1;
         --surface: #ffffff;
-        --surface-2: #f4f4ef;
+        --surface-2: #f4f3ed;
         --border: #e8e6df;
         --border-2: #d4d1c8;
         --text: #0e0f11;
         --text-dim: #4a4d54;
-        --text-mute: #82858d;
+        --text-mute: #8a8d94;
         --red: #e51b23;
         --red-bright: #ff2630;
         --amber: #ffb800;
         --green: #00b85f;
         --blue: #2563eb;
-        --purple: #a855f7;
-        --pink: #ec4899;
-        --yellow: #fde047;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -36,985 +33,886 @@
     body {
         font-family: 'Inter', system-ui, sans-serif;
         color: var(--text);
-        min-height: 100vh;
         line-height: 1.5;
+        font-size: 15px;
         -webkit-font-smoothing: antialiased;
-        overflow-x: hidden;
     }
 
-    .backdrop {
-        position: fixed; inset: 0; z-index: -2;
-        background:
-            radial-gradient(ellipse 60% 40% at 85% 5%, rgba(255,184,0,0.22), transparent 60%),
-            radial-gradient(ellipse 50% 40% at 15% 25%, rgba(229,27,35,0.10), transparent 60%),
-            radial-gradient(ellipse 60% 40% at 90% 90%, rgba(37,99,235,0.10), transparent 60%),
-            radial-gradient(ellipse 40% 30% at 10% 80%, rgba(0,184,95,0.08), transparent 60%),
-            var(--bg);
-    }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; }
 
-    /* Nav */
+    .container { max-width: 1280px; margin: 0 auto; padding: 0 32px; }
+
+    /* ===== Nav ===== */
     nav {
         position: sticky; top: 0; z-index: 100;
-        background: rgba(250,250,247,0.85);
-        backdrop-filter: blur(20px);
-        border-bottom: 1px solid var(--border);
+        background: var(--text);
+        color: white;
+        border-bottom: 1px solid #1a1c20;
     }
     .nav-inner {
-        max-width: 1340px; margin: 0 auto;
-        padding: 14px 28px;
-        display: flex; align-items: center; gap: 28px;
+        max-width: 1280px; margin: 0 auto;
+        padding: 0 32px; height: 64px;
+        display: flex; align-items: center; gap: 32px;
     }
-    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand {
+        display: flex; align-items: center; gap: 10px;
+        flex-shrink: 0; color: white;
+    }
     .brand-mark {
-        width: 32px; height: 32px;
+        width: 30px; height: 30px;
         background: var(--red); color: white;
         font-family: 'Playfair Display', serif;
         font-style: italic; font-weight: 700; font-size: 20px;
-        border-radius: 4px;
+        border-radius: 6px;
         display: grid; place-items: center;
     }
-    .brand-name { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 22px; }
+    .brand-name {
+        font-family: 'Anton', sans-serif;
+        font-size: 22px; letter-spacing: 2px;
+        text-transform: uppercase;
+    }
 
-    .nav-links { display: flex; gap: 24px; margin-left: 8px; }
-    .nav-links a {
-        color: var(--text-dim); text-decoration: none;
+    .tabs { display: flex; gap: 4px; align-items: center; flex: 1; overflow-x: auto; scrollbar-width: none; }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab {
+        background: transparent; border: none;
+        color: rgba(255,255,255,0.7);
         font-size: 13px; font-weight: 600;
-        text-transform: uppercase; letter-spacing: 1px;
-    }
-    .nav-links a:hover { color: var(--text); }
-    .nav-right { margin-left: auto; display: flex; gap: 10px; align-items: center; }
-
-    .country-pill {
-        display: flex; align-items: center; gap: 8px;
-        padding: 7px 14px;
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: 999px;
-        cursor: pointer;
-        font-size: 13px; color: var(--text);
-        font-weight: 500;
-        transition: border-color 0.15s;
-    }
-    .country-pill:hover { border-color: var(--red); }
-    .country-pill .flag { font-size: 16px; }
-    .country-pill .chev { opacity: 0.5; font-size: 10px; }
-
-    .btn {
-        font-family: inherit; cursor: pointer;
-        border: 1px solid transparent;
+        padding: 8px 14px; border-radius: 6px;
+        white-space: nowrap;
         transition: all 0.15s;
     }
-    .nav-cta {
-        padding: 9px 18px;
-        background: var(--red); color: white;
-        border: none; border-radius: 4px;
-        font-weight: 600; font-size: 13px;
-    }
-    .nav-cta:hover { background: var(--red-bright); }
+    .tab:hover { color: white; background: rgba(255,255,255,0.08); }
+    .tab.active { color: white; background: rgba(255,255,255,0.12); }
+    .tab.highlight { color: var(--amber); font-weight: 700; }
 
-    @media (max-width: 880px) {
-        .nav-links { display: none; }
+    .nav-right { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-shrink: 0; }
+    .nav-btn {
+        background: transparent; border: 1px solid rgba(255,255,255,0.2);
+        color: white; padding: 7px 14px; border-radius: 6px;
+        font-size: 13px; font-weight: 600;
+        display: inline-flex; align-items: center; gap: 6px;
     }
+    .nav-btn:hover { border-color: rgba(255,255,255,0.5); }
+    .nav-btn.ai {
+        background: var(--red); border-color: var(--red);
+    }
+    .nav-btn.ai:hover { background: var(--red-bright); }
 
-    /* Hero */
-    .hero { max-width: 1340px; margin: 0 auto; padding: 56px 28px 32px; }
-    .hero-grid {
-        display: grid;
-        grid-template-columns: 1.4fr 1fr;
-        gap: 40px; align-items: center;
-    }
     @media (max-width: 900px) {
-        .hero-grid { grid-template-columns: 1fr; }
-        .hero-art { display: none; }
-    }
-    .kicker {
-        display: inline-flex; align-items: center; gap: 10px;
-        font-family: 'Playfair Display', serif;
-        font-style: italic; font-size: 14px;
-        color: var(--red); margin-bottom: 20px;
-    }
-    .kicker .line { width: 36px; height: 1px; background: var(--red); }
-    .kicker .dot { width: 6px; height: 6px; background: var(--red); border-radius: 50%; animation: pulse 1.6s infinite; }
-    .hero h1 {
-        font-family: 'Playfair Display', serif; font-weight: 400;
-        font-size: clamp(52px, 7vw, 100px);
-        line-height: 1.0; letter-spacing: -0.02em;
-        margin-bottom: 24px;
-    }
-    .hero h1 .italic { font-style: italic; }
-    .hero h1 .bold {
-        font-family: 'Anton', sans-serif; font-weight: 400;
-        text-transform: uppercase; letter-spacing: 0.5px;
-        display: inline-block;
-    }
-    .hero h1 .red { color: var(--red); }
-    .hero p.lede {
-        font-size: clamp(16px, 1.5vw, 19px);
-        color: var(--text-dim);
-        max-width: 540px; margin-bottom: 28px;
+        .nav-btn .lbl { display: none; }
+        .tabs { gap: 0; }
+        .tab { padding: 8px 10px; font-size: 12px; }
     }
 
-    .hero-art { position: relative; aspect-ratio: 3/4; max-height: 520px; justify-self: end; width: 100%; max-width: 400px; }
-    .mag { position: relative; width: 100%; height: 100%; overflow: hidden; background: #000; box-shadow: 0 30px 80px rgba(0,0,0,0.6); }
-    .mag img { width: 100%; height: 100%; object-fit: cover; opacity: 0.85; }
-    .mag-overlay {
-        position: absolute; inset: 0;
-        background: linear-gradient(180deg, rgba(0,0,0,0.55) 0%, transparent 30%, rgba(0,0,0,0.6) 100%);
-        padding: 24px 28px;
-        display: flex; flex-direction: column; justify-content: space-between;
-    }
-    .mag-band { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 11px; letter-spacing: 3px; color: white; opacity: 0.85; }
-    .mag-title { line-height: 0.95; color: white; }
-    .mag-title .serif-italic { font-family: 'Playfair Display', serif; font-style: italic; font-size: 26px; display: block; }
-    .mag-title .display { font-family: 'Anton', sans-serif; font-size: clamp(40px, 5vw, 52px); letter-spacing: 0.5px; text-transform: uppercase; display: inline-block; margin-top: 4px; }
+    /* ===== Pages ===== */
+    .page { display: none; padding: 0 0 80px; }
+    .page.active { display: block; }
 
-    /* AI button */
-    .ai-btn {
-        display: inline-flex; align-items: center; gap: 10px;
-        padding: 12px 20px;
-        background: linear-gradient(135deg, var(--red), #b91017);
-        border: none; border-radius: 8px; color: white;
-        font-family: inherit; font-weight: 600; font-size: 14px;
-        cursor: pointer; transition: transform 0.1s, box-shadow 0.15s;
-        box-shadow: 0 8px 24px rgba(229,27,35,0.3);
-    }
-    .ai-btn:hover { transform: translateY(-1px); box-shadow: 0 12px 32px rgba(229,27,35,0.4); }
-    .ai-btn .spark { font-size: 16px; }
-
-    /* Country bar */
-    .country-bar {
-        max-width: 1340px; margin: 0 auto;
-        padding: 24px 28px 16px;
-    }
-    .country-bar-head {
-        display: flex; justify-content: space-between; align-items: baseline;
-        margin-bottom: 14px; flex-wrap: wrap; gap: 12px;
-    }
-    .country-bar-head h3 {
-        font-family: 'Playfair Display', serif;
-        font-style: italic; font-weight: 400;
-        font-size: 20px;
-    }
-    .country-bar-head h3 em { color: var(--red); font-weight: 700; font-style: normal; font-family: 'Anton', sans-serif; text-transform: uppercase; margin-left: 6px; }
-    .country-bar-sub { color: var(--text-dim); font-size: 13px; }
-
-    .countries {
-        display: flex; gap: 10px; overflow-x: auto;
-        scrollbar-width: thin; padding-bottom: 6px;
-    }
-    .country {
-        display: flex; align-items: center; gap: 10px;
-        background: var(--surface);
-        border: 1.5px solid var(--border);
-        padding: 10px 16px; border-radius: 12px;
-        cursor: pointer; flex-shrink: 0;
-        transition: all 0.15s;
-    }
-    .country:hover { border-color: var(--text-dim); }
-    .country.active {
-        background: linear-gradient(135deg, var(--red), #b91017);
-        border-color: var(--red);
+    /* ===== Discover Hero ===== */
+    .hero {
+        position: relative;
+        background: linear-gradient(135deg, #0e0f11 0%, #1a1c20 50%, #0e0f11 100%);
         color: white;
+        padding: 80px 32px 100px;
+        overflow: hidden;
     }
-    .country .flag { font-size: 22px; }
-    .country .info { display: flex; flex-direction: column; gap: 2px; }
-    .country .name { font-weight: 700; font-size: 13px; }
-    .country .count { font-size: 11px; color: var(--text-mute); }
-    .country.active .count { color: rgba(255,255,255,0.85); }
+    .hero::before {
+        content: ''; position: absolute; inset: 0;
+        background:
+            radial-gradient(ellipse 60% 50% at 80% 20%, rgba(229,27,35,0.35), transparent 60%),
+            radial-gradient(ellipse 50% 60% at 10% 80%, rgba(255,184,0,0.25), transparent 60%),
+            url('https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=1600&q=80&auto=format&fit=crop') center/cover;
+        opacity: 0.6;
+        z-index: 0;
+    }
+    .hero-content {
+        position: relative; z-index: 1;
+        max-width: 720px; margin: 0 auto;
+        text-align: center;
+    }
+    .hero h1 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 400;
+        font-size: clamp(38px, 5.5vw, 64px);
+        line-height: 1.05; letter-spacing: -0.02em;
+        margin-bottom: 14px;
+    }
+    .hero h1 em { font-style: italic; color: var(--amber); }
+    .hero .lede { color: rgba(255,255,255,0.8); font-size: 16px; margin-bottom: 32px; }
 
-    /* Borough lock banner */
-    .borough-banner {
-        max-width: 1340px; margin: 0 auto;
-        padding: 16px 28px 0;
+    .hero-search {
+        display: flex; gap: 0;
+        background: white; color: var(--text);
+        border-radius: 12px; padding: 6px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+        max-width: 600px; margin: 0 auto;
     }
-    .borough-strip {
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-left: 4px solid var(--amber);
-        padding: 14px 18px;
-        display: flex; justify-content: space-between; align-items: center;
-        gap: 16px; flex-wrap: wrap;
-        border-radius: 6px;
+    .hero-search input {
+        flex: 1; border: none; outline: none;
+        padding: 14px 18px; font-size: 15px;
+        background: transparent; color: var(--text);
+        font-family: inherit;
     }
-    .borough-strip .text { font-size: 13px; color: var(--text-dim); }
-    .borough-strip .text strong { color: var(--text); font-weight: 600; }
-    .borough-strip .unlock-btn {
-        background: var(--amber); color: #1a1408;
-        border: none; padding: 9px 18px; border-radius: 6px;
-        font-family: inherit; font-weight: 700; font-size: 13px;
-        cursor: pointer;
-    }
-    .borough-strip .unlock-btn:hover { background: #ffc943; }
-
-    /* Search */
-    .search-wrap { max-width: 1340px; margin: 0 auto; padding: 24px 28px 0; }
-    .search {
-        background: var(--surface); border: 1px solid var(--border);
-        padding: 14px; display: grid;
-        grid-template-columns: 1.3fr 1fr 1fr 1fr auto;
-        gap: 10px; border-radius: 8px;
-        box-shadow: 0 30px 80px rgba(0,0,0,0.4);
-    }
-    @media (max-width: 880px) {
-        .search { grid-template-columns: 1fr 1fr; }
-        .search .go { grid-column: 1 / -1; }
-    }
-    .field { background: var(--surface-2); padding: 10px 14px; border-radius: 6px; }
-    .field:focus-within { background: #252832; }
-    .field label {
-        display: block; font-family: 'Archivo Black', sans-serif;
-        font-size: 10px; color: var(--text-mute);
-        text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px;
-    }
-    .field input, .field select {
-        width: 100%; background: transparent; border: none;
-        color: var(--text); font-size: 14px; font-weight: 500;
-        font-family: inherit; outline: none; cursor: pointer;
-    }
-    .field select option { background: var(--surface-2); }
-    .go {
+    .hero-search button {
         background: var(--red); color: white; border: none;
-        padding: 0 28px; border-radius: 6px;
-        font-family: 'Anton', sans-serif; font-size: 18px;
-        letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
+        padding: 0 24px; border-radius: 8px;
+        font-weight: 700; font-size: 14px;
     }
-    .go:hover { background: var(--red-bright); }
+    .hero-search button:hover { background: var(--red-bright); }
 
-    /* Event type tabs */
-    .event-tabs {
-        max-width: 1340px; margin: 0 auto;
-        padding: 28px 28px 0;
-        display: flex; gap: 4px; border-bottom: 1px solid var(--border);
-        flex-wrap: wrap;
+    /* ===== Sub-tabs (Watch / Parade / Pickup) ===== */
+    .subtabs-wrap {
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        position: sticky; top: 64px; z-index: 50;
     }
-    .event-tab {
-        padding: 12px 18px; background: transparent;
-        border: none; color: var(--text-dim);
-        font-family: inherit; font-weight: 600;
-        font-size: 14px; cursor: pointer;
-        border-bottom: 2px solid transparent;
+    .subtabs {
+        max-width: 1280px; margin: 0 auto;
+        padding: 0 32px;
+        display: flex; gap: 2px; overflow-x: auto;
+        scrollbar-width: none;
+    }
+    .subtabs::-webkit-scrollbar { display: none; }
+    .subtab {
+        background: transparent; border: none;
+        color: var(--text-dim);
+        font-size: 14px; font-weight: 600;
+        padding: 16px 4px; margin-right: 28px;
+        border-bottom: 3px solid transparent;
         margin-bottom: -1px;
+        white-space: nowrap;
         display: inline-flex; align-items: center; gap: 8px;
     }
-    .event-tab:hover { color: var(--text); }
-    .event-tab.active {
-        color: var(--text);
-        border-bottom-color: var(--red);
-    }
-    .event-tab .badge {
-        background: var(--surface-2); color: var(--text-dim);
+    .subtab:hover { color: var(--text); }
+    .subtab.active { color: var(--text); border-bottom-color: var(--red); }
+    .subtab .count {
+        background: var(--surface-2); color: var(--text-mute);
+        padding: 1px 7px; border-radius: 999px;
         font-size: 11px; font-weight: 700;
-        padding: 2px 7px; border-radius: 999px;
     }
-    .event-tab.active .badge { background: var(--red); color: white; }
-    .event-tab[data-type="parade"].active { color: var(--blue); border-bottom-color: var(--blue); }
-    .event-tab[data-type="parade"].active .badge { background: var(--blue); }
-    .event-tab[data-type="pickup"].active { color: var(--green); border-bottom-color: var(--green); }
-    .event-tab[data-type="pickup"].active .badge { background: var(--green); }
-    .event-tab[data-type="poll"].active { color: #b45309; border-bottom-color: var(--amber); }
-    .event-tab[data-type="poll"].active .badge { background: var(--amber); color: #1a1408; }
+    .subtab.active .count { background: var(--red); color: white; }
 
-    /* Section */
-    .section { max-width: 1340px; margin: 0 auto; padding: 32px 28px; }
-    .sec-head {
-        display: flex; align-items: end; justify-content: space-between;
-        margin-bottom: 24px; gap: 24px; flex-wrap: wrap;
+    /* ===== Carousels ===== */
+    .row { margin-top: 40px; }
+    .row-head {
+        display: flex; align-items: baseline; justify-content: space-between;
+        margin-bottom: 18px; gap: 16px;
     }
-    .sec-head .title { display: flex; align-items: baseline; gap: 14px; }
-    .sec-head .bar { width: 8px; height: 38px; background: var(--red); display: inline-block; }
-    .sec-head h2 {
-        font-family: 'Playfair Display', serif; font-weight: 400;
-        font-size: clamp(32px, 4vw, 48px);
-        letter-spacing: -0.02em; line-height: 1.05;
+    .row-head h2 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 400; font-size: 26px; letter-spacing: -0.01em;
     }
-    .sec-head h2 em { font-style: italic; color: var(--red); }
-    .sec-head h2 .display {
-        font-family: 'Anton', sans-serif;
-        text-transform: uppercase; letter-spacing: 1px;
-        font-size: 0.92em;
+    .row-head h2 em { font-style: italic; color: var(--red); }
+    .row-head .actions { display: flex; gap: 8px; align-items: center; }
+    .row-head .see-all {
+        color: var(--text-dim); font-size: 13px; font-weight: 600;
+        background: transparent; border: none;
     }
-    .sec-head .sub {
+    .row-head .see-all:hover { color: var(--text); text-decoration: underline; }
+    .row-arrow {
+        width: 32px; height: 32px; border-radius: 50%;
+        background: var(--surface); border: 1px solid var(--border);
         color: var(--text-dim); font-size: 13px;
-        font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px;
+        display: grid; place-items: center;
+    }
+    .row-arrow:hover { color: var(--text); border-color: var(--text); }
+
+    .scroller {
+        display: grid; grid-auto-flow: column;
+        grid-auto-columns: minmax(280px, 1fr);
+        gap: 16px; overflow-x: auto;
+        scrollbar-width: none;
+        scroll-snap-type: x mandatory;
+        padding-bottom: 4px;
+    }
+    .scroller::-webkit-scrollbar { display: none; }
+    .scroller > * { scroll-snap-align: start; }
+
+    /* ===== Cards (Gametime-style) ===== */
+    .card {
+        background: var(--surface);
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        position: relative;
+        display: flex; flex-direction: column;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 16px 32px rgba(0,0,0,0.08); }
+    .card-img {
+        position: relative; aspect-ratio: 16 / 11;
+        overflow: hidden; background: var(--surface-2);
+    }
+    .card-img img {
+        width: 100%; height: 100%; object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    .card:hover .card-img img { transform: scale(1.05); }
+    .card-img-gradient {
+        position: absolute; inset: 0;
+        background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.45));
+    }
+    .img-pills {
+        position: absolute; top: 10px; left: 10px; right: 10px;
+        display: flex; justify-content: space-between; align-items: start;
+        z-index: 2;
+    }
+    .pill {
+        background: rgba(255,255,255,0.95); color: var(--text);
+        font-size: 11px; font-weight: 700;
+        padding: 3px 9px; border-radius: 999px;
+    }
+    .pill.live {
+        background: var(--red); color: white;
+        display: inline-flex; align-items: center; gap: 5px;
+    }
+    .pill.live .dot {
+        width: 5px; height: 5px; background: white;
+        border-radius: 50%; animation: pulse 1.5s infinite;
+    }
+    .pill.free { background: var(--green); color: white; }
+    .pill.lock { background: var(--amber); color: #1a1408; }
+
+    .save {
+        width: 28px; height: 28px; border-radius: 50%;
+        background: rgba(255,255,255,0.95);
+        border: none; color: var(--text);
+        font-size: 13px;
+        display: grid; place-items: center;
+    }
+    .save:hover { background: white; }
+    .save.on { background: var(--red); color: white; }
+
+    .card-cover-title {
+        position: absolute; bottom: 12px; left: 14px; right: 14px;
+        color: white; z-index: 2;
+        font-family: 'Anton', sans-serif;
+        font-size: 22px; line-height: 1; letter-spacing: 0.5px;
+        text-transform: uppercase;
+        text-shadow: 0 2px 12px rgba(0,0,0,0.6);
+    }
+
+    .card-body { padding: 14px 16px 16px; }
+    .card-title {
+        font-weight: 700; font-size: 15px; line-height: 1.3;
+        margin-bottom: 4px;
+    }
+    .card-meta {
+        font-size: 13px; color: var(--text-dim);
+        margin-bottom: 2px;
+    }
+    .card-price {
+        font-size: 13px; color: var(--text-dim);
+        margin-top: 6px;
+    }
+    .card-price strong { color: var(--text); font-weight: 700; }
+    .country-flag {
+        position: absolute; top: 10px; right: 48px;
+        font-size: 18px;
+        background: white; padding: 4px;
+        border-radius: 999px;
+        z-index: 2;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+    /* Locked cards */
+    .card.locked .card-img::after {
+        content: ''; position: absolute; inset: 0;
+        background: rgba(255,255,255,0.55); backdrop-filter: blur(2px);
+        z-index: 3;
+    }
+    .card.locked .lock-banner {
+        position: absolute; inset: 0; z-index: 4;
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: center;
+        gap: 8px; cursor: pointer;
+    }
+    .lock-banner .lock-icon {
+        width: 44px; height: 44px; border-radius: 50%;
+        background: var(--amber); display: grid; place-items: center;
+        font-size: 20px; box-shadow: 0 6px 18px rgba(255,184,0,0.4);
+    }
+    .lock-banner .lock-msg {
+        background: white; padding: 4px 12px; border-radius: 999px;
+        font-size: 12px; font-weight: 700; color: var(--text);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    /* ===== Country strip ===== */
+    .country-strip {
+        background: var(--bg-alt);
+        border-bottom: 1px solid var(--border);
+        padding: 14px 0;
+    }
+    .country-strip-inner {
+        max-width: 1280px; margin: 0 auto;
+        padding: 0 32px;
+        display: flex; align-items: center; gap: 12px;
+    }
+    .country-strip-label {
+        font-size: 12px; color: var(--text-dim);
+        font-weight: 700; text-transform: uppercase;
+        letter-spacing: 1.5px; flex-shrink: 0;
+    }
+    .countries {
+        display: flex; gap: 8px; overflow-x: auto;
+        scrollbar-width: none; flex: 1;
+    }
+    .countries::-webkit-scrollbar { display: none; }
+    .country {
+        display: inline-flex; align-items: center; gap: 7px;
+        background: var(--surface); border: 1px solid var(--border);
+        padding: 6px 12px; border-radius: 999px;
+        font-size: 13px; font-weight: 600;
+        white-space: nowrap; flex-shrink: 0;
+    }
+    .country:hover { border-color: var(--text); }
+    .country.active {
+        background: var(--text); color: white;
+        border-color: var(--text);
+    }
+    .country .flag { font-size: 16px; }
+
+    /* ===== Borough banner ===== */
+    .borough-banner {
+        background: linear-gradient(135deg, #fff8e6, #ffeed4);
+        border-bottom: 1px solid var(--amber);
+    }
+    .borough-banner-inner {
+        max-width: 1280px; margin: 0 auto;
+        padding: 12px 32px;
+        display: flex; justify-content: space-between; align-items: center;
+        gap: 16px; flex-wrap: wrap;
+    }
+    .borough-banner .text { font-size: 13px; color: #5a3a08; }
+    .borough-banner .text strong { font-weight: 700; }
+    .borough-banner .btn-pay {
+        background: #1a1408; color: var(--amber);
+        border: none; padding: 8px 16px; border-radius: 6px;
+        font-size: 13px; font-weight: 700;
+    }
+
+    /* ===== Section padding for non-hero pages ===== */
+    .page-head {
+        max-width: 1280px; margin: 0 auto;
+        padding: 48px 32px 24px;
+    }
+    .page-head h1 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 400; font-size: clamp(34px, 4vw, 48px);
+        letter-spacing: -0.02em; line-height: 1.05;
+        margin-bottom: 6px;
+    }
+    .page-head h1 em { font-style: italic; color: var(--red); }
+    .page-head p { color: var(--text-dim); font-size: 15px; }
+
+    .page-content {
+        max-width: 1280px; margin: 0 auto;
+        padding: 0 32px;
+    }
+
+    /* ===== Filters bar (Discover) ===== */
+    .filters {
+        max-width: 1280px; margin: 0 auto;
+        padding: 24px 32px 0;
+        display: flex; gap: 10px; flex-wrap: wrap;
+        align-items: center;
+    }
+    .filter {
+        background: var(--surface); border: 1px solid var(--border);
+        padding: 8px 14px; border-radius: 999px;
+        font-size: 13px; font-weight: 600; color: var(--text-dim);
+        display: inline-flex; align-items: center; gap: 6px;
+    }
+    .filter:hover { border-color: var(--text); color: var(--text); }
+    .filter.active { background: var(--text); color: white; border-color: var(--text); }
+    .filter select {
+        background: transparent; border: none; outline: none;
+        font: inherit; color: inherit; cursor: pointer;
+        padding-right: 4px;
     }
 
     .view-toggle {
-        display: inline-flex; background: var(--surface);
-        border: 1px solid var(--border); padding: 4px; border-radius: 6px;
+        margin-left: auto;
+        display: inline-flex;
+        background: var(--surface); border: 1px solid var(--border);
+        border-radius: 8px; padding: 3px;
     }
     .view-toggle button {
         background: transparent; border: none; color: var(--text-dim);
-        padding: 7px 14px; font-family: inherit;
-        font-size: 13px; font-weight: 600; cursor: pointer; border-radius: 4px;
+        padding: 6px 14px; font-size: 13px; font-weight: 600;
+        border-radius: 6px;
     }
-    .view-toggle button.active { background: var(--surface-2); color: var(--text); }
+    .view-toggle button.active { background: var(--text); color: white; }
 
-    /* Chips */
-    .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 28px; }
-    .chip {
-        padding: 8px 14px; background: transparent;
-        color: var(--text-dim); border: 1.5px solid var(--border);
-        font-size: 12px; font-weight: 700; cursor: pointer;
-        text-transform: uppercase; letter-spacing: 1px;
-        border-radius: 999px;
-    }
-    .chip:hover { color: var(--text); border-color: var(--text-dim); }
-    .chip.active { background: var(--text); color: white; border-color: var(--text); }
-
-    /* Grid + Cards */
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 22px; }
-    .card {
-        position: relative; background: var(--surface);
-        border: 1px solid var(--border); overflow: hidden;
-        display: flex; flex-direction: column;
-        border-radius: 8px;
-        transition: transform 0.25s ease, box-shadow 0.25s;
-    }
-    .card { box-shadow: 0 2px 8px rgba(14,15,17,0.04); }
-    .card:hover { transform: translateY(-4px); box-shadow: 0 24px 48px rgba(229,27,35,0.18), 0 12px 24px rgba(14,15,17,0.08); }
-
-    .card.locked { opacity: 0.85; }
-    .card.locked::after {
-        content: ''; position: absolute; inset: 0;
-        background: rgba(250,250,247,0.7); backdrop-filter: blur(2px);
-        z-index: 5; pointer-events: none;
-    }
-    .lock-overlay {
-        position: absolute; inset: 0; z-index: 6;
-        display: flex; flex-direction: column;
-        align-items: center; justify-content: center;
-        gap: 12px; padding: 20px; text-align: center;
-        cursor: pointer;
-    }
-    .card:not(.locked) .lock-overlay { display: none; }
-    .lock-overlay .lock-icon {
-        width: 56px; height: 56px;
-        background: var(--amber); border-radius: 50%;
-        display: grid; place-items: center; font-size: 24px;
-        box-shadow: 0 8px 24px rgba(255,184,0,0.5);
-    }
-    .lock-overlay .lock-text {
-        font-family: 'Playfair Display', serif; font-style: italic;
-        color: var(--text); font-size: 17px; font-weight: 600;
-        background: white; padding: 6px 14px; border-radius: 999px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    .lock-overlay .lock-unlock {
-        background: var(--amber); color: #1a1408;
-        font-family: 'Anton', sans-serif; font-size: 14px;
-        letter-spacing: 2px; text-transform: uppercase;
-        padding: 10px 20px; border: none; border-radius: 4px;
-        cursor: pointer;
+    /* ===== Map ===== */
+    #map {
+        width: 100%; height: 640px;
+        border: 1px solid var(--border); border-radius: 12px;
+        margin-top: 24px;
     }
 
-    .card-cover {
-        position: relative; height: 220px; overflow: hidden;
-        background: var(--cover-bg, var(--red));
-        display: flex; flex-direction: column;
-    }
-    .cover-top {
-        background: transparent; color: white;
-        padding: 12px 16px;
-        font-family: 'Inter', sans-serif; font-weight: 700;
-        font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase;
-        display: flex; justify-content: space-between;
-        position: absolute; top: 0; left: 0; right: 0; z-index: 3;
-        text-shadow: 0 1px 8px rgba(0,0,0,0.6);
-    }
-    .cover-art {
-        flex: 1; position: relative; overflow: hidden;
-        background-size: cover; background-position: center;
-        transition: transform 0.5s ease;
-    }
-    .card:hover .cover-art { transform: scale(1.06); }
-    .cover-art::before {
-        content: ''; position: absolute; inset: 0;
-        background:
-            linear-gradient(180deg, transparent 30%, rgba(0,0,0,0.55) 75%, rgba(0,0,0,0.85)),
-            linear-gradient(135deg, var(--tint, rgba(229,27,35,0.35)), transparent 60%);
-        mix-blend-mode: multiply;
-    }
-    .cover-emoji {
-        position: absolute; top: 14px; right: 14px;
-        font-size: 32px; z-index: 2;
-        filter: drop-shadow(0 4px 12px rgba(0,0,0,0.7));
-    }
-    .cover-headline {
-        position: absolute; bottom: 16px; left: 16px; right: 16px;
-        color: white; text-shadow: 0 2px 16px rgba(0,0,0,0.7);
-        z-index: 2; line-height: 0.95;
-    }
-    .cover-headline .serif { font-family: 'Playfair Display', serif; font-style: italic; font-size: 18px; display: block; margin-bottom: 2px; }
-    .cover-headline .display { font-family: 'Anton', sans-serif; font-size: 32px; letter-spacing: 0.5px; text-transform: uppercase; display: block; }
-    .live-tag {
-        position: absolute; top: 40px; left: 14px;
-        background: var(--red); color: white;
-        padding: 4px 9px; font-family: 'Archivo Black', sans-serif;
-        font-size: 10px; letter-spacing: 2px;
-        display: flex; align-items: center; gap: 5px;
-        z-index: 2; border-radius: 3px;
-    }
-    .live-tag .dot { width: 6px; height: 6px; background: white; border-radius: 50%; animation: pulse 1.4s infinite; }
-
-    @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.4; }
-    }
-
-    .card-body {
-        padding: 18px; display: flex; flex-direction: column;
-        gap: 12px; flex: 1;
-    }
-    .venue-row { display: flex; align-items: center; gap: 12px; }
-    .venue-icon {
-        width: 42px; height: 42px;
-        background: var(--surface-2); border: 1px solid var(--border);
-        display: grid; place-items: center; font-size: 18px;
-        flex-shrink: 0; border-radius: 6px;
-    }
-    .venue-info { flex: 1; min-width: 0; }
-    .venue-name { font-weight: 700; font-size: 15px; line-height: 1.2; margin-bottom: 2px; }
-    .venue-type {
-        font-family: 'Archivo Black', sans-serif;
-        font-size: 9px; text-transform: uppercase;
-        letter-spacing: 1.5px; color: var(--text-mute);
-    }
-    .country-tag {
-        display: inline-flex; align-items: center; gap: 4px;
-        font-size: 11px; color: var(--text-dim);
-    }
-    .perks { display: flex; gap: 6px; flex-wrap: wrap; }
-    .perk {
-        font-size: 10px; background: transparent;
-        color: var(--text-dim); padding: 4px 9px;
-        border: 1px solid var(--border); font-weight: 600;
-        text-transform: uppercase; letter-spacing: 1px;
-        border-radius: 999px;
-    }
-    .card-foot {
-        margin-top: auto; padding-top: 14px;
-        border-top: 1px solid var(--border);
-        display: flex; gap: 8px;
-    }
-    .rsvp {
-        flex: 1; background: var(--text); color: white;
-        border: none; padding: 12px;
-        font-family: 'Anton', sans-serif; font-size: 15px;
-        letter-spacing: 2px; text-transform: uppercase;
-        cursor: pointer; border-radius: 4px;
-    }
-    .rsvp:hover { background: #2a2c30; }
-    .rsvp.going { background: var(--green); color: white; }
-    .icon-btn {
-        background: var(--surface-2); border: 1px solid var(--border);
-        color: var(--text-dim); width: 44px; cursor: pointer;
-        font-size: 16px; border-radius: 4px;
-    }
-    .icon-btn:hover { color: var(--text); border-color: var(--text-dim); }
-
-    /* Poll cards */
-    .poll-card {
-        background: var(--surface); border: 1px solid var(--border);
-        padding: 22px; border-radius: 8px;
-    }
-    .poll-card h4 {
-        font-family: 'Playfair Display', serif;
-        font-weight: 700; font-size: 19px;
-        margin-bottom: 4px;
-    }
-    .poll-card .poll-sub { color: var(--text-mute); font-size: 12px; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; }
-    .poll-opt {
-        position: relative; padding: 12px 14px;
-        background: var(--surface-2); border: 1px solid var(--border);
-        border-radius: 6px; margin-bottom: 8px;
-        cursor: pointer; overflow: hidden;
-        transition: border-color 0.15s;
-    }
-    .poll-opt:hover { border-color: var(--text-dim); }
-    .poll-opt.voted { border-color: var(--red); }
-    .poll-opt-bar {
-        position: absolute; left: 0; top: 0; bottom: 0;
-        background: rgba(229,27,35,0.18);
-        z-index: 0; transition: width 0.4s ease;
-    }
-    .poll-opt-content { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: center; }
-    .poll-opt-name { font-weight: 600; font-size: 14px; }
-    .poll-opt-pct { color: var(--text-dim); font-size: 13px; font-weight: 700; }
-    .poll-meta { color: var(--text-mute); font-size: 12px; margin-top: 12px; }
-
-    /* Map */
-    #map { width: 100%; height: 640px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; }
-    .leaflet-popup-content-wrapper, .leaflet-popup-tip {
-        background: var(--surface) !important; color: var(--text) !important;
-        border-radius: 6px !important; border: 1px solid var(--border) !important;
-        box-shadow: 0 12px 36px rgba(0,0,0,0.5) !important;
-    }
-    .leaflet-popup-content { margin: 0 !important; width: 240px !important; }
-    .map-popup img { width: 100%; height: 120px; object-fit: cover; display: block; border-radius: 6px 6px 0 0; }
-    .map-popup .mp-body { padding: 12px 14px; }
-    .map-popup .mp-sport { font-family: 'Archivo Black', sans-serif; font-size: 10px; letter-spacing: 2px; color: var(--red); text-transform: uppercase; }
-    .map-popup .mp-match { font-family: 'Anton', sans-serif; font-size: 18px; letter-spacing: 1px; text-transform: uppercase; margin: 4px 0 8px; }
-    .map-popup .mp-venue { font-size: 13px; color: var(--text-dim); font-weight: 600; }
-    .map-popup .mp-meta { font-size: 11px; color: var(--text-mute); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
-    .leaflet-popup-close-button { color: var(--text-dim) !important; font-size: 20px !important; }
-    .map-marker {
-        width: 38px; height: 38px; border-radius: 50%;
-        background: var(--red); border: 3px solid white;
-        display: grid; place-items: center; font-size: 18px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-    }
-    .map-marker.live { animation: marker-pulse 1.5s infinite; }
-    @keyframes marker-pulse {
-        0%, 100% { box-shadow: 0 4px 12px rgba(0,0,0,0.5), 0 0 0 0 rgba(229,27,35,0.7); }
-        50% { box-shadow: 0 4px 12px rgba(0,0,0,0.5), 0 0 0 12px rgba(229,27,35,0); }
-    }
-
-    /* Match schedule */
-    .schedule {
-        display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    /* ===== Schedule cards ===== */
+    .schedule-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         gap: 14px;
+        margin-top: 24px;
     }
     .match-card {
         background: var(--surface); border: 1px solid var(--border);
-        padding: 18px; border-radius: 8px;
-        display: flex; flex-direction: column; gap: 12px;
-        cursor: pointer;
-        transition: border-color 0.15s, transform 0.15s;
+        padding: 20px; border-radius: 12px;
+        display: flex; flex-direction: column; gap: 14px;
     }
-    .match-card:hover { border-color: var(--text-dim); transform: translateY(-2px); }
+    .match-card:hover { border-color: var(--text); }
     .match-top {
         display: flex; justify-content: space-between;
         font-size: 11px; color: var(--text-mute);
-        text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700;
+        text-transform: uppercase; letter-spacing: 1.2px; font-weight: 700;
     }
     .match-top .tournament { color: var(--red); }
-    .match-teams { display: flex; align-items: center; gap: 16px; }
+    .match-teams { display: flex; align-items: center; gap: 12px; }
     .match-team { flex: 1; display: flex; align-items: center; gap: 10px; }
     .match-team.away { justify-content: flex-end; flex-direction: row-reverse; text-align: right; }
     .match-flag { font-size: 28px; }
     .match-team-name { font-family: 'Anton', sans-serif; font-size: 18px; letter-spacing: 1px; text-transform: uppercase; }
-    .match-vs {
-        font-family: 'Playfair Display', serif; font-style: italic;
-        color: var(--text-mute); font-size: 15px;
-    }
+    .match-vs { font-family: 'Playfair Display', serif; font-style: italic; color: var(--text-mute); }
     .match-time {
-        text-align: center; padding-top: 8px;
-        border-top: 1px dashed var(--border);
-        font-size: 12px; color: var(--text-dim); font-weight: 600;
+        padding-top: 10px; border-top: 1px dashed var(--border);
+        font-size: 13px; color: var(--text-dim);
     }
     .match-actions { display: flex; gap: 8px; }
     .match-btn {
-        flex: 1; padding: 8px; background: var(--surface-2);
+        flex: 1; padding: 9px; background: var(--surface-2);
         border: 1px solid var(--border); color: var(--text);
-        font-family: inherit; font-weight: 600; font-size: 12px;
-        cursor: pointer; border-radius: 4px;
-        text-transform: uppercase; letter-spacing: 1px;
+        font-size: 12px; font-weight: 600; border-radius: 6px;
     }
-    .match-btn:hover { background: var(--red); border-color: var(--red); }
+    .match-btn:hover { background: var(--text); color: white; border-color: var(--text); }
+    .match-btn.primary { background: var(--text); color: white; border-color: var(--text); }
+    .match-btn.primary:hover { background: var(--red); border-color: var(--red); }
 
-    /* Two-col layout for chat + lineup */
-    .two-col {
+    /* ===== Fan Hub ===== */
+    .fanhub-grid {
         display: grid; grid-template-columns: 1fr 1fr;
-        gap: 22px;
+        gap: 24px; margin-top: 24px;
     }
-    @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+    @media (max-width: 900px) { .fanhub-grid { grid-template-columns: 1fr; } }
 
-    /* Fan chat */
-    .chat {
+    .panel {
         background: var(--surface); border: 1px solid var(--border);
-        border-radius: 8px; padding: 0; overflow: hidden;
-        display: flex; flex-direction: column;
-        height: 480px;
+        border-radius: 12px; overflow: hidden;
     }
-    .chat-head {
-        padding: 16px 18px; border-bottom: 1px solid var(--border);
+    .panel-head {
+        padding: 18px 20px; border-bottom: 1px solid var(--border);
         display: flex; justify-content: space-between; align-items: center;
     }
-    .chat-head .chat-title { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 17px; }
-    .chat-head .chat-title em { font-style: italic; color: var(--red); }
-    .chat-head .online {
-        display: inline-flex; align-items: center; gap: 6px;
-        font-size: 11px; color: var(--text-dim);
+    .panel-title {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700; font-size: 18px;
+    }
+    .panel-title em { font-style: italic; color: var(--red); }
+    .panel-sub {
+        font-size: 11px; color: var(--text-mute);
         text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700;
-    }
-    .chat-head .online .dot { width: 7px; height: 7px; background: var(--green); border-radius: 50%; box-shadow: 0 0 8px var(--green); }
-    .chat-body {
-        flex: 1; overflow-y: auto;
-        padding: 14px 18px;
-        display: flex; flex-direction: column; gap: 12px;
-    }
-    .chat-msg { display: flex; gap: 10px; align-items: flex-start; }
-    .chat-avatar {
-        width: 32px; height: 32px; border-radius: 50%;
-        background: var(--avatar, var(--surface-2));
-        display: grid; place-items: center;
-        font-size: 14px; flex-shrink: 0; font-weight: 700;
-        color: white;
-    }
-    .chat-content .chat-meta { font-size: 11px; color: var(--text-mute); margin-bottom: 2px; font-weight: 600; }
-    .chat-content .chat-meta strong { color: var(--text); font-weight: 700; margin-right: 6px; }
-    .chat-content .chat-text { font-size: 14px; color: var(--text); line-height: 1.4; }
-    .chat-input {
-        display: flex; gap: 8px; padding: 12px 14px;
-        border-top: 1px solid var(--border); background: var(--surface-2);
-    }
-    .chat-input input {
-        flex: 1; background: var(--surface-2); border: 1px solid var(--border);
-        color: var(--text); padding: 9px 12px; border-radius: 4px;
-        font-family: inherit; font-size: 14px; outline: none;
-    }
-    .chat-input input:focus { border-color: var(--red); }
-    .chat-input button {
-        background: var(--red); border: none; color: white;
-        padding: 0 18px; font-family: 'Anton', sans-serif;
-        letter-spacing: 1.5px; font-size: 14px; cursor: pointer;
-        text-transform: uppercase; border-radius: 4px;
     }
 
     /* Lineup */
-    .lineup {
-        background: var(--surface); border: 1px solid var(--border);
-        border-radius: 8px; padding: 20px;
-    }
-    .lineup-head { display: flex; justify-content: space-between; margin-bottom: 14px; align-items: baseline; }
-    .lineup-head .lt-title { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 17px; }
-    .lineup-head .lt-title em { font-style: italic; color: var(--red); }
-    .lineup-head .lt-sub { font-size: 11px; color: var(--text-mute); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; }
-    .lineup-list { display: flex; flex-direction: column; gap: 8px; }
+    .lineup-list { padding: 14px 18px; display: flex; flex-direction: column; gap: 6px; }
     .player-row {
         display: flex; align-items: center; gap: 12px;
         padding: 10px 12px; background: var(--surface-2);
-        border-radius: 6px;
+        border-radius: 8px;
     }
     .player-num {
         width: 26px; height: 26px; border-radius: 50%;
         background: var(--red); color: white;
         display: grid; place-items: center;
         font-family: 'Anton', sans-serif; font-size: 13px;
-        flex-shrink: 0;
     }
     .player-name { flex: 1; font-weight: 600; font-size: 14px; }
     .player-pos { font-size: 11px; color: var(--text-mute); margin-right: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
     .player-reactions { display: flex; gap: 4px; }
     .reaction {
-        background: transparent; border: 1px solid var(--border);
+        background: var(--surface); border: 1px solid var(--border);
         font-size: 14px; padding: 3px 8px; border-radius: 999px;
-        cursor: pointer; display: inline-flex; align-items: center; gap: 4px;
-        transition: all 0.15s;
     }
-    .reaction span { font-size: 11px; color: var(--text-dim); font-weight: 700; }
-    .reaction:hover { border-color: var(--text-dim); }
     .reaction.active { background: var(--red); border-color: var(--red); }
-    .reaction.active span { color: white; }
 
-    /* AI Modal */
-    .modal-backdrop {
+    /* Chat */
+    .chat { display: flex; flex-direction: column; height: 540px; }
+    .chat-body {
+        flex: 1; overflow-y: auto;
+        padding: 16px 20px;
+        display: flex; flex-direction: column; gap: 14px;
+    }
+    .chat-msg { display: flex; gap: 10px; align-items: start; }
+    .chat-avatar {
+        width: 32px; height: 32px; border-radius: 50%;
+        display: grid; place-items: center;
+        font-size: 14px; flex-shrink: 0; font-weight: 700;
+        color: white;
+    }
+    .chat-meta { font-size: 11px; color: var(--text-mute); margin-bottom: 2px; }
+    .chat-meta strong { color: var(--text); font-weight: 700; margin-right: 6px; }
+    .chat-text { font-size: 14px; line-height: 1.4; }
+    .chat-input {
+        display: flex; gap: 8px; padding: 14px 18px;
+        border-top: 1px solid var(--border); background: var(--surface-2);
+    }
+    .chat-input input {
+        flex: 1; background: white; border: 1px solid var(--border);
+        padding: 10px 12px; border-radius: 6px; outline: none;
+        font: inherit; font-size: 14px;
+    }
+    .chat-input input:focus { border-color: var(--red); }
+    .chat-input button {
+        background: var(--red); border: none; color: white;
+        padding: 0 18px; font-weight: 700; font-size: 13px; border-radius: 6px;
+    }
+    .online {
+        display: inline-flex; align-items: center; gap: 6px;
+        font-size: 11px; color: var(--text-mute);
+        text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700;
+    }
+    .online .dot {
+        width: 7px; height: 7px; background: var(--green);
+        border-radius: 50%;
+    }
+
+    /* ===== Polls ===== */
+    .polls-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 16px; margin-top: 24px;
+    }
+    .poll-card {
+        background: var(--surface); border: 1px solid var(--border);
+        padding: 22px; border-radius: 12px;
+        position: relative;
+    }
+    .poll-card h3 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700; font-size: 18px;
+        margin-bottom: 4px;
+    }
+    .poll-sub {
+        font-size: 11px; color: var(--text-mute);
+        text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700;
+        margin-bottom: 16px;
+    }
+    .poll-opt {
+        position: relative; padding: 12px 14px;
+        background: var(--surface-2);
+        border: 1px solid transparent;
+        border-radius: 8px; margin-bottom: 8px;
+        cursor: pointer; overflow: hidden;
+    }
+    .poll-opt:hover { border-color: var(--border-2); }
+    .poll-opt.voted { border-color: var(--red); }
+    .poll-opt-bar {
+        position: absolute; left: 0; top: 0; bottom: 0;
+        background: rgba(229,27,35,0.15);
+        z-index: 0; transition: width 0.4s ease;
+    }
+    .poll-opt-content {
+        position: relative; z-index: 1;
+        display: flex; justify-content: space-between; align-items: center;
+    }
+    .poll-opt-name { font-weight: 600; font-size: 14px; }
+    .poll-opt-pct { color: var(--text-dim); font-size: 13px; font-weight: 700; }
+    .poll-meta { color: var(--text-mute); font-size: 12px; margin-top: 12px; }
+    .poll-locked {
+        text-align: center; padding: 30px 0;
+    }
+    .poll-locked .lock-icon {
+        width: 56px; height: 56px; border-radius: 50%;
+        background: var(--amber);
+        display: grid; place-items: center; font-size: 22px;
+        margin: 0 auto 12px;
+        box-shadow: 0 8px 20px rgba(255,184,0,0.4);
+    }
+    .poll-locked button {
+        background: var(--text); color: white; border: none;
+        padding: 10px 22px; border-radius: 6px;
+        font-weight: 700; font-size: 13px; margin-top: 6px;
+    }
+
+    /* ===== Modal ===== */
+    .modal-bg {
         position: fixed; inset: 0; z-index: 200;
-        background: rgba(14,15,17,0.55); backdrop-filter: blur(8px);
+        background: rgba(14,15,17,0.5); backdrop-filter: blur(6px);
         display: none; align-items: center; justify-content: center;
         padding: 20px;
     }
-    .modal-backdrop.open { display: flex; }
+    .modal-bg.open { display: flex; }
     .modal {
-        background: var(--surface); border: 1px solid var(--border);
-        border-radius: 12px; width: 100%; max-width: 560px;
-        max-height: 86vh; display: flex; flex-direction: column;
-        overflow: hidden;
+        background: white; border-radius: 14px;
+        width: 100%; max-width: 540px; max-height: 86vh;
+        display: flex; flex-direction: column; overflow: hidden;
+        box-shadow: 0 30px 80px rgba(0,0,0,0.3);
     }
     .modal-head {
         padding: 22px 26px; border-bottom: 1px solid var(--border);
         display: flex; justify-content: space-between; align-items: center;
     }
     .modal-head h3 {
-        font-family: 'Playfair Display', serif; font-style: italic;
-        font-weight: 400; font-size: 24px;
+        font-family: 'Playfair Display', serif;
+        font-style: italic; font-weight: 400; font-size: 22px;
     }
-    .modal-head h3 strong { font-family: 'Anton', sans-serif; font-weight: 400; text-transform: uppercase; font-style: normal; letter-spacing: 1px; color: var(--red); }
-    .modal-close { background: transparent; border: none; color: var(--text-dim); font-size: 22px; cursor: pointer; }
+    .modal-head h3 strong { font-family: 'Anton', sans-serif; font-style: normal; font-weight: 400; text-transform: uppercase; color: var(--red); letter-spacing: 1px; margin-left: 2px; }
+    .modal-close {
+        background: transparent; border: none; color: var(--text-dim);
+        font-size: 22px;
+    }
     .modal-body { padding: 22px 26px; overflow-y: auto; }
     .ai-prompt {
         width: 100%; min-height: 90px;
         background: var(--surface-2); border: 1px solid var(--border);
-        color: var(--text); padding: 14px;
-        font-family: inherit; font-size: 14px;
-        border-radius: 6px; outline: none; resize: vertical;
+        padding: 14px; font: inherit; font-size: 14px;
+        border-radius: 8px; outline: none; resize: vertical;
     }
     .ai-prompt:focus { border-color: var(--red); }
     .ai-suggestions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
     .ai-sugg {
         font-size: 12px; padding: 6px 12px;
-        background: transparent; border: 1px solid var(--border);
+        background: var(--surface-2); border: 1px solid var(--border);
         color: var(--text-dim); border-radius: 999px;
-        cursor: pointer;
     }
-    .ai-sugg:hover { color: var(--text); border-color: var(--text-dim); }
+    .ai-sugg:hover { color: var(--text); border-color: var(--text); }
     .ai-submit {
         margin-top: 16px; width: 100%;
-        background: linear-gradient(135deg, var(--red), #b91017);
-        border: none; color: white; padding: 14px;
-        font-family: 'Anton', sans-serif; font-size: 16px;
-        letter-spacing: 2px; text-transform: uppercase;
-        border-radius: 6px; cursor: pointer;
+        background: var(--red); border: none; color: white;
+        padding: 14px; font-weight: 700; font-size: 14px;
+        border-radius: 8px;
     }
+    .ai-submit:hover { background: var(--red-bright); }
     .ai-response {
         margin-top: 22px; padding: 18px;
         background: linear-gradient(135deg, #fff8e6, #ffeed4);
-        border: 1px solid var(--amber);
-        border-radius: 6px;
-        font-size: 14px; line-height: 1.6;
-        white-space: pre-wrap; color: var(--text);
+        border: 1px solid var(--amber); border-radius: 8px;
+        font-size: 14px; line-height: 1.6; white-space: pre-wrap;
     }
-    .ai-response strong { color: var(--red); font-family: 'Anton', sans-serif; font-weight: 400; letter-spacing: 1px; }
-    .ai-typing { color: var(--text-mute); font-style: italic; }
+    .ai-response strong {
+        color: var(--red); font-family: 'Anton', sans-serif;
+        font-weight: 400; letter-spacing: 1px;
+    }
 
-    /* Paywall modal */
-    .paywall .modal {
-        max-width: 460px;
-        background: linear-gradient(180deg, #fff8e6 0%, var(--surface) 60%);
-    }
-    .paywall-hero {
-        text-align: center; padding: 40px 26px 16px;
-    }
-    .paywall-hero .crown { font-size: 48px; margin-bottom: 10px; }
+    /* Paywall */
+    .paywall .modal { max-width: 440px; background: linear-gradient(180deg, #fff8e6 0%, white 60%); }
+    .paywall-hero { text-align: center; padding: 36px 26px 12px; }
+    .paywall-hero .crown { font-size: 42px; margin-bottom: 8px; }
     .paywall-hero h3 {
         font-family: 'Playfair Display', serif; font-style: italic;
-        font-weight: 400; font-size: 28px; margin-bottom: 8px;
+        font-size: 26px; margin-bottom: 8px;
     }
-    .paywall-hero h3 strong { font-family: 'Anton', sans-serif; font-weight: 400; text-transform: uppercase; font-style: normal; letter-spacing: 1px; color: var(--amber); }
+    .paywall-hero h3 strong { font-family: 'Anton', sans-serif; font-style: normal; font-weight: 400; text-transform: uppercase; color: var(--red); letter-spacing: 1px; }
     .paywall-hero .sub { color: var(--text-dim); font-size: 14px; max-width: 320px; margin: 0 auto; }
-    .paywall-features { padding: 0 26px 16px; }
+    .paywall-features { padding: 0 26px 12px; }
     .paywall-feature {
         display: flex; gap: 12px; align-items: start;
-        padding: 12px 0; font-size: 14px;
+        padding: 10px 0; font-size: 14px;
     }
-    .paywall-feature .check { color: var(--green); flex-shrink: 0; font-weight: 700; }
+    .paywall-feature .check { color: var(--green); font-weight: 700; }
     .paywall-price {
-        text-align: center; padding: 16px 26px 8px;
-        font-family: 'Anton', sans-serif; font-size: 54px;
-        letter-spacing: 1px; color: var(--text); line-height: 1;
+        text-align: center; padding: 16px 26px 6px;
+        font-family: 'Anton', sans-serif; font-size: 48px;
+        letter-spacing: 1px; line-height: 1;
     }
-    .paywall-price .small { font-size: 16px; color: var(--text-mute); display: block; letter-spacing: 2px; margin-top: 6px; }
-    .paywall-actions { padding: 16px 26px 26px; display: flex; flex-direction: column; gap: 8px; }
+    .paywall-price .small { font-size: 14px; color: var(--text-mute); display: block; letter-spacing: 2px; margin-top: 6px; }
+    .paywall-actions { padding: 14px 26px 24px; display: flex; flex-direction: column; gap: 8px; }
     .paywall-pay {
-        background: var(--amber); color: #1a1408;
-        border: none; padding: 14px;
-        font-family: 'Anton', sans-serif; font-size: 16px;
-        letter-spacing: 2px; text-transform: uppercase;
-        border-radius: 6px; cursor: pointer;
+        background: var(--text); color: var(--amber); border: none;
+        padding: 14px; font-family: 'Anton', sans-serif;
+        font-size: 16px; letter-spacing: 2px; text-transform: uppercase;
+        border-radius: 8px;
     }
-    .paywall-pay:hover { background: #ffc943; }
-    .paywall-skip { background: transparent; color: var(--text-dim); border: none; font-size: 13px; cursor: pointer; padding: 8px; }
+    .paywall-skip { background: transparent; color: var(--text-mute); border: none; font-size: 13px; padding: 8px; }
 
-    /* Empty */
+    /* Empty + footer */
     .empty {
-        grid-column: 1 / -1; text-align: center;
-        padding: 80px 20px; color: var(--text-dim);
+        text-align: center; padding: 80px 20px; color: var(--text-dim);
+        grid-column: 1 / -1;
     }
-    .empty .big { font-size: 80px; margin-bottom: 16px; opacity: 0.6; }
-    .empty h3 { font-family: 'Anton', sans-serif; font-size: 32px; letter-spacing: 2px; margin-bottom: 8px; }
-
+    .empty h3 {
+        font-family: 'Playfair Display', serif;
+        font-style: italic; font-size: 24px;
+        margin-bottom: 6px; color: var(--text);
+    }
     footer {
-        max-width: 1340px; margin: 80px auto 0;
-        padding: 40px 28px; border-top: 1px solid var(--border);
+        margin-top: 80px; padding: 32px;
+        border-top: 1px solid var(--border);
+    }
+    .footer-inner {
+        max-width: 1280px; margin: 0 auto;
         display: flex; justify-content: space-between; align-items: center;
         flex-wrap: wrap; gap: 16px;
-        color: var(--text-mute); font-size: 12px;
-        text-transform: uppercase; letter-spacing: 1px; font-weight: 600;
+        color: var(--text-mute); font-size: 13px;
     }
 
     /* Toast */
     .toast {
         position: fixed; bottom: 24px; left: 50%;
         transform: translateX(-50%) translateY(20px);
-        background: var(--surface); border: 1px solid var(--border);
-        padding: 12px 20px; border-radius: 8px;
-        color: var(--text); font-size: 14px; font-weight: 500;
+        background: var(--text); color: white;
+        padding: 12px 22px; border-radius: 999px;
+        font-size: 14px; font-weight: 600;
         opacity: 0; transition: all 0.3s; z-index: 300;
-        box-shadow: 0 12px 36px rgba(0,0,0,0.5);
+        box-shadow: 0 12px 36px rgba(0,0,0,0.3);
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
 
-<div class="backdrop"></div>
-
 <nav>
     <div class="nav-inner">
-        <div class="brand">
+        <a class="brand" href="#/discover">
             <div class="brand-mark">L</div>
             <div class="brand-name">The Lineup</div>
-        </div>
-        <div class="nav-links">
-            <a href="#tonight">Discover</a>
-            <a href="#schedule">Schedule</a>
-            <a href="#chat">Fan Hub</a>
-            <a href="#tonight">Polls</a>
+        </a>
+        <div class="tabs" id="tabs">
+            <button class="tab" data-route="discover">Discover</button>
+            <button class="tab" data-route="schedule">Schedule</button>
+            <button class="tab" data-route="fanhub">Fan Hub</button>
+            <button class="tab" data-route="polls">Polls</button>
+            <button class="tab highlight" data-route="discover">⚽ World Cup 2026</button>
         </div>
         <div class="nav-right">
-            <button class="country-pill" onclick="document.getElementById('country-bar').scrollIntoView({behavior:'smooth'})">
-                <span class="flag" id="nav-flag">🌍</span>
-                <span id="nav-country">Pick country</span>
-                <span class="chev">▼</span>
-            </button>
-            <button class="nav-cta">Sign in</button>
+            <button class="nav-btn ai" onclick="openAI()">✦ <span class="lbl">Plan with AI</span></button>
+            <button class="nav-btn">Sign in</button>
         </div>
     </div>
 </nav>
 
-<section class="hero">
-    <div class="hero-grid">
-        <div>
-            <div class="kicker"><span class="dot"></span><span>Live tonight</span><span class="line"></span><span id="hero-count">47 watch parties</span></div>
-            <h1>
-                <span class="italic">Find your</span><br>
-                <span class="bold red">CROWD.</span><br>
-                <span class="italic">Catch the</span> <span class="bold">GAME.</span>
-            </h1>
-            <p class="lede">Pick the country you're supporting. Find watch parties, post-game parades, and pickup matches wherever they're happening — bars, parks, breweries, plazas, and beyond.</p>
-            <button class="ai-btn" onclick="openAI()">
-                <span class="spark">✦</span>
-                Plan your matchday with AI
-            </button>
-        </div>
-        <div class="hero-art">
-            <div class="mag">
-                <img src="https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=900&q=85&auto=format&fit=crop" alt="">
-                <div class="mag-overlay">
-                    <div class="mag-band">VOL. 47 · TONIGHT</div>
-                    <div class="mag-title">
-                        <span class="serif-italic">Inside the</span>
-                        <span class="display">WATCH PARTY</span>
-                    </div>
-                </div>
-            </div>
+<!-- ============ DISCOVER PAGE ============ -->
+<section class="page" data-page="discover">
+    <div class="hero">
+        <div class="hero-content">
+            <h1>Find your <em>crowd.</em> Catch the <em>game.</em></h1>
+            <p class="lede">Watch parties, post-game parades, and pickup games — every sport, every venue, every country.</p>
+            <form class="hero-search" onsubmit="event.preventDefault();applyFilters()">
+                <input id="search-input" type="text" placeholder="Search teams, venues, or events">
+                <button type="submit">Search</button>
+            </form>
         </div>
     </div>
-</section>
 
-<section class="country-bar" id="country-bar">
-    <div class="country-bar-head">
-        <h3>Pick your country <em>You're Supporting</em></h3>
-        <div class="country-bar-sub">Filters everything below — parties, parades, polls, schedule</div>
-    </div>
-    <div class="countries" id="countries"></div>
-</section>
-
-<div class="borough-banner" id="borough-banner"></div>
-
-<div class="search-wrap">
-    <div class="search">
-        <div class="field">
-            <label>Location</label>
-            <input id="loc" type="text" placeholder="City, ZIP, neighborhood" value="Brooklyn, NY">
+    <div class="country-strip">
+        <div class="country-strip-inner">
+            <span class="country-strip-label">Who are you supporting?</span>
+            <div class="countries" id="countries"></div>
         </div>
-        <div class="field">
-            <label>Sport</label>
-            <select id="sport">
+    </div>
+
+    <div id="borough-banner"></div>
+
+    <div class="subtabs-wrap">
+        <div class="subtabs" id="subtabs"></div>
+    </div>
+
+    <div class="filters">
+        <button class="filter" onclick="toggleQuickFilter(this,'Live Now')">🔴 Live now</button>
+        <button class="filter" onclick="toggleQuickFilter(this,'Free')">Free</button>
+        <button class="filter" onclick="toggleQuickFilter(this,'Outdoor')">Outdoor</button>
+        <button class="filter" onclick="toggleQuickFilter(this,'Within 1 mi')">Within 1 mi</button>
+        <div class="filter">
+            <select id="sport-select" onchange="applyFilters()">
                 <option value="">All sports</option>
-                <option>Soccer</option><option>NFL</option><option>NBA</option><option>MLB</option>
-                <option>NHL</option><option>UFC</option><option>F1</option><option>College</option>
+                <option>Soccer</option><option>NFL</option><option>NBA</option>
+                <option>MLB</option><option>NHL</option><option>UFC</option><option>F1</option>
             </select>
         </div>
-        <div class="field">
-            <label>Venue</label>
-            <select id="vtype-select">
-                <option value="">All venues</option>
-                <option>Sports Bar</option><option>Park</option><option>Brewery</option>
-                <option>Rooftop</option><option>Restaurant</option><option>Plaza</option>
-                <option>Community Center</option><option>Beach</option>
-            </select>
-        </div>
-        <div class="field">
-            <label>When</label>
-            <select id="when">
+        <div class="filter">
+            <select id="when-select" onchange="applyFilters()">
                 <option value="">Anytime</option>
                 <option>Tonight</option><option>Tomorrow</option><option>This weekend</option>
             </select>
         </div>
-        <button class="go" onclick="render()">Search</button>
-    </div>
-</div>
-
-<div class="event-tabs" id="event-tabs"></div>
-
-<section class="section" id="tonight">
-    <div class="sec-head">
-        <div class="title">
-            <span class="bar"></span>
-            <h2 id="sec-title"><em>Tonight's</em> <span class="display">Lineup</span></h2>
+        <div class="view-toggle">
+            <button id="view-list" class="active" onclick="setView('list')">List</button>
+            <button id="view-map" onclick="setView('map')">Map</button>
         </div>
-        <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
-            <div class="sub" id="count"></div>
-            <div class="view-toggle">
-                <button id="view-list" class="active" onclick="setView('list')">List</button>
-                <button id="view-map" onclick="setView('map')">Map</button>
+    </div>
+
+    <div class="page-content">
+        <div id="discover-list"></div>
+        <div id="map" style="display:none"></div>
+    </div>
+</section>
+
+<!-- ============ SCHEDULE PAGE ============ -->
+<section class="page" data-page="schedule">
+    <div class="page-head">
+        <h1><em>Match</em> Schedule</h1>
+        <p>Upcoming fixtures for the country you support.</p>
+    </div>
+    <div class="page-content">
+        <div class="schedule-grid" id="schedule-grid"></div>
+    </div>
+</section>
+
+<!-- ============ FAN HUB PAGE ============ -->
+<section class="page" data-page="fanhub">
+    <div class="page-head">
+        <h1><em>Fan</em> Hub</h1>
+        <p>Live chat with your country's supporters. React to the starting lineup.</p>
+    </div>
+    <div class="page-content">
+        <div class="fanhub-grid">
+            <div class="panel" id="lineup-panel"></div>
+            <div class="panel chat">
+                <div class="panel-head">
+                    <div class="panel-title"><em id="chat-country">Global</em> Chat</div>
+                    <div class="online"><span class="dot"></span><span id="chat-online">2,341 online</span></div>
+                </div>
+                <div class="chat-body" id="chat-body"></div>
+                <form class="chat-input" onsubmit="sendChat(event)">
+                    <input id="chat-input" placeholder="Say something to fellow supporters...">
+                    <button type="submit">Send</button>
+                </form>
             </div>
         </div>
     </div>
-
-    <div class="chips" id="chips"></div>
-    <div class="grid" id="grid"></div>
-    <div id="map" style="display:none"></div>
 </section>
 
-<section class="section" id="schedule">
-    <div class="sec-head">
-        <div class="title">
-            <span class="bar"></span>
-            <h2><em>Match</em> <span class="display">Schedule</span></h2>
-        </div>
-        <div class="sub">Upcoming fixtures for your country</div>
+<!-- ============ POLLS PAGE ============ -->
+<section class="page" data-page="polls">
+    <div class="page-head">
+        <h1><em>Community</em> Polls</h1>
+        <p>Vote on where the best watch parties should happen next.</p>
     </div>
-    <div class="schedule" id="schedule-grid"></div>
-</section>
-
-<section class="section" id="chat">
-    <div class="sec-head">
-        <div class="title">
-            <span class="bar"></span>
-            <h2><em>Fan</em> <span class="display">Hub</span></h2>
-        </div>
-        <div class="sub">Lineup reactions · Live chat</div>
-    </div>
-    <div class="two-col">
-        <div class="lineup" id="lineup-block"></div>
-        <div class="chat">
-            <div class="chat-head">
-                <div class="chat-title"><em id="chat-country">Global</em> Fan Chat</div>
-                <div class="online"><span class="dot"></span><span id="chat-online">2,341 online</span></div>
-            </div>
-            <div class="chat-body" id="chat-body"></div>
-            <form class="chat-input" onsubmit="sendChat(event)">
-                <input id="chat-input" placeholder="Say something to your fellow supporters..." />
-                <button type="submit">Send</button>
-            </form>
-        </div>
+    <div class="page-content">
+        <div class="polls-grid" id="polls-grid"></div>
     </div>
 </section>
 
 <footer>
-    <div class="brand">
-        <div class="brand-mark">L</div>
-        <div class="brand-name">The Lineup</div>
+    <div class="footer-inner">
+        <div style="display:flex;align-items:center;gap:10px">
+            <div class="brand-mark">L</div>
+            <div class="brand-name">The Lineup</div>
+        </div>
+        <div>© 2026 The Lineup. One Game. Every Crowd.</div>
     </div>
-    <div>© 2026 — One Game. Every Crowd.</div>
 </footer>
 
 <!-- AI Modal -->
-<div class="modal-backdrop" id="ai-modal" onclick="if(event.target===this)closeAI()">
+<div class="modal-bg" id="ai-modal" onclick="if(event.target===this)closeAI()">
     <div class="modal">
         <div class="modal-head">
-            <h3><em>Plan your</em> <strong>Matchday</strong></h3>
+            <h3><em>Plan your</em><strong>Matchday</strong></h3>
             <button class="modal-close" onclick="closeAI()">✕</button>
         </div>
         <div class="modal-body">
-            <textarea class="ai-prompt" id="ai-prompt" placeholder="e.g. 'I'm cheering for Argentina with 3 friends, we want food, beer, and a big screen — somewhere in Brooklyn'"></textarea>
+            <textarea class="ai-prompt" id="ai-prompt" placeholder="e.g. 'I'm cheering for Argentina with 3 friends — food, beer, big screen, Brooklyn'"></textarea>
             <div class="ai-suggestions">
                 <button class="ai-sugg" onclick="fillPrompt(this)">Argentina match + dinner spot</button>
                 <button class="ai-sugg" onclick="fillPrompt(this)">Family-friendly outdoor World Cup</button>
                 <button class="ai-sugg" onclick="fillPrompt(this)">Pub crawl with Liverpool fans</button>
-                <button class="ai-sugg" onclick="fillPrompt(this)">Post-game parade route</button>
             </div>
             <button class="ai-submit" onclick="runAI()">✦ Build my matchday</button>
             <div class="ai-response" id="ai-response" style="display:none"></div>
@@ -1022,19 +920,18 @@
     </div>
 </div>
 
-<!-- Paywall Modal -->
-<div class="modal-backdrop paywall" id="paywall" onclick="if(event.target===this)closePaywall()">
+<!-- Paywall -->
+<div class="modal-bg paywall" id="paywall" onclick="if(event.target===this)closePaywall()">
     <div class="modal">
         <div class="paywall-hero">
             <div class="crown">👑</div>
             <h3><em>Unlock the rest of</em> <strong>NYC</strong></h3>
-            <div class="sub">Brooklyn is free, forever. Get every other borough — Manhattan, Queens, the Bronx, and Staten Island.</div>
+            <p class="sub">Brooklyn is free, forever. Get every other borough — Manhattan, Queens, the Bronx & Staten Island.</p>
         </div>
         <div class="paywall-features">
             <div class="paywall-feature"><span class="check">✓</span><span>Watch parties in all 5 boroughs</span></div>
             <div class="paywall-feature"><span class="check">✓</span><span>Post-game parade routes & start times</span></div>
             <div class="paywall-feature"><span class="check">✓</span><span>Pickup games in every park</span></div>
-            <div class="paywall-feature"><span class="check">✓</span><span>Priority RSVP for sold-out events</span></div>
             <div class="paywall-feature"><span class="check">✓</span><span>Unlimited AI matchday plans</span></div>
         </div>
         <div class="paywall-price">$5<span class="small">ONE-TIME · LIFETIME</span></div>
@@ -1050,82 +947,77 @@
 <script>
 // ============ DATA ============
 const countries = [
-    { code:'US',  name:'USA',       flag:'🇺🇸' },
-    { code:'AR',  name:'Argentina', flag:'🇦🇷' },
-    { code:'BR',  name:'Brazil',    flag:'🇧🇷' },
-    { code:'EN',  name:'England',   flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿' },
-    { code:'ES',  name:'Spain',     flag:'🇪🇸' },
-    { code:'FR',  name:'France',    flag:'🇫🇷' },
-    { code:'DE',  name:'Germany',   flag:'🇩🇪' },
-    { code:'IT',  name:'Italy',     flag:'🇮🇹' },
-    { code:'MX',  name:'Mexico',    flag:'🇲🇽' },
-    { code:'PT',  name:'Portugal',  flag:'🇵🇹' },
-    { code:'NL',  name:'Netherlands', flag:'🇳🇱' },
-    { code:'JP',  name:'Japan',     flag:'🇯🇵' },
+    { code:'US', name:'USA',         flag:'🇺🇸' },
+    { code:'AR', name:'Argentina',   flag:'🇦🇷' },
+    { code:'BR', name:'Brazil',      flag:'🇧🇷' },
+    { code:'EN', name:'England',     flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿' },
+    { code:'ES', name:'Spain',       flag:'🇪🇸' },
+    { code:'FR', name:'France',      flag:'🇫🇷' },
+    { code:'DE', name:'Germany',     flag:'🇩🇪' },
+    { code:'IT', name:'Italy',       flag:'🇮🇹' },
+    { code:'MX', name:'Mexico',      flag:'🇲🇽' },
+    { code:'PT', name:'Portugal',    flag:'🇵🇹' },
+    { code:'NL', name:'Netherlands', flag:'🇳🇱' },
+    { code:'JP', name:'Japan',       flag:'🇯🇵' },
 ];
 
-const eventTypes = [
-    { id:'watch-party', label:'Watch Parties', icon:'📺' },
-    { id:'parade',      label:'Post-Game Parades', icon:'🎉' },
-    { id:'pickup',      label:'Pickup Games', icon:'⚽' },
-    { id:'poll',        label:'Polls', icon:'📊' },
+const subtabs = [
+    { id:'watch-party', label:'Watch Parties' },
+    { id:'parade',      label:'Parades' },
+    { id:'pickup',      label:'Pickup Games' },
 ];
 
 const parties = [
-    // Brooklyn (FREE)
-    { id:1, sport:'Soccer', country:'AR', match:'Argentina vs. Brazil', venue:'La Boqueria', vtype:'Restaurant', neighborhood:'Williamsburg', borough:'Brooklyn', distance:0.4, time:'Sat · 4:00 PM', perks:['Tango','Empanadas'], live:true, when:'This weekend', lat:40.7115, lng:-73.9569, eventType:'watch-party' },
-    { id:2, sport:'Soccer', country:'AR', match:'Argentina vs. Brazil', venue:'McCarren Park Lawn', vtype:'Park', neighborhood:'Greenpoint', borough:'Brooklyn', distance:0.8, time:'Sat · 4:00 PM', perks:['Outdoor','Free','Food Trucks'], live:true, when:'This weekend', lat:40.7205, lng:-73.9520, eventType:'watch-party' },
-    { id:3, sport:'Soccer', country:'BR', match:'Brazil vs. Argentina', venue:'Miss Favela', vtype:'Restaurant', neighborhood:'Williamsburg', borough:'Brooklyn', distance:0.6, time:'Sat · 4:00 PM', perks:['Caipirinhas','Samba'], live:false, when:'This weekend', lat:40.7126, lng:-73.9637, eventType:'watch-party' },
-    { id:4, sport:'NHL', country:'US', match:'Rangers vs. Devils', venue:'Brooklyn Brewery', vtype:'Brewery', neighborhood:'Williamsburg', borough:'Brooklyn', distance:1.1, time:'Tonight · 7:00 PM', perks:['Craft Beer','Big Screen'], live:true, when:'Tonight', lat:40.7218, lng:-73.9573, eventType:'watch-party' },
-    { id:5, sport:'MLB', country:'US', match:'Yankees vs. Red Sox', venue:'Domino Park', vtype:'Park', neighborhood:'Williamsburg', borough:'Brooklyn', distance:0.5, time:'Tomorrow · 1:05 PM', perks:['Outdoor','Family Friendly'], live:false, when:'Tomorrow', lat:40.7144, lng:-73.9676, eventType:'watch-party' },
-    { id:6, sport:'NFL', country:'US', match:'Bills vs. Chiefs', venue:'The Pourhouse', vtype:'Sports Bar', neighborhood:'Williamsburg', borough:'Brooklyn', distance:0.4, time:'Sun · 4:25 PM', perks:['Wings','Buckets'], live:false, when:'This weekend', lat:40.7115, lng:-73.9569, eventType:'watch-party' },
-
-    // Brooklyn parades (FREE)
-    { id:20, sport:'Soccer', country:'AR', match:'Argentina Victory Parade', venue:'Bedford Ave → McCarren Park', vtype:'Plaza', neighborhood:'Williamsburg', borough:'Brooklyn', distance:0.5, time:'Sat · 6:30 PM', perks:['Free','March','Drums'], live:false, when:'This weekend', lat:40.7170, lng:-73.9560, eventType:'parade' },
-    { id:21, sport:'Soccer', country:'BR', match:'Brazil Carnival March', venue:'Prospect Park West', vtype:'Park', neighborhood:'Park Slope', borough:'Brooklyn', distance:2.0, time:'Sun · 5:00 PM', perks:['Free','Samba','Floats'], live:false, when:'This weekend', lat:40.6694, lng:-73.9750, eventType:'parade' },
-
-    // Brooklyn pickup (FREE)
-    { id:30, sport:'Soccer', country:'US', match:'Pickup Soccer · 5v5', venue:'McCarren Park Pitch', vtype:'Park', neighborhood:'Greenpoint', borough:'Brooklyn', distance:0.8, time:'Sat · 10:00 AM', perks:['All Levels','Free','BYO Cleats'], live:false, when:'This weekend', lat:40.7205, lng:-73.9520, eventType:'pickup' },
-    { id:31, sport:'NBA', country:'US', match:'Pickup Basketball · Open Run', venue:'McCarren Park Courts', vtype:'Park', neighborhood:'Greenpoint', borough:'Brooklyn', distance:0.8, time:'Sun · 11:00 AM', perks:['All Levels','Free'], live:false, when:'This weekend', lat:40.7205, lng:-73.9520, eventType:'pickup' },
-
-    // Other boroughs (LOCKED)
-    { id:7, sport:'Soccer', country:'AR', match:'Argentina vs. Brazil', venue:'Boca Juniors NYC', vtype:'Restaurant', neighborhood:'Jackson Heights', borough:'Queens', distance:6.0, time:'Sat · 4:00 PM', perks:['Asado','Mate'], live:true, when:'This weekend', lat:40.7558, lng:-73.8831, eventType:'watch-party' },
-    { id:8, sport:'NBA', country:'US', match:'Knicks vs. Celtics', venue:"Foley's Bar & Grill", vtype:'Sports Bar', neighborhood:'Midtown', borough:'Manhattan', distance:5.2, time:'Tonight · 7:30 PM', perks:['Happy Hour'], live:true, when:'Tonight', lat:40.7549, lng:-73.9840, eventType:'watch-party' },
-    { id:9, sport:'NHL', country:'US', match:'Rangers vs. Devils', venue:'Westlight Rooftop', vtype:'Rooftop', neighborhood:'Williamsburg', borough:'Manhattan', distance:5.1, time:'Tonight · 7:00 PM', perks:['Skyline View'], live:true, when:'Tonight', lat:40.7220, lng:-73.9580, eventType:'watch-party' },
-    { id:10, sport:'UFC', country:'US', match:'UFC 312 Main Card', venue:'Iron Bar', vtype:'Sports Bar', neighborhood:'Midtown', borough:'Manhattan', distance:5.5, time:'Sat · 10:00 PM', perks:['PPV','Reserved'], live:false, when:'This weekend', lat:40.7549, lng:-73.9840, eventType:'watch-party' },
-    { id:11, sport:'Soccer', country:'EN', match:'Arsenal vs. Liverpool', venue:'The Football Factory', vtype:'Sports Bar', neighborhood:'East Village', borough:'Manhattan', distance:4.1, time:'Sat · 9:00 AM', perks:['Pints','Breakfast'], live:false, when:'This weekend', lat:40.7295, lng:-73.9870, eventType:'watch-party' },
-    { id:12, sport:'NFL', country:'US', match:'49ers vs. Seahawks', venue:'Rockaway Beach', vtype:'Beach', neighborhood:'Rockaway', borough:'Queens', distance:8.0, time:'Sun · 1:00 PM', perks:['Bonfire','Free'], live:false, when:'This weekend', lat:40.5829, lng:-73.8155, eventType:'watch-party' },
-    { id:13, sport:'Soccer', country:'US', match:'USA vs. Mexico', venue:'Washington Square Park', vtype:'Park', neighborhood:'Greenwich Village', borough:'Manhattan', distance:5.2, time:'Tonight · 8:00 PM', perks:['Free','Big Crowd'], live:true, when:'Tonight', lat:40.7308, lng:-73.9973, eventType:'watch-party' },
-    { id:14, sport:'Soccer', country:'MX', match:'USA vs. Mexico', venue:'Tortilleria Nixtamal', vtype:'Restaurant', neighborhood:'Corona', borough:'Queens', distance:7.5, time:'Tonight · 8:00 PM', perks:['Tacos','Margaritas'], live:true, when:'Tonight', lat:40.7460, lng:-73.8580, eventType:'watch-party' },
-    { id:22, sport:'NBA', country:'US', match:'Knicks Championship Parade', venue:'Canyon of Heroes', vtype:'Plaza', neighborhood:'Financial District', borough:'Manhattan', distance:6.0, time:'Mon · 11:00 AM', perks:['Free','Confetti'], live:false, when:'This weekend', lat:40.7074, lng:-74.0113, eventType:'parade' },
-    { id:32, sport:'Soccer', country:'US', match:'Pickup Soccer', venue:'Pier 40', vtype:'Park', neighborhood:'West Village', borough:'Manhattan', distance:5.5, time:'Sun · 9:00 AM', perks:['Free'], live:false, when:'This weekend', lat:40.7282, lng:-74.0107, eventType:'pickup' },
+    { id:1, sport:'Soccer', country:'AR', match:'Argentina vs. Brazil', venue:'La Boqueria', vtype:'Restaurant', neighborhood:'Williamsburg', borough:'Brooklyn', distance:0.4, time:'Sat · 4:00 PM', perks:['Tango','Empanadas'], live:true, when:'This weekend', lat:40.7115, lng:-73.9569, eventType:'watch-party', price:'No cover' },
+    { id:2, sport:'Soccer', country:'AR', match:'Argentina vs. Brazil', venue:'McCarren Park Lawn', vtype:'Park', neighborhood:'Greenpoint', borough:'Brooklyn', distance:0.8, time:'Sat · 4:00 PM', perks:['Outdoor','Free','Food Trucks'], live:true, when:'This weekend', lat:40.7205, lng:-73.9520, eventType:'watch-party', price:'Free' },
+    { id:3, sport:'Soccer', country:'BR', match:'Brazil vs. Argentina', venue:'Miss Favela', vtype:'Restaurant', neighborhood:'Williamsburg', borough:'Brooklyn', distance:0.6, time:'Sat · 4:00 PM', perks:['Caipirinhas','Samba'], live:false, when:'This weekend', lat:40.7126, lng:-73.9637, eventType:'watch-party', price:'No cover' },
+    { id:4, sport:'NHL', country:'US', match:'Rangers vs. Devils', venue:'Brooklyn Brewery', vtype:'Brewery', neighborhood:'Williamsburg', borough:'Brooklyn', distance:1.1, time:'Tonight · 7:00 PM', perks:['Craft Beer'], live:true, when:'Tonight', lat:40.7218, lng:-73.9573, eventType:'watch-party', price:'No cover' },
+    { id:5, sport:'MLB', country:'US', match:'Yankees vs. Red Sox', venue:'Domino Park', vtype:'Park', neighborhood:'Williamsburg', borough:'Brooklyn', distance:0.5, time:'Tomorrow · 1:05 PM', perks:['Outdoor','Family Friendly'], live:false, when:'Tomorrow', lat:40.7144, lng:-73.9676, eventType:'watch-party', price:'Free' },
+    { id:6, sport:'NFL', country:'US', match:'Bills vs. Chiefs', venue:'The Pourhouse', vtype:'Sports Bar', neighborhood:'Williamsburg', borough:'Brooklyn', distance:0.4, time:'Sun · 4:25 PM', perks:['Wings','Buckets'], live:false, when:'This weekend', lat:40.7115, lng:-73.9569, eventType:'watch-party', price:'No cover' },
+    { id:20, sport:'Soccer', country:'AR', match:'Argentina Victory Parade', venue:'Bedford Ave → McCarren Park', vtype:'Plaza', neighborhood:'Williamsburg', borough:'Brooklyn', distance:0.5, time:'Sat · 6:30 PM', perks:['Free','March','Drums'], live:false, when:'This weekend', lat:40.7170, lng:-73.9560, eventType:'parade', price:'Free' },
+    { id:21, sport:'Soccer', country:'BR', match:'Brazil Carnival March', venue:'Prospect Park West', vtype:'Park', neighborhood:'Park Slope', borough:'Brooklyn', distance:2.0, time:'Sun · 5:00 PM', perks:['Free','Samba','Floats'], live:false, when:'This weekend', lat:40.6694, lng:-73.9750, eventType:'parade', price:'Free' },
+    { id:30, sport:'Soccer', country:'US', match:'Pickup Soccer · 5v5', venue:'McCarren Park Pitch', vtype:'Park', neighborhood:'Greenpoint', borough:'Brooklyn', distance:0.8, time:'Sat · 10:00 AM', perks:['All Levels','Free'], live:false, when:'This weekend', lat:40.7205, lng:-73.9520, eventType:'pickup', price:'Free' },
+    { id:31, sport:'NBA', country:'US', match:'Pickup Basketball · Open Run', venue:'McCarren Park Courts', vtype:'Park', neighborhood:'Greenpoint', borough:'Brooklyn', distance:0.8, time:'Sun · 11:00 AM', perks:['All Levels','Free'], live:false, when:'This weekend', lat:40.7205, lng:-73.9520, eventType:'pickup', price:'Free' },
+    { id:7, sport:'Soccer', country:'AR', match:'Argentina vs. Brazil', venue:'Boca Juniors NYC', vtype:'Restaurant', neighborhood:'Jackson Heights', borough:'Queens', distance:6.0, time:'Sat · 4:00 PM', perks:['Asado','Mate'], live:true, when:'This weekend', lat:40.7558, lng:-73.8831, eventType:'watch-party', price:'No cover' },
+    { id:8, sport:'NBA', country:'US', match:'Knicks vs. Celtics', venue:"Foley's Bar & Grill", vtype:'Sports Bar', neighborhood:'Midtown', borough:'Manhattan', distance:5.2, time:'Tonight · 7:30 PM', perks:['Happy Hour'], live:true, when:'Tonight', lat:40.7549, lng:-73.9840, eventType:'watch-party', price:'No cover' },
+    { id:9, sport:'NHL', country:'US', match:'Rangers vs. Devils', venue:'Westlight Rooftop', vtype:'Rooftop', neighborhood:'Williamsburg', borough:'Manhattan', distance:5.1, time:'Tonight · 7:00 PM', perks:['Skyline View'], live:true, when:'Tonight', lat:40.7220, lng:-73.9580, eventType:'watch-party', price:'$15 min' },
+    { id:10, sport:'UFC', country:'US', match:'UFC 312 Main Card', venue:'Iron Bar', vtype:'Sports Bar', neighborhood:'Midtown', borough:'Manhattan', distance:5.5, time:'Sat · 10:00 PM', perks:['PPV','Reserved'], live:false, when:'This weekend', lat:40.7549, lng:-73.9840, eventType:'watch-party', price:'$20 cover' },
+    { id:11, sport:'Soccer', country:'EN', match:'Arsenal vs. Liverpool', venue:'The Football Factory', vtype:'Sports Bar', neighborhood:'East Village', borough:'Manhattan', distance:4.1, time:'Sat · 9:00 AM', perks:['Pints'], live:false, when:'This weekend', lat:40.7295, lng:-73.9870, eventType:'watch-party', price:'No cover' },
+    { id:13, sport:'Soccer', country:'US', match:'USA vs. Mexico', venue:'Washington Square Park', vtype:'Park', neighborhood:'Greenwich Village', borough:'Manhattan', distance:5.2, time:'Tonight · 8:00 PM', perks:['Free','Big Crowd'], live:true, when:'Tonight', lat:40.7308, lng:-73.9973, eventType:'watch-party', price:'Free' },
+    { id:14, sport:'Soccer', country:'MX', match:'USA vs. Mexico', venue:'Tortilleria Nixtamal', vtype:'Restaurant', neighborhood:'Corona', borough:'Queens', distance:7.5, time:'Tonight · 8:00 PM', perks:['Tacos'], live:true, when:'Tonight', lat:40.7460, lng:-73.8580, eventType:'watch-party', price:'No cover' },
+    { id:22, sport:'NBA', country:'US', match:'Knicks Championship Parade', venue:'Canyon of Heroes', vtype:'Plaza', neighborhood:'Financial District', borough:'Manhattan', distance:6.0, time:'Mon · 11:00 AM', perks:['Free','Confetti'], live:false, when:'This weekend', lat:40.7074, lng:-74.0113, eventType:'parade', price:'Free' },
+    { id:32, sport:'Soccer', country:'US', match:'Pickup Soccer', venue:'Pier 40', vtype:'Park', neighborhood:'West Village', borough:'Manhattan', distance:5.5, time:'Sun · 9:00 AM', perks:['Free'], live:false, when:'This weekend', lat:40.7282, lng:-74.0107, eventType:'pickup', price:'Free' },
 ];
 
 const polls = [
-    { id:101, country:'AR', borough:'Brooklyn', question:"Best Argentina watch spot in Brooklyn?", sub:'For the Brazil match Saturday', options:[
+    { id:101, country:'AR', borough:'Brooklyn', question:"Best Argentina watch spot in Brooklyn?", sub:'Brooklyn · Saturday match', options:[
         { name:'La Boqueria', votes:284 },
         { name:'McCarren Park Lawn', votes:412 },
         { name:'Bedford Brewery', votes:156 },
     ], totalVotes:852, closes:'Closes in 3h' },
-    { id:102, country:'US', borough:'Brooklyn', question:"Where should we host the Knicks Game 7 watch?", sub:'Community vote · Brooklyn', options:[
+    { id:102, country:'US', borough:'Brooklyn', question:"Where to host the Knicks Game 7 watch?", sub:'Brooklyn · Community vote', options:[
         { name:'Brooklyn Brewery', votes:520 },
         { name:'Prospect Park Bandshell', votes:840 },
         { name:'Domino Park LED Wall', votes:391 },
     ], totalVotes:1751, closes:'Closes Friday' },
-    { id:103, country:'BR', borough:'Brooklyn', question:"Best caipirinha spot for Brazil match?", sub:'Vote your favorite', options:[
+    { id:103, country:'BR', borough:'Brooklyn', question:"Best caipirinha spot for the Brazil match?", sub:'Brooklyn · Vote', options:[
         { name:'Miss Favela', votes:198 },
         { name:'Beco', votes:142 },
         { name:'Rio Market', votes:87 },
     ], totalVotes:427, closes:'Closes Sat' },
+    { id:104, country:'US', borough:'Manhattan', question:"Top Manhattan rooftop for Knicks playoffs?", sub:'Manhattan · Community vote', options:[
+        { name:'Westlight', votes:412 },
+        { name:'Magic Hour', votes:238 },
+    ], totalVotes:650, closes:'Closes Friday' },
 ];
 
 const schedule = [
-    { id:1, country:'AR', sport:'Soccer', home:{name:'Argentina', flag:'🇦🇷'}, away:{name:'Brazil', flag:'🇧🇷'}, tournament:'Copa America', date:'Sat · 4:00 PM', venue:'Maracanã' },
-    { id:2, country:'AR', sport:'Soccer', home:{name:'Argentina', flag:'🇦🇷'}, away:{name:'Uruguay', flag:'🇺🇾'}, tournament:'Copa America', date:'Wed · 8:00 PM', venue:'Monumental' },
-    { id:3, country:'US', sport:'Soccer', home:{name:'USA', flag:'🇺🇸'}, away:{name:'Mexico', flag:'🇲🇽'}, tournament:'CONCACAF', date:'Tonight · 8:00 PM', venue:'AT&T Stadium' },
-    { id:4, country:'BR', sport:'Soccer', home:{name:'Brazil', flag:'🇧🇷'}, away:{name:'Argentina', flag:'🇦🇷'}, tournament:'Copa America', date:'Sat · 4:00 PM', venue:'Maracanã' },
-    { id:5, country:'EN', sport:'Soccer', home:{name:'England', flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿'}, away:{name:'Spain', flag:'🇪🇸'}, tournament:'Euro Qualifier', date:'Sun · 11:00 AM', venue:'Wembley' },
-    { id:6, country:'ES', sport:'Soccer', home:{name:'Spain', flag:'🇪🇸'}, away:{name:'England', flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿'}, tournament:'Euro Qualifier', date:'Sun · 11:00 AM', venue:'Wembley' },
+    { country:'AR', sport:'Soccer', home:{name:'Argentina', flag:'🇦🇷'}, away:{name:'Brazil', flag:'🇧🇷'}, tournament:'Copa America', date:'Sat · 4:00 PM', venue:'Maracanã' },
+    { country:'AR', sport:'Soccer', home:{name:'Argentina', flag:'🇦🇷'}, away:{name:'Uruguay', flag:'🇺🇾'}, tournament:'Copa America', date:'Wed · 8:00 PM', venue:'Monumental' },
+    { country:'US', sport:'Soccer', home:{name:'USA', flag:'🇺🇸'}, away:{name:'Mexico', flag:'🇲🇽'}, tournament:'CONCACAF', date:'Tonight · 8:00 PM', venue:'AT&T Stadium' },
+    { country:'US', sport:'NBA', home:{name:'Knicks', flag:'🏀'}, away:{name:'Celtics', flag:'🍀'}, tournament:'NBA Playoffs', date:'Tonight · 7:30 PM', venue:'MSG' },
+    { country:'BR', sport:'Soccer', home:{name:'Brazil', flag:'🇧🇷'}, away:{name:'Argentina', flag:'🇦🇷'}, tournament:'Copa America', date:'Sat · 4:00 PM', venue:'Maracanã' },
+    { country:'EN', sport:'Soccer', home:{name:'England', flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿'}, away:{name:'Spain', flag:'🇪🇸'}, tournament:'Euro Qualifier', date:'Sun · 11:00 AM', venue:'Wembley' },
 ];
 
 const lineups = {
@@ -1144,349 +1036,250 @@ const lineups = {
         { num:4,  name:'T. Adams', pos:'DM' },
     ]},
     BR: { team:'Brazil', formation:'4-3-3', players:[
-        { num:1,  name:'Alisson', pos:'GK' },
-        { num:7,  name:'Vinícius Jr.', pos:'WNG' },
-        { num:10, name:'Rodrygo', pos:'FWD' },
-        { num:9,  name:'Endrick', pos:'FWD' },
-        { num:5,  name:'Casemiro (C)', pos:'DM' },
+        { num:1, name:'Alisson', pos:'GK' },
+        { num:7, name:'Vinícius Jr.', pos:'WNG' },
+        { num:10,name:'Rodrygo', pos:'FWD' },
+        { num:9, name:'Endrick', pos:'FWD' },
+        { num:5, name:'Casemiro (C)', pos:'DM' },
     ]},
     EN: { team:'England', formation:'4-3-3', players:[
-        { num:1,  name:'J. Pickford', pos:'GK' },
-        { num:9,  name:'H. Kane (C)', pos:'FWD' },
-        { num:10, name:'J. Bellingham', pos:'MID' },
-        { num:7,  name:'B. Saka', pos:'WNG' },
-        { num:11, name:'P. Foden', pos:'WNG' },
+        { num:1, name:'J. Pickford', pos:'GK' },
+        { num:9, name:'H. Kane (C)', pos:'FWD' },
+        { num:10,name:'J. Bellingham', pos:'MID' },
+        { num:7, name:'B. Saka', pos:'WNG' },
+        { num:11,name:'P. Foden', pos:'WNG' },
     ]},
 };
 
 const chatMessages = {
-    AR: [
-        { user:'lionel_88', msg:"VAMOS ARGENTINA!! 🇦🇷🇦🇷 see you all at La Boqueria", time:'2m' },
-        { user:'mariana_b', msg:'McCarren Park lawn is filling up already', time:'4m' },
-        { user:'pablo_g',  msg:'who else getting matching jerseys?', time:'7m' },
-        { user:'sofia_a',  msg:'Empanadas for everyone after we win 🙌', time:'12m' },
-    ],
-    US: [
-        { user:'jake_nyc',   msg:"USA USA USA 🇺🇸 anyone heading to Washington Sq?", time:'1m' },
-        { user:'samantha_p', msg:"Pulisic is gonna cook tonight", time:'3m' },
-        { user:'mike_dl',    msg:'Foley\'s is packed already, get there early', time:'8m' },
-    ],
-    BR: [
-        { user:'rafa_sp',  msg:'Miss Favela é o melhor lugar 🇧🇷', time:'2m' },
-        { user:'isabela_r', msg:'Trazendo o tambor!! 🥁', time:'5m' },
-    ],
-    EN: [
-        { user:'oli_uk',    msg:"COME ON ENGLAND 🦁", time:'3m' },
-        { user:'harry_l',   msg:"Football Factory has the away pub experience nailed", time:'9m' },
-    ],
+    AR: [{user:'lionel_88',msg:'VAMOS ARGENTINA!! 🇦🇷 see you at La Boqueria',time:'2m'},
+         {user:'mariana_b',msg:'McCarren Park is filling up already',time:'4m'},
+         {user:'pablo_g',msg:'who else getting matching jerseys?',time:'7m'}],
+    US: [{user:'jake_nyc',msg:'USA USA USA 🇺🇸 anyone for Washington Sq?',time:'1m'},
+         {user:'samantha_p',msg:'Pulisic is gonna cook tonight',time:'3m'},
+         {user:'mike_dl',msg:"Foley's is packed already, get there early",time:'8m'}],
+    BR: [{user:'rafa_sp',msg:'Miss Favela é o melhor lugar 🇧🇷',time:'2m'},
+         {user:'isabela_r',msg:'Trazendo o tambor!! 🥁',time:'5m'}],
+    EN: [{user:'oli_uk',msg:'COME ON ENGLAND 🦁',time:'3m'},
+         {user:'harry_l',msg:'Football Factory has the away pub experience nailed',time:'9m'}],
 };
 
 const photos = {
-    NFL:     'https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=800&q=80&auto=format&fit=crop',
-    NBA:     'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&q=80&auto=format&fit=crop',
-    MLB:     'https://images.unsplash.com/photo-1508344928928-7165b67de128?w=800&q=80&auto=format&fit=crop',
-    NHL:     'https://images.unsplash.com/photo-1515703407324-5f51c2ed1e8b?w=800&q=80&auto=format&fit=crop',
-    Soccer:  'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=800&q=80&auto=format&fit=crop',
-    UFC:     'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=80&auto=format&fit=crop',
-    F1:      'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=800&q=80&auto=format&fit=crop',
-    College: 'https://images.unsplash.com/photo-1471295253337-3ceaaedca402?w=800&q=80&auto=format&fit=crop',
+    NFL:'https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=800&q=80&auto=format&fit=crop',
+    NBA:'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&q=80&auto=format&fit=crop',
+    MLB:'https://images.unsplash.com/photo-1508344928928-7165b67de128?w=800&q=80&auto=format&fit=crop',
+    NHL:'https://images.unsplash.com/photo-1515703407324-5f51c2ed1e8b?w=800&q=80&auto=format&fit=crop',
+    Soccer:'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=800&q=80&auto=format&fit=crop',
+    UFC:'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=80&auto=format&fit=crop',
+    F1:'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=800&q=80&auto=format&fit=crop',
 };
-
-const sportData = {
-    NFL:     { emoji:'🏈', color:'#013369', tag:'Football' },
-    NBA:     { emoji:'🏀', color:'#c8102e', tag:'Hoops' },
-    MLB:     { emoji:'⚾', color:'#002d72', tag:'Baseball' },
-    NHL:     { emoji:'🏒', color:'#111111', tag:'Hockey' },
-    Soccer:  { emoji:'⚽', color:'#00853f', tag:'Football' },
-    UFC:     { emoji:'🥊', color:'#d20a0a', tag:'MMA' },
-    F1:      { emoji:'🏎️', color:'#e10600', tag:'Racing' },
-    College: { emoji:'🎓', color:'#8a4a0e', tag:'NCAA' },
-};
-
-const venueData = {
-    'Sports Bar':       { emoji:'🍺' },
-    'Park':             { emoji:'🌳' },
-    'Brewery':          { emoji:'🍻' },
-    'Rooftop':          { emoji:'🌃' },
-    'Restaurant':       { emoji:'🍽️' },
-    'Plaza':            { emoji:'🏛️' },
-    'Community Center': { emoji:'🏘️' },
-    'Beach':            { emoji:'🏖️' },
-};
-
+const sportColor = { NFL:'#013369', NBA:'#c8102e', MLB:'#002d72', NHL:'#1f2937', Soccer:'#00853f', UFC:'#9b1c1c', F1:'#b91c1c' };
 const reactionEmojis = ['🔥','💪','😍','😱','💀'];
 
 // ============ STATE ============
+let activeRoute = 'discover';
+let activeSubtab = 'watch-party';
 let activeCountry = null;
-let activeEventType = 'watch-party';
-let activeChips = new Set();
-let going = new Set();
+let activeQuickFilters = new Set();
 let saved = new Set();
-let votedPolls = {}; // pollId -> optionIndex
-let reactions = {}; // playerKey -> emoji
+let votedPolls = {};
+let reactions = {};
 let unlockedBoroughs = new Set(['Brooklyn']);
 let currentView = 'list';
 let mapInstance = null;
 let mapMarkers = [];
-let chatMessagesState = {};
+let chatExtra = {};
 
-// ============ COUNTRY BAR ============
+// ============ ROUTING ============
+function route(name) {
+    activeRoute = name;
+    document.querySelectorAll('.page').forEach(p => p.classList.toggle('active', p.dataset.page === name));
+    document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.route === name && !t.classList.contains('highlight')));
+    if (location.hash !== '#/' + name) history.replaceState(null, '', '#/' + name);
+    window.scrollTo(0, 0);
+    if (name === 'schedule') renderSchedule();
+    if (name === 'fanhub') { renderLineup(); renderChat(); }
+    if (name === 'polls') renderPolls();
+    if (name === 'discover' && currentView === 'map') setTimeout(() => mapInstance?.invalidateSize(), 50);
+}
+
+function initRouting() {
+    document.querySelectorAll('.tab').forEach(t => {
+        t.addEventListener('click', () => route(t.dataset.route));
+    });
+    const hash = location.hash.replace('#/', '');
+    route(['discover','schedule','fanhub','polls'].includes(hash) ? hash : 'discover');
+}
+
+// ============ COUNTRIES ============
 function buildCountries() {
     const c = document.getElementById('countries');
     countries.forEach(co => {
-        const count = parties.filter(p => p.country === co.code).length
-                    + polls.filter(p => p.country === co.code).length;
-        const el = document.createElement('div');
+        const el = document.createElement('button');
         el.className = 'country';
-        el.innerHTML = `
-            <span class="flag">${co.flag}</span>
-            <div class="info">
-                <span class="name">${co.name}</span>
-                <span class="count">${count} events</span>
-            </div>
-        `;
-        el.onclick = () => selectCountry(co, el);
+        el.innerHTML = `<span class="flag">${co.flag}</span><span>${co.name}</span>`;
+        el.onclick = () => {
+            if (activeCountry?.code === co.code) { activeCountry = null; el.classList.remove('active'); }
+            else {
+                activeCountry = co;
+                document.querySelectorAll('.country').forEach(x => x.classList.remove('active'));
+                el.classList.add('active');
+            }
+            applyFilters();
+            if (activeRoute === 'schedule') renderSchedule();
+            if (activeRoute === 'fanhub') { renderLineup(); renderChat(); }
+            if (activeRoute === 'polls') renderPolls();
+        };
         c.appendChild(el);
     });
 }
 
-function selectCountry(co, el) {
-    if (activeCountry?.code === co.code) {
-        activeCountry = null;
-        el.classList.remove('active');
-        document.getElementById('nav-flag').textContent = '🌍';
-        document.getElementById('nav-country').textContent = 'Pick country';
-    } else {
-        activeCountry = co;
-        document.querySelectorAll('.country').forEach(x => x.classList.remove('active'));
-        el.classList.add('active');
-        document.getElementById('nav-flag').textContent = co.flag;
-        document.getElementById('nav-country').textContent = co.name;
-    }
-    renderAll();
-}
-
-// ============ EVENT TABS ============
-function buildEventTabs() {
-    const c = document.getElementById('event-tabs');
-    eventTypes.forEach(et => {
+// ============ SUBTABS ============
+function buildSubtabs() {
+    const c = document.getElementById('subtabs');
+    subtabs.forEach(st => {
+        const count = parties.filter(p => p.eventType === st.id).length;
         const btn = document.createElement('button');
-        btn.className = 'event-tab' + (et.id === activeEventType ? ' active' : '');
-        btn.dataset.type = et.id;
-        const count = et.id === 'poll'
-            ? polls.length
-            : parties.filter(p => p.eventType === et.id).length;
-        btn.innerHTML = `<span>${et.icon}</span><span>${et.label}</span><span class="badge">${count}</span>`;
+        btn.className = 'subtab' + (st.id === activeSubtab ? ' active' : '');
+        btn.dataset.id = st.id;
+        btn.innerHTML = `<span>${st.label}</span><span class="count">${count}</span>`;
         btn.onclick = () => {
-            activeEventType = et.id;
-            document.querySelectorAll('.event-tab').forEach(t => t.classList.remove('active'));
+            activeSubtab = st.id;
+            document.querySelectorAll('.subtab').forEach(x => x.classList.remove('active'));
             btn.classList.add('active');
-            updateSecTitle();
-            render();
+            applyFilters();
         };
         c.appendChild(btn);
     });
 }
 
-function updateSecTitle() {
-    const titles = {
-        'watch-party': "<em>Tonight's</em> <span class='display'>Lineup</span>",
-        'parade':      "<em>Post-Game</em> <span class='display'>Parades</span>",
-        'pickup':      "<em>Pickup</em> <span class='display'>Games</span>",
-        'poll':        "<em>Community</em> <span class='display'>Polls</span>",
-    };
-    document.getElementById('sec-title').innerHTML = titles[activeEventType];
+// ============ FILTERS ============
+function toggleQuickFilter(btn, name) {
+    if (activeQuickFilters.has(name)) { activeQuickFilters.delete(name); btn.classList.remove('active'); }
+    else { activeQuickFilters.add(name); btn.classList.add('active'); }
+    applyFilters();
 }
 
-// ============ FILTER CHIPS ============
-const quickFilters = ['Live Now','Free','Outdoor','Within 1 mi','Family Friendly'];
-function buildChips() {
-    const c = document.getElementById('chips');
-    quickFilters.forEach(f => {
-        const el = document.createElement('div');
-        el.className = 'chip';
-        el.textContent = f;
-        el.onclick = () => {
-            if (activeChips.has(f)) { activeChips.delete(f); el.classList.remove('active'); }
-            else { activeChips.add(f); el.classList.add('active'); }
-            render();
-        };
-        c.appendChild(el);
-    });
-}
-
-// ============ FILTER LOGIC ============
 function matchesFilters(p) {
-    const sport = document.getElementById('sport').value;
-    const when = document.getElementById('when').value;
-    const vtypeSel = document.getElementById('vtype-select').value;
+    const sport = document.getElementById('sport-select').value;
+    const when = document.getElementById('when-select').value;
+    const q = document.getElementById('search-input').value.trim().toLowerCase();
     if (sport && p.sport !== sport) return false;
     if (when && p.when !== when) return false;
-    if (vtypeSel && p.vtype !== vtypeSel) return false;
     if (activeCountry && p.country !== activeCountry.code) return false;
-    for (const f of activeChips) {
+    if (q && !`${p.match} ${p.venue} ${p.neighborhood}`.toLowerCase().includes(q)) return false;
+    for (const f of activeQuickFilters) {
         if (f === 'Live Now' && !p.live) return false;
-        else if (f === 'Within 1 mi' && p.distance > 1) return false;
-        else if (f === 'Free' && !p.perks.some(pk => pk.toLowerCase() === 'free')) return false;
-        else if (['Outdoor','Family Friendly'].includes(f)
-                 && !p.perks.some(pk => pk.toLowerCase().includes(f.toLowerCase().replace(' friendly','')))) return false;
+        if (f === 'Within 1 mi' && p.distance > 1) return false;
+        if (f === 'Free' && !p.perks.some(pk => pk.toLowerCase() === 'free')) return false;
+        if (f === 'Outdoor' && !p.perks.some(pk => pk.toLowerCase().includes('outdoor'))) return false;
     }
     return true;
 }
 
-function isLocked(p) {
-    return !unlockedBoroughs.has(p.borough);
-}
+function isLocked(p) { return !unlockedBoroughs.has(p.borough); }
 
-// ============ RENDER ============
-function render() {
-    document.getElementById('chips').style.display = activeEventType === 'poll' ? 'none' : 'flex';
-    document.querySelector('.view-toggle').style.display = activeEventType === 'poll' ? 'none' : 'inline-flex';
-    document.getElementById('map').style.display = (activeEventType !== 'poll' && currentView === 'map') ? 'block' : 'none';
-
-    if (activeEventType === 'poll') {
-        renderPolls();
-        return;
-    }
-
-    const grid = document.getElementById('grid');
-    grid.style.display = currentView === 'list' ? 'grid' : 'none';
-
+function applyFilters() {
+    if (activeRoute !== 'discover') return;
     const filtered = parties
-        .filter(p => p.eventType === activeEventType)
+        .filter(p => p.eventType === activeSubtab)
         .filter(matchesFilters)
         .sort((a,b) => a.distance - b.distance);
 
-    document.getElementById('count').textContent =
-        `${filtered.length} ${filtered.length === 1 ? 'spot' : 'spots'} near you`;
+    if (currentView === 'map' && mapInstance) {
+        renderMap(filtered);
+        return;
+    }
+    renderDiscoverList(filtered);
+}
 
-    if (currentView === 'map' && mapInstance) renderMap(filtered);
-
-    grid.innerHTML = '';
+function renderDiscoverList(filtered) {
+    const wrap = document.getElementById('discover-list');
     if (filtered.length === 0) {
-        grid.innerHTML = `<div class="empty">
-            <div class="big">📭</div>
-            <h3>Nothing in the lineup</h3>
-            <p>Try clearing a filter or picking a different country.</p>
-        </div>`;
+        wrap.innerHTML = `<div class="empty"><h3>No events match those filters</h3><p>Try clearing a filter or picking a different country.</p></div>`;
         return;
     }
 
+    // Group into rows
+    const groups = {};
     filtered.forEach(p => {
-        const s = sportData[p.sport];
-        const v = venueData[p.vtype];
-        const co = countries.find(c => c.code === p.country);
-        const isGoing = going.has(p.id);
-        const locked = isLocked(p);
+        const key = `${p.borough}`;
+        if (!groups[key]) groups[key] = [];
+        groups[key].push(p);
+    });
 
-        const card = document.createElement('article');
-        card.className = 'card' + (locked ? ' locked' : '');
-        card.style.setProperty('--tint', hexToRgba(s.color, 0.55));
+    const liveGroup = filtered.filter(p => p.live);
+    const freeGroup = filtered.filter(p => p.perks.some(pk => pk.toLowerCase() === 'free'));
+    const tonightGroup = filtered.filter(p => p.when === 'Tonight');
 
-        const [teamA, teamB] = p.match.split(' vs. ');
-        const headline = teamB
-            ? `<span class="serif">${teamA} vs.</span><span class="display">${teamB}</span>`
-            : `<span class="display">${p.match}</span>`;
+    const rows = [];
+    if (liveGroup.length) rows.push({ title: `<em>Live</em> right now`, items: liveGroup });
+    if (tonightGroup.length) rows.push({ title: `<em>Tonight</em> near you`, items: tonightGroup });
+    if (freeGroup.length) rows.push({ title: `<em>Free</em> events`, items: freeGroup });
+    Object.entries(groups).forEach(([b, items]) => {
+        if (items.length >= 2) rows.push({ title: `Popular in <em>${b}</em>`, items });
+    });
+    if (rows.length === 0) rows.push({ title: 'All events', items: filtered });
 
-        card.innerHTML = `
-            <div class="card-cover">
-                <div class="cover-top">
-                    <span>${p.borough} · ${s.tag}</span>
-                    <span>${p.time}</span>
+    wrap.innerHTML = rows.map((r, idx) => `
+        <section class="row">
+            <div class="row-head">
+                <h2>${r.title}</h2>
+                <div class="actions">
+                    <button class="row-arrow" onclick="scrollRow('row-${idx}', -1)">‹</button>
+                    <button class="row-arrow" onclick="scrollRow('row-${idx}', 1)">›</button>
                 </div>
-                ${p.live ? '<div class="live-tag"><span class="dot"></span>LIVE</div>' : ''}
-                <div class="cover-art" style="background-image:url('${photos[p.sport]}')"></div>
-                <div class="cover-emoji">${s.emoji}</div>
-                <div class="cover-headline">${headline}</div>
+            </div>
+            <div class="scroller" id="row-${idx}">
+                ${r.items.map(cardHTML).join('')}
+            </div>
+        </section>
+    `).join('');
+}
+
+function cardHTML(p) {
+    const co = countries.find(c => c.code === p.country);
+    const isSaved = saved.has(p.id);
+    const locked = isLocked(p);
+    const isFree = p.perks.some(pk => pk.toLowerCase() === 'free');
+
+    return `
+        <article class="card${locked ? ' locked' : ''}">
+            <div class="card-img">
+                <img src="${photos[p.sport] || photos.Soccer}" alt="" loading="lazy">
+                <div class="card-img-gradient"></div>
+                <div class="img-pills">
+                    ${p.live ? '<span class="pill live"><span class="dot"></span>Live</span>'
+                       : isFree ? '<span class="pill free">Free</span>'
+                       : `<span class="pill">${p.sport}</span>`}
+                    <button class="save ${isSaved ? 'on' : ''}" onclick="event.stopPropagation();toggleSaved(${p.id})">${isSaved ? '♥' : '♡'}</button>
+                </div>
+                ${co ? `<div class="country-flag">${co.flag}</div>` : ''}
+                <div class="card-cover-title">${p.match}</div>
+                ${locked ? `<div class="lock-banner" onclick="openPaywall()">
+                    <div class="lock-icon">🔒</div>
+                    <div class="lock-msg">${p.borough} · $5 to unlock</div>
+                </div>` : ''}
             </div>
             <div class="card-body">
-                <div class="venue-row">
-                    <div class="venue-icon">${v.emoji}</div>
-                    <div class="venue-info">
-                        <div class="venue-name">${p.venue}</div>
-                        <div class="venue-type">${p.vtype} · <span style="color:var(--text-mute)">${p.neighborhood} · ${p.distance} mi</span></div>
-                    </div>
-                </div>
-                <div class="country-tag">${co ? co.flag + ' ' + co.name : '🌍'} fans welcome</div>
-                <div class="perks">${p.perks.map(x => `<span class="perk">${x}</span>`).join('')}</div>
-                <div class="card-foot">
-                    <button class="rsvp ${isGoing ? 'going' : ''}" onclick="event.stopPropagation();toggleGoing(${p.id})">
-                        ${isGoing ? "✓ You're In" : "I'm In"}
-                    </button>
-                    <button class="icon-btn" onclick="event.stopPropagation()">♡</button>
-                    <button class="icon-btn" onclick="event.stopPropagation()">↗</button>
-                </div>
+                <div class="card-title">${p.venue}</div>
+                <div class="card-meta">${p.vtype} · ${p.neighborhood} · ${p.distance} mi</div>
+                <div class="card-meta">${p.time}</div>
+                <div class="card-price">From <strong>${p.price}</strong></div>
             </div>
-            <div class="lock-overlay" onclick="openPaywall()">
-                <div class="lock-icon">🔒</div>
-                <div class="lock-text">${p.borough} is locked</div>
-                <button class="lock-unlock">Unlock for $5</button>
-            </div>
-        `;
-        grid.appendChild(card);
-    });
+        </article>
+    `;
 }
 
-function renderPolls() {
-    const grid = document.getElementById('grid');
-    grid.style.display = 'grid';
-    const filtered = polls.filter(p => !activeCountry || p.country === activeCountry.code);
-    document.getElementById('count').textContent = `${filtered.length} active ${filtered.length === 1 ? 'poll' : 'polls'}`;
-    grid.innerHTML = '';
-
-    if (filtered.length === 0) {
-        grid.innerHTML = `<div class="empty"><div class="big">📊</div><h3>No polls for this country yet</h3></div>`;
-        return;
-    }
-
-    filtered.forEach(p => {
-        const locked = !unlockedBoroughs.has(p.borough);
-        const userVote = votedPolls[p.id];
-        const co = countries.find(c => c.code === p.country);
-        const card = document.createElement('article');
-        card.className = 'poll-card' + (locked ? ' locked' : '');
-        card.style.position = 'relative';
-        if (locked) {
-            card.innerHTML = `<div class="lock-overlay" onclick="openPaywall()" style="display:flex"><div class="lock-icon">🔒</div><div class="lock-text">${p.borough} polls locked</div><button class="lock-unlock">Unlock for $5</button></div>`;
-            grid.appendChild(card);
-            return;
-        }
-        const total = p.totalVotes + (userVote !== undefined ? 1 : 0);
-
-        const optsHtml = p.options.map((opt, i) => {
-            const voteCount = opt.votes + (userVote === i ? 1 : 0);
-            const pct = total > 0 ? Math.round((voteCount / total) * 100) : 0;
-            return `
-                <div class="poll-opt ${userVote === i ? 'voted' : ''}" onclick="vote(${p.id}, ${i})">
-                    <div class="poll-opt-bar" style="width:${userVote !== undefined ? pct : 0}%"></div>
-                    <div class="poll-opt-content">
-                        <span class="poll-opt-name">${userVote === i ? '✓ ' : ''}${opt.name}</span>
-                        ${userVote !== undefined ? `<span class="poll-opt-pct">${pct}%</span>` : ''}
-                    </div>
-                </div>
-            `;
-        }).join('');
-
-        card.innerHTML = `
-            <h4>${p.question}</h4>
-            <div class="poll-sub">${co.flag} ${co.name} · ${p.borough} · ${p.sub}</div>
-            ${optsHtml}
-            <div class="poll-meta">${total.toLocaleString()} votes · ${p.closes}</div>
-        `;
-        grid.appendChild(card);
-    });
+function scrollRow(id, dir) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.scrollBy({ left: dir * 320, behavior: 'smooth' });
 }
 
-function vote(pollId, optIdx) {
-    if (votedPolls[pollId] !== undefined) return;
-    votedPolls[pollId] = optIdx;
-    toast('Vote counted ✓');
-    renderPolls();
-}
-
-function hexToRgba(hex, a) {
-    const n = parseInt(hex.slice(1), 16);
-    return `rgba(${(n>>16)&0xff},${(n>>8)&0xff},${n&0xff},${a})`;
+function toggleSaved(id) {
+    if (saved.has(id)) saved.delete(id); else saved.add(id);
+    applyFilters();
 }
 
 // ============ MAP ============
@@ -1494,68 +1287,63 @@ function setView(v) {
     currentView = v;
     document.getElementById('view-list').classList.toggle('active', v === 'list');
     document.getElementById('view-map').classList.toggle('active', v === 'map');
-    document.getElementById('grid').style.display = v === 'list' ? 'grid' : 'none';
+    document.getElementById('discover-list').style.display = v === 'list' ? 'block' : 'none';
     document.getElementById('map').style.display = v === 'map' ? 'block' : 'none';
     if (v === 'map') {
         if (!mapInstance) initMap();
         setTimeout(() => mapInstance.invalidateSize(), 50);
-        render();
+        applyFilters();
+    } else {
+        applyFilters();
     }
 }
 
 function initMap() {
     mapInstance = L.map('map', { zoomControl: true, scrollWheelZoom: true })
-        .setView([40.7128, -73.9700], 12);
+        .setView([40.7128, -73.97], 12);
     L.tileLayer('https://{s}.basemaps.cartocdn.com/voyager/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; OpenStreetMap &copy; CARTO', subdomains: 'abcd', maxZoom: 19
+        attribution:'&copy; OpenStreetMap &copy; CARTO', subdomains:'abcd', maxZoom:19
     }).addTo(mapInstance);
 }
 
 function renderMap(filtered) {
     mapMarkers.forEach(m => mapInstance.removeLayer(m));
     mapMarkers = [];
-    if (!filtered || filtered.length === 0) return;
+    if (!filtered || !filtered.length) return;
     filtered.forEach(p => {
-        const s = sportData[p.sport];
         const locked = isLocked(p);
+        const color = locked ? '#8a8d94' : (sportColor[p.sport] || '#e51b23');
         const icon = L.divIcon({
-            className: '',
-            html: `<div class="map-marker ${p.live ? 'live' : ''}" style="background:${locked ? '#6b6f78' : s.color};opacity:${locked ? 0.6 : 1}">${locked ? '🔒' : s.emoji}</div>`,
-            iconSize: [38, 38], iconAnchor: [19, 19]
+            className:'', iconSize:[30,30], iconAnchor:[15,15],
+            html:`<div style="width:30px;height:30px;border-radius:50%;background:${color};border:3px solid white;box-shadow:0 4px 12px rgba(0,0,0,0.25);display:grid;place-items:center;color:white;font-size:13px;font-weight:700">${locked ? '🔒' : p.sport[0]}</div>`
         });
         const marker = L.marker([p.lat, p.lng], { icon }).addTo(mapInstance);
         const co = countries.find(c => c.code === p.country);
         marker.bindPopup(`
-            <div class="map-popup">
-                <img src="${photos[p.sport]}" alt="">
-                <div class="mp-body">
-                    <div class="mp-sport">${p.sport} ${p.live ? '· LIVE' : ''}${locked ? ' · LOCKED' : ''}</div>
-                    <div class="mp-match">${p.match}</div>
-                    <div class="mp-venue">${p.venue}</div>
-                    <div class="mp-meta">${co ? co.flag : ''} ${p.borough} · ${p.time}</div>
-                </div>
+            <div style="font-family:Inter,sans-serif;padding:10px 14px;min-width:220px">
+                <div style="font-size:11px;color:${color};font-weight:700;letter-spacing:1.5px;text-transform:uppercase">${p.sport} ${p.live ? '· LIVE' : ''}</div>
+                <div style="font-weight:700;margin:4px 0">${p.match}</div>
+                <div style="font-size:13px;color:#4a4d54">${p.venue} · ${p.vtype}</div>
+                <div style="font-size:12px;color:#8a8d94;margin-top:4px">${co?co.flag+' ':''}${p.borough} · ${p.time}</div>
             </div>
         `);
         if (locked) marker.on('click', () => setTimeout(openPaywall, 300));
         mapMarkers.push(marker);
     });
     const bounds = L.latLngBounds(filtered.map(p => [p.lat, p.lng]));
-    mapInstance.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
+    mapInstance.fitBounds(bounds, { padding:[40,40], maxZoom:14 });
 }
 
 // ============ SCHEDULE ============
 function renderSchedule() {
-    const grid = document.getElementById('schedule-grid');
     const list = schedule.filter(m => !activeCountry || m.country === activeCountry.code);
-    grid.innerHTML = '';
+    const grid = document.getElementById('schedule-grid');
     if (list.length === 0) {
-        grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><h3 style="font-family:'Playfair Display',serif;font-style:italic;font-size:24px">No upcoming matches for that country</h3></div>`;
+        grid.innerHTML = `<div class="empty"><h3>No fixtures for this country yet</h3></div>`;
         return;
     }
-    list.forEach(m => {
-        const card = document.createElement('div');
-        card.className = 'match-card';
-        card.innerHTML = `
+    grid.innerHTML = list.map(m => `
+        <div class="match-card">
             <div class="match-top">
                 <span class="tournament">${m.tournament}</span>
                 <span>${m.sport}</span>
@@ -1574,27 +1362,24 @@ function renderSchedule() {
             <div class="match-time">${m.date} · ${m.venue}</div>
             <div class="match-actions">
                 <button class="match-btn" onclick="toast('Reminder set ✓')">Set Reminder</button>
-                <button class="match-btn" onclick="document.getElementById('tonight').scrollIntoView({behavior:'smooth'})">Find Party</button>
+                <button class="match-btn primary" onclick="route('discover')">Find Party</button>
             </div>
-        `;
-        grid.appendChild(card);
-    });
+        </div>
+    `).join('');
 }
 
-// ============ LINEUP REACTIONS ============
+// ============ FAN HUB ============
 function renderLineup() {
-    const block = document.getElementById('lineup-block');
     const code = activeCountry?.code || 'US';
     const data = lineups[code] || lineups.US;
-    const co = countries.find(c => c.code === code) || countries[0];
-
-    block.innerHTML = `
-        <div class="lineup-head">
-            <div class="lt-title">${co.flag} <em>Starting</em> Lineup</div>
-            <div class="lt-sub">Formation · ${data.formation}</div>
+    const co = countries.find(c => c.code === code);
+    document.getElementById('lineup-panel').innerHTML = `
+        <div class="panel-head">
+            <div class="panel-title">${co.flag} <em>Starting</em> Lineup</div>
+            <div class="panel-sub">Formation · ${data.formation}</div>
         </div>
         <div class="lineup-list">
-            ${data.players.map((pl, idx) => {
+            ${data.players.map(pl => {
                 const key = `${code}-${pl.num}`;
                 const userR = reactions[key];
                 return `
@@ -1603,11 +1388,7 @@ function renderLineup() {
                         <div class="player-name">${pl.name}</div>
                         <div class="player-pos">${pl.pos}</div>
                         <div class="player-reactions">
-                            ${reactionEmojis.map(e => `
-                                <button class="reaction ${userR === e ? 'active' : ''}" onclick="react('${key}','${e}')">
-                                    <span style="font-size:14px">${e}</span>
-                                </button>
-                            `).join('')}
+                            ${reactionEmojis.map(e => `<button class="reaction ${userR === e ? 'active' : ''}" onclick="react('${key}','${e}')">${e}</button>`).join('')}
                         </div>
                     </div>
                 `;
@@ -1621,27 +1402,22 @@ function react(key, emoji) {
     renderLineup();
 }
 
-// ============ CHAT ============
 function renderChat() {
     const code = activeCountry?.code || 'US';
-    const co = countries.find(c => c.code === code) || countries[0];
+    const co = countries.find(c => c.code === code);
     document.getElementById('chat-country').textContent = co.name;
     document.getElementById('chat-online').textContent = `${(Math.floor(Math.random()*5000)+500).toLocaleString()} online`;
-    const baseMsgs = chatMessages[code] || chatMessages.US;
-    const allMsgs = [...baseMsgs, ...(chatMessagesState[code] || [])];
-    const body = document.getElementById('chat-body');
-    body.innerHTML = allMsgs.map(m => {
-        const color = stringToColor(m.user);
-        return `
-            <div class="chat-msg">
-                <div class="chat-avatar" style="background:${color}">${m.user[0].toUpperCase()}</div>
-                <div class="chat-content">
-                    <div class="chat-meta"><strong>${m.user}</strong>${m.time}</div>
-                    <div class="chat-text">${m.msg}</div>
-                </div>
+    const msgs = [...(chatMessages[code] || chatMessages.US), ...(chatExtra[code] || [])];
+    document.getElementById('chat-body').innerHTML = msgs.map(m => `
+        <div class="chat-msg">
+            <div class="chat-avatar" style="background:${stringColor(m.user)}">${m.user[0].toUpperCase()}</div>
+            <div>
+                <div class="chat-meta"><strong>${m.user}</strong>${m.time}</div>
+                <div class="chat-text">${m.msg}</div>
             </div>
-        `;
-    }).join('');
+        </div>
+    `).join('');
+    const body = document.getElementById('chat-body');
     body.scrollTop = body.scrollHeight;
 }
 
@@ -1651,63 +1427,103 @@ function sendChat(e) {
     const text = input.value.trim();
     if (!text) return;
     const code = activeCountry?.code || 'US';
-    if (!chatMessagesState[code]) chatMessagesState[code] = [];
-    chatMessagesState[code].push({ user:'you', msg:text, time:'now' });
+    if (!chatExtra[code]) chatExtra[code] = [];
+    chatExtra[code].push({ user:'you', msg:text, time:'now' });
     input.value = '';
     renderChat();
 }
 
-function stringToColor(s) {
-    let h = 0;
-    for (let i = 0; i < s.length; i++) h = s.charCodeAt(i) + ((h << 5) - h);
+function stringColor(s) {
+    let h = 0; for (let i = 0; i < s.length; i++) h = s.charCodeAt(i) + ((h << 5) - h);
     return `hsl(${h % 360}, 60%, 50%)`;
+}
+
+// ============ POLLS ============
+function renderPolls() {
+    const list = polls.filter(p => !activeCountry || p.country === activeCountry.code);
+    const grid = document.getElementById('polls-grid');
+    if (list.length === 0) {
+        grid.innerHTML = `<div class="empty"><h3>No polls for this country yet</h3></div>`;
+        return;
+    }
+    grid.innerHTML = list.map(p => {
+        const locked = !unlockedBoroughs.has(p.borough);
+        const co = countries.find(c => c.code === p.country);
+        if (locked) {
+            return `<div class="poll-card">
+                <h3>${p.question}</h3>
+                <div class="poll-sub">${co.flag} ${co.name} · ${p.borough}</div>
+                <div class="poll-locked">
+                    <div class="lock-icon">🔒</div>
+                    <div style="font-style:italic;color:var(--text-dim);font-family:'Playfair Display',serif">${p.borough} polls are locked</div>
+                    <button onclick="openPaywall()">Unlock for $5</button>
+                </div>
+            </div>`;
+        }
+        const userVote = votedPolls[p.id];
+        const total = p.totalVotes + (userVote !== undefined ? 1 : 0);
+        const optsHtml = p.options.map((opt, i) => {
+            const voteCount = opt.votes + (userVote === i ? 1 : 0);
+            const pct = total > 0 ? Math.round((voteCount / total) * 100) : 0;
+            return `<div class="poll-opt ${userVote === i ? 'voted' : ''}" onclick="vote(${p.id}, ${i})">
+                <div class="poll-opt-bar" style="width:${userVote !== undefined ? pct : 0}%"></div>
+                <div class="poll-opt-content">
+                    <span class="poll-opt-name">${userVote === i ? '✓ ' : ''}${opt.name}</span>
+                    ${userVote !== undefined ? `<span class="poll-opt-pct">${pct}%</span>` : ''}
+                </div>
+            </div>`;
+        }).join('');
+        return `<div class="poll-card">
+            <h3>${p.question}</h3>
+            <div class="poll-sub">${co.flag} ${co.name} · ${p.sub}</div>
+            ${optsHtml}
+            <div class="poll-meta">${total.toLocaleString()} votes · ${p.closes}</div>
+        </div>`;
+    }).join('');
+}
+
+function vote(id, i) {
+    if (votedPolls[id] !== undefined) return;
+    votedPolls[id] = i;
+    toast('Vote counted ✓');
+    renderPolls();
 }
 
 // ============ AI ============
 function openAI() { document.getElementById('ai-modal').classList.add('open'); }
 function closeAI() { document.getElementById('ai-modal').classList.remove('open'); }
 function fillPrompt(el) { document.getElementById('ai-prompt').value = el.textContent.trim(); }
-
 function runAI() {
+    const resp = document.getElementById('ai-response');
     const prompt = document.getElementById('ai-prompt').value.trim();
     if (!prompt) return;
-    const resp = document.getElementById('ai-response');
     resp.style.display = 'block';
-    resp.innerHTML = `<span class="ai-typing">✦ Building your matchday plan...</span>`;
+    resp.innerHTML = `<span style="font-style:italic;color:var(--text-mute)">✦ Building your matchday plan...</span>`;
     setTimeout(() => {
         const country = activeCountry || countries.find(c => prompt.toLowerCase().includes(c.name.toLowerCase())) || countries[0];
-        const co = country;
-        const candidates = parties.filter(p =>
-            unlockedBoroughs.has(p.borough) &&
-            (p.country === co.code || p.eventType === 'watch-party')
-        ).slice(0, 3);
+        const candidates = parties.filter(p => unlockedBoroughs.has(p.borough) && (p.country === country.code || p.eventType === 'watch-party')).slice(0,3);
         const main = candidates[0] || parties[0];
-        const upcoming = schedule.find(m => m.country === co.code) || schedule[0];
-
+        const upcoming = schedule.find(m => m.country === country.code) || schedule[0];
         resp.innerHTML = `
-<strong>YOUR ${co.flag} ${co.name.toUpperCase()} MATCHDAY</strong>
+<strong>YOUR ${country.flag} ${country.name.toUpperCase()} MATCHDAY</strong>
 
 <strong>⏰ THE MATCH</strong>
-${upcoming.home.flag} ${upcoming.home.name} vs. ${upcoming.away.name} ${upcoming.away.flag}
+${upcoming.home.flag} ${upcoming.home.name} vs ${upcoming.away.name} ${upcoming.away.flag}
 ${upcoming.date} · ${upcoming.tournament}
 
-<strong>📍 PRIMARY SPOT — 90 MIN BEFORE KICKOFF</strong>
+<strong>📍 PRIMARY SPOT</strong>
 ${main.venue} (${main.neighborhood}, ${main.borough})
 ${main.vtype} · ${main.perks.join(' · ')}
-Why: ${co.name} crowd, ${main.perks[0].toLowerCase()}, easy reach from anywhere in Brooklyn
 
-<strong>🍻 PRE-GAME — 2 HOURS EARLY</strong>
-Grab food + first round nearby. Bedford Ave has 6 cafes within a block.
+<strong>🍻 PRE-GAME</strong>
+Arrive 90 min early. Grab food + first round on Bedford Ave.
 
 <strong>🎉 POST-GAME</strong>
-${parties.find(p => p.eventType === 'parade' && p.country === co.code)?.venue || 'Walk over to McCarren Park for the after-party'}
-Bring: scarf, voice (you'll lose it), cash for street vendors
+${parties.find(p => p.eventType === 'parade' && p.country === country.code)?.venue || 'Walk to McCarren Park for the afterparty'}
 
-<strong>📋 BACKUP PLAN</strong>
-If primary is full → ${candidates[1]?.venue || 'McCarren Park Lawn'} (free, outdoor)
-
-Ready? Tap "I'm In" on the cards below to reserve your spot.`;
-    }, 900);
+<strong>📋 BACKUP</strong>
+${candidates[1]?.venue || 'McCarren Park Lawn (free, outdoor)'}`;
+    }, 700);
 }
 
 // ============ PAYWALL ============
@@ -1717,51 +1533,41 @@ function unlockBoroughs() {
     ['Manhattan','Queens','Bronx','Staten Island'].forEach(b => unlockedBoroughs.add(b));
     closePaywall();
     toast('🎉 All boroughs unlocked!');
-    document.getElementById('borough-banner').style.display = 'none';
-    renderAll();
+    document.getElementById('borough-banner').innerHTML = '';
+    applyFilters();
+    if (activeRoute === 'polls') renderPolls();
 }
 
 function renderBoroughBanner() {
-    const banner = document.getElementById('borough-banner');
-    if (unlockedBoroughs.size > 1) { banner.innerHTML = ''; return; }
-    banner.innerHTML = `
-        <div class="borough-strip">
-            <div class="text"><strong>Brooklyn is free.</strong> Unlock Manhattan, Queens, the Bronx & Staten Island for a one-time $5.</div>
-            <button class="unlock-btn" onclick="openPaywall()">Unlock all 5 boroughs · $5</button>
+    if (unlockedBoroughs.size > 1) return;
+    document.getElementById('borough-banner').innerHTML = `
+        <div class="borough-banner">
+            <div class="borough-banner-inner">
+                <div class="text"><strong>Brooklyn is free.</strong> Unlock Manhattan, Queens, the Bronx & Staten Island for a one-time $5.</div>
+                <button class="btn-pay" onclick="openPaywall()">Unlock all 5 boroughs · $5</button>
+            </div>
         </div>
     `;
 }
 
-// ============ MISC ============
-function toggleGoing(id) {
-    if (going.has(id)) going.delete(id);
-    else going.add(id);
-    render();
-}
-
+// ============ TOAST ============
 function toast(msg) {
     const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
+    t.textContent = msg; t.classList.add('show');
     clearTimeout(t._tid);
     t._tid = setTimeout(() => t.classList.remove('show'), 2200);
 }
 
-function renderAll() {
-    render();
-    renderSchedule();
-    renderLineup();
-    renderChat();
-    renderBoroughBanner();
-    document.getElementById('hero-count').textContent =
-        `${parties.filter(p => p.eventType === 'watch-party').length} watch parties`;
-}
-
 // ============ INIT ============
 buildCountries();
-buildEventTabs();
-buildChips();
-renderAll();
+buildSubtabs();
+renderBoroughBanner();
+applyFilters();
+initRouting();
+window.addEventListener('hashchange', () => {
+    const hash = location.hash.replace('#/', '');
+    if (['discover','schedule','fanhub','polls'].includes(hash)) route(hash);
+});
 </script>
 
 </body>
