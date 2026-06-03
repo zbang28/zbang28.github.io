@@ -852,6 +852,16 @@
     body.worldcup-mode .country-strip-label { color: var(--text-dim); }
     body.worldcup-mode .split-list-head { border-color: var(--border); }
     body.worldcup-mode .empty h3 { color: var(--text); }
+    /* Nav stays dark in worldcup-mode (its bg was var(--text) which flipped) */
+    body.worldcup-mode nav {
+        background: #0e0f11;
+        border-bottom-color: #1c1c24;
+    }
+    body.worldcup-mode .drop-btn { background: var(--surface); color: var(--text); border-color: var(--border); }
+    body.worldcup-mode .drop-btn:hover { border-color: var(--text); }
+    body.worldcup-mode .drop-check { color: var(--text); }
+    body.worldcup-mode .drop-item { color: var(--text); }
+    body.worldcup-mode .drop-item-count { background: var(--bg); color: var(--text-dim); }
 
     /* ===== World Cup vibrant hero ===== */
     .worldcup-hero {
