@@ -103,18 +103,12 @@
         background: linear-gradient(135deg, #ffd400 0%, #16a34a 33%, #2563eb 66%, #ff2d3a 100%) !important;
         padding: 8px 16px !important;
         border-radius: 10px !important;
-        box-shadow: 0 6px 18px rgba(255,212,0,0.35), 0 0 0 1px rgba(255,255,255,0.22) inset;
-        transition: transform 0.18s cubic-bezier(.2,.7,.2,1), box-shadow 0.2s;
+        box-shadow: none !important;
+        transition: transform 0.18s cubic-bezier(.2,.7,.2,1);
         text-shadow: 0 1px 4px rgba(0,0,0,0.35);
     }
-    .tab.highlight:hover {
-        transform: translateY(-1px);
-        background: linear-gradient(135deg, #ffd400 0%, #16a34a 33%, #2563eb 66%, #ff2d3a 100%) !important;
-        box-shadow: 0 12px 28px rgba(255,212,0,0.45), 0 0 0 1px rgba(255,255,255,0.3) inset;
-    }
-    .tab.highlight.active {
-        box-shadow: 0 12px 28px rgba(255,45,58,0.55), 0 0 0 2px white inset;
-    }
+    .tab.highlight:hover { transform: translateY(-1px); }
+    .tab.highlight.active { transform: translateY(-1px); }
     .tab-badge {
         display: inline-block;
         margin-left: 6px;
@@ -1654,7 +1648,7 @@
         background: transparent !important;
         box-shadow: none !important;
         border-radius: 0;
-        filter: drop-shadow(0 2px 6px rgba(0,0,0,0.15));
+        filter: none;
         transition: transform 0.25s cubic-bezier(.2,.7,.2,1);
     }
     .countries-flagrow .country:hover {
@@ -1662,22 +1656,8 @@
         transform: translateY(-2px);
     }
     .countries-flagrow .country:hover .flag { transform: scale(1.08); }
-    .countries-flagrow .country.active {
-        opacity: 1;
-        transform: translateY(-1px);
-    }
-    .countries-flagrow .country.active::after {
-        content: '';
-        position: absolute;
-        left: 8px; right: 8px; bottom: -4px;
-        height: 3px;
-        background: linear-gradient(90deg, #ff2e2e, #ffd400);
-        border-radius: 2px;
-    }
-    .countries-flagrow .country.active .flag {
-        transform: scale(1.12);
-        filter: drop-shadow(0 4px 12px rgba(255,46,46,0.35));
-    }
+    .countries-flagrow .country.active { opacity: 1; }
+    .countries-flagrow .country.active .flag { transform: scale(1.12); }
 
     /* Bottom borough banner with lock chips — sits below the split */
     .borough-foot {
@@ -4449,7 +4429,7 @@ function applyFilters() {
     if (activeRoute !== 'events' && activeRoute !== 'worldcup') return;
     const filtered = parties
         .filter(p => p.eventType === activeSubtab)
-        .filter(p => activeRoute !== 'worldcup' || isWorldCupEvent(p))
+        .filter(p => activeRoute === 'worldcup' ? isWorldCupEvent(p) : !isWorldCupEvent(p))
         .filter(matchesFilters)
         .sort((a,b) => a.distance - b.distance);
 
