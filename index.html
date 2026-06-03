@@ -500,6 +500,208 @@
         border-radius: 4px;
     }
 
+    /* ===== Matchday page ===== */
+    .matchday-head {
+        position: relative;
+        background:
+            radial-gradient(ellipse 70% 60% at 20% 0%, rgba(168,85,247,0.35), transparent 60%),
+            radial-gradient(ellipse 70% 60% at 90% 100%, rgba(255,62,181,0.3), transparent 60%),
+            linear-gradient(135deg, #1a0a2c 0%, #0e0f11 70%);
+        padding: 36px 24px 44px;
+        color: white;
+        overflow: hidden;
+    }
+    .matchday-head::before {
+        content: ''; position: absolute; inset: 0;
+        background-image:
+            radial-gradient(circle at 12% 25%, white 1.5px, transparent 2.5px),
+            radial-gradient(circle at 78% 18%, white 1.2px, transparent 2px),
+            radial-gradient(circle at 35% 80%, white 1.3px, transparent 2.2px),
+            radial-gradient(circle at 88% 75%, white 1px, transparent 1.8px);
+        background-size: 180px 200px, 220px 240px, 200px 220px, 240px 200px;
+        opacity: 0.5;
+        pointer-events: none;
+    }
+    .matchday-head-inner {
+        position: relative; z-index: 1;
+        max-width: 760px; margin: 0 auto;
+        text-align: center;
+    }
+    .matchday-back {
+        background: rgba(255,255,255,0.08);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.15);
+        color: white;
+        padding: 7px 14px;
+        border-radius: 999px;
+        font: inherit; font-size: 12px; font-weight: 700;
+        cursor: pointer;
+        margin-bottom: 24px;
+        float: left;
+    }
+    .matchday-back:hover { background: rgba(255,255,255,0.16); }
+    .matchday-eyebrow {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: var(--grad-2);
+        padding: 5px 12px;
+        border-radius: 999px;
+        font-size: 11px; font-weight: 900;
+        letter-spacing: 2px; text-transform: uppercase;
+        margin-bottom: 14px;
+        box-shadow: 0 6px 18px rgba(255,62,181,0.4);
+    }
+    .matchday-eyebrow .spark { font-size: 14px; }
+    .matchday-title {
+        font-family: 'Inter', sans-serif;
+        font-weight: 900;
+        font-size: clamp(36px, 5vw, 56px);
+        line-height: 1; letter-spacing: -0.03em;
+        margin-bottom: 10px;
+    }
+    .matchday-title .grad {
+        background: var(--grad-2);
+        -webkit-background-clip: text; background-clip: text;
+        color: transparent;
+    }
+    .matchday-sub {
+        color: rgba(255,255,255,0.75);
+        font-size: 15px;
+        max-width: 480px; margin: 0 auto 20px;
+    }
+    .matchday-prompt-box { margin: 0 auto; max-width: 600px; text-align: left; }
+    .matchday-quick {
+        display: flex; flex-wrap: wrap; gap: 6px;
+        justify-content: center;
+        margin-top: 14px;
+    }
+    .matchday-quick .ai-sugg {
+        background: rgba(255,255,255,0.08);
+        border-color: rgba(255,255,255,0.18);
+        color: rgba(255,255,255,0.85);
+    }
+    .matchday-quick .ai-sugg:hover {
+        background: rgba(255,255,255,0.16);
+        color: white; border-color: white;
+    }
+
+    .matchday-result {
+        display: grid;
+        grid-template-columns: minmax(360px, 460px) 1fr;
+        height: calc(100vh - 64px);
+        position: relative;
+        margin-top: 0;
+    }
+    @media (max-width: 880px) {
+        .matchday-result { grid-template-columns: 1fr; height: auto; }
+        .matchday-map-wrap { height: 420px; }
+    }
+    .matchday-stops {
+        overflow-y: auto;
+        padding: 24px;
+        background: var(--bg);
+        border-right: 1px solid var(--border);
+        display: flex; flex-direction: column; gap: 14px;
+    }
+    .matchday-map-wrap {
+        position: relative;
+        background: var(--surface-2);
+        height: 100%;
+    }
+    #matchday-map { width: 100%; height: 100%; }
+    .matchday-map-legend {
+        position: absolute; top: 16px; left: 16px; z-index: 1000;
+        background: rgba(14,15,17,0.85);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 10px;
+        padding: 10px 12px;
+        font-size: 11px; font-weight: 700;
+        color: white;
+        display: flex; gap: 12px; align-items: center;
+        flex-wrap: wrap;
+        text-transform: uppercase; letter-spacing: 1px;
+    }
+    .matchday-map-legend .dot {
+        display: inline-block; width: 10px; height: 10px;
+        border-radius: 50%; margin-right: 4px;
+        border: 1.5px solid white;
+        vertical-align: middle;
+    }
+    .matchday-map-legend .dot-1 { background: #a855f7; }
+    .matchday-map-legend .dot-2 { background: #ff2d3a; }
+    .matchday-map-legend .dot-3 { background: #ffb800; }
+    .matchday-map-legend .dot-4 { background: #00d96f; }
+
+    .stop-card {
+        position: relative;
+        background: var(--surface);
+        border: 1.5px solid var(--border);
+        border-radius: 14px;
+        overflow: hidden;
+        cursor: pointer;
+        display: grid;
+        grid-template-columns: 56px 1fr;
+        gap: 0;
+        transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    }
+    .stop-card:hover {
+        transform: translateY(-2px);
+        border-color: var(--stop-color, var(--red));
+        box-shadow: 0 8px 18px rgba(0,0,0,0.25), 0 0 0 1px var(--stop-color, var(--red));
+    }
+    .stop-card-num {
+        background: var(--stop-color, var(--red));
+        color: white;
+        display: grid; place-items: center;
+        font-family: 'Inter', sans-serif;
+        font-weight: 900; font-size: 22px;
+        letter-spacing: -0.02em;
+    }
+    .stop-card-num::after {
+        content: ''; position: absolute;
+        left: 56px; width: 1px; top: 16px; bottom: 16px;
+        background: var(--border);
+    }
+    .stop-card-body {
+        padding: 12px 14px;
+    }
+    .stop-card-kicker {
+        font-size: 10px; font-weight: 900;
+        text-transform: uppercase; letter-spacing: 2px;
+        color: var(--stop-color, var(--red));
+        margin-bottom: 4px;
+    }
+    .stop-card-venue {
+        font-weight: 800; font-size: 15px;
+        color: var(--text);
+        margin-bottom: 2px;
+    }
+    .stop-card-meta {
+        font-size: 12px; color: var(--text-dim);
+        margin-bottom: 4px;
+    }
+    .stop-card-tags {
+        display: flex; gap: 5px; flex-wrap: wrap;
+        margin-top: 6px;
+    }
+    .stop-card-tag {
+        font-size: 10px; font-weight: 700;
+        padding: 3px 7px;
+        background: var(--surface-2);
+        color: var(--text-dim);
+        border-radius: 999px;
+    }
+
+    /* Matchday route pin (map) */
+    .route-pin {
+        width: 36px; height: 36px;
+        border-radius: 50%;
+        border: 3px solid white;
+        display: grid; place-items: center;
+        color: white; font-weight: 900; font-size: 14px;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+    }
+
     /* Featured rail (smaller tiles) */
     .featured-grid {
         display: grid;
@@ -2986,6 +3188,68 @@
     </div>
 </section>
 
+<!-- ============ MATCHDAY PAGE ============ -->
+<section class="page" data-page="matchday">
+    <div class="matchday-head">
+        <div class="matchday-head-inner">
+            <button class="matchday-back" onclick="route('home')">← Back</button>
+            <div class="matchday-eyebrow">
+                <span class="spark">✦</span> AI Matchday Planner
+            </div>
+            <h1 class="matchday-title">Plan your <span class="grad">matchday</span></h1>
+            <p class="matchday-sub">Tell us who you're cheering for, where, and how many. We'll route your day across the city.</p>
+
+            <div class="prompt-box matchday-prompt-box">
+                <div class="prompt-files" id="matchday-files"></div>
+                <textarea
+                    id="matchday-prompt"
+                    class="prompt-textarea"
+                    placeholder="e.g. 'I'm cheering for Argentina with 3 friends — food, beer, big screen, Brooklyn'"
+                    rows="1"
+                ></textarea>
+                <div class="prompt-actions">
+                    <div class="prompt-actions-left">
+                        <div class="prompt-mode-row">
+                            <button type="button" class="prompt-mode" data-mode="search" onclick="toggleMatchdayMode('search')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+                                <span class="prompt-mode-label">Search</span>
+                            </button>
+                            <span class="prompt-divider"></span>
+                            <button type="button" class="prompt-mode" data-mode="think" onclick="toggleMatchdayMode('think')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 0 0 12 21Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 0 1 12 21Z"/></svg>
+                                <span class="prompt-mode-label">Think</span>
+                            </button>
+                        </div>
+                    </div>
+                    <button id="matchday-send" class="prompt-send" onclick="buildMatchday()">
+                        <svg class="ic-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg>
+                        <svg class="ic-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="matchday-quick">
+                <button class="ai-sugg" onclick="fillMatchdayPrompt('Argentina match in Brooklyn with friends')">Argentina · Brooklyn · friends</button>
+                <button class="ai-sugg" onclick="fillMatchdayPrompt('Family-friendly outdoor World Cup watch')">Family · outdoor · World Cup</button>
+                <button class="ai-sugg" onclick="fillMatchdayPrompt('Liverpool fans pub crawl, Manhattan')">Liverpool · pub crawl · NYC</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="matchday-result" id="matchday-result" style="display:none">
+        <div class="matchday-stops" id="matchday-stops"></div>
+        <div class="matchday-map-wrap">
+            <div id="matchday-map"></div>
+            <div class="matchday-map-legend">
+                <span class="dot dot-1"></span>Pregame
+                <span class="dot dot-2"></span>Watch party
+                <span class="dot dot-3"></span>Post-game
+                <span class="dot dot-4"></span>Backup
+            </div>
+        </div>
+    </div>
+</section>
+
 <footer>
     <div class="footer-inner">
         <div style="display:flex;align-items:center;gap:10px">
@@ -3265,6 +3529,7 @@ function route(name) {
     if (location.hash !== '#/' + name) history.replaceState(null, '', '#/' + name);
     window.scrollTo(0, 0);
     if (name === 'fanhub') renderFanHub();
+    if (name === 'matchday') { setupMatchdayPrompt(); setTimeout(() => matchdayMap?.invalidateSize(), 80); }
     if (name === 'events' || name === 'worldcup') {
         renderSportChip();
         applyFilters();
@@ -3277,7 +3542,7 @@ function initRouting() {
         t.addEventListener('click', () => route(t.dataset.route));
     });
     const hash = location.hash.replace('#/', '');
-    route(['home','events','fanhub','worldcup'].includes(hash) ? hash : 'home');
+    route(['home','events','fanhub','worldcup','matchday'].includes(hash) ? hash : 'home');
 }
 
 // ============ COUNTRIES ============
@@ -3828,7 +4093,165 @@ function vote(id, i) {
 }
 
 // ============ AI ============
-function openAI() { document.getElementById('ai-modal').classList.add('open'); setupPromptBox(); }
+function openAI() { route('matchday'); }
+function openAIModal() { document.getElementById('ai-modal').classList.add('open'); setupPromptBox(); }
+
+let matchdayMap = null;
+let matchdayMarkers = [];
+let matchdayLine = null;
+let activeMatchdayMode = null;
+
+function fillMatchdayPrompt(text) {
+    const ta = document.getElementById('matchday-prompt');
+    ta.value = text;
+    autosizeTextarea(ta);
+    refreshMatchdaySend();
+    ta.focus();
+}
+
+function toggleMatchdayMode(mode) {
+    activeMatchdayMode = (activeMatchdayMode === mode) ? null : mode;
+    document.querySelectorAll('#matchday-prompt-box-placeholder .prompt-mode, .matchday-prompt-box .prompt-mode').forEach(b => {
+        b.classList.toggle('active', b.dataset.mode === activeMatchdayMode);
+    });
+}
+
+function refreshMatchdaySend() {
+    const ta = document.getElementById('matchday-prompt');
+    const send = document.getElementById('matchday-send');
+    if (!ta || !send) return;
+    send.classList.toggle('has-content', ta.value.trim().length > 0);
+}
+
+function setupMatchdayPrompt() {
+    const ta = document.getElementById('matchday-prompt');
+    if (!ta || ta._wired) return;
+    ta._wired = true;
+    ta.addEventListener('input', () => { autosizeTextarea(ta); refreshMatchdaySend(); });
+    ta.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            buildMatchday();
+        }
+    });
+    refreshMatchdaySend();
+}
+
+function initMatchdayMap() {
+    if (matchdayMap) return;
+    matchdayMap = L.map('matchday-map', { zoomControl: true, scrollWheelZoom: true })
+        .setView([40.7128, -73.97], 12);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap &copy; CARTO', subdomains: 'abcd', maxZoom: 19
+    }).addTo(matchdayMap);
+}
+
+function buildMatchday() {
+    const ta = document.getElementById('matchday-prompt');
+    const prompt = (ta?.value || '').trim();
+    if (!prompt) { ta?.focus(); return; }
+
+    // Pick a country based on prompt
+    const country = countries.find(c => prompt.toLowerCase().includes(c.name.toLowerCase())) || activeCountry || countries[0];
+
+    // Choose 4 stops in Brooklyn unless prompt mentions another borough
+    const targetBorough = ['Manhattan','Queens','Bronx','Staten Island'].find(b => prompt.toLowerCase().includes(b.toLowerCase())) || 'Brooklyn';
+    const pool = parties.filter(p => unlockedBoroughs.has(p.borough) && (p.borough === targetBorough || targetBorough === 'Brooklyn'));
+
+    const watch = pool.find(p => p.eventType === 'watch-party' && p.country === country.code)
+        || pool.find(p => p.eventType === 'watch-party');
+    const pregame = pool.find(p => ['Brewery','Restaurant'].includes(p.vtype) && p !== watch)
+        || pool.find(p => p.vtype === 'Sports Bar' && p !== watch);
+    const post = pool.find(p => p.eventType === 'parade') || pool.find(p => p.vtype === 'Park' && p !== watch && p !== pregame);
+    const backup = pool.find(p => p.vtype === 'Park' && ![watch, pregame, post].includes(p))
+        || pool.find(p => ![watch, pregame, post].includes(p));
+
+    const stops = [
+        { tag: 'PREGAME', label: '2h before kickoff', color: '#a855f7', p: pregame },
+        { tag: 'WATCH PARTY', label: 'Kickoff', color: '#ff2d3a', p: watch },
+        { tag: 'POST-GAME', label: 'Final whistle', color: '#ffb800', p: post },
+        { tag: 'BACKUP', label: 'If plans change', color: '#00d96f', p: backup },
+    ].filter(s => s.p);
+
+    if (stops.length < 2) { toast('Not enough venues to plan a route'); return; }
+
+    // Show result panel
+    const result = document.getElementById('matchday-result');
+    result.style.display = '';
+
+    // Render stops
+    const wrap = document.getElementById('matchday-stops');
+    wrap.innerHTML = `
+        <div style="font-size:11px;font-weight:800;color:var(--text-mute);letter-spacing:2px;text-transform:uppercase;margin-bottom:2px">
+            ${country.flag} ${country.name} · ${targetBorough}
+        </div>
+        <div style="font-family:'Inter',sans-serif;font-weight:900;font-size:22px;letter-spacing:-0.03em;margin-bottom:14px;color:var(--text)">
+            Your matchday in ${stops.length} stops
+        </div>
+    ` + stops.map((s, i) => `
+        <div class="stop-card" style="--stop-color:${s.color}" onclick="zoomMatchdayStop(${i})">
+            <div class="stop-card-num">${i + 1}</div>
+            <div class="stop-card-body">
+                <div class="stop-card-kicker">${s.tag} · ${s.label}</div>
+                <div class="stop-card-venue">${s.p.venue}</div>
+                <div class="stop-card-meta">${s.p.vtype} · ${s.p.neighborhood} · ${s.p.time}</div>
+                <div class="stop-card-tags">
+                    ${s.p.perks.slice(0,3).map(pk => `<span class="stop-card-tag">${pk}</span>`).join('')}
+                </div>
+            </div>
+        </div>
+    `).join('');
+
+    // Init map + plot
+    setTimeout(() => {
+        initMatchdayMap();
+        matchdayMap.invalidateSize();
+
+        // Clear old
+        matchdayMarkers.forEach(m => matchdayMap.removeLayer(m));
+        if (matchdayLine) matchdayMap.removeLayer(matchdayLine);
+        matchdayMarkers = [];
+
+        // Add markers
+        stops.forEach((s, i) => {
+            const icon = L.divIcon({
+                className: '', iconSize: [36, 36], iconAnchor: [18, 18],
+                html: `<div class="route-pin" style="background:${s.color}">${i + 1}</div>`
+            });
+            const m = L.marker([s.p.lat, s.p.lng], { icon }).addTo(matchdayMap);
+            m.bindPopup(`<div style="font-family:Inter,sans-serif;padding:8px 12px;min-width:200px">
+                <div style="font-size:10px;font-weight:800;color:${s.color};letter-spacing:2px;text-transform:uppercase">STOP ${i + 1} · ${s.tag}</div>
+                <div style="font-weight:900;font-size:14px;margin:4px 0;color:#0e0f11">${s.p.venue}</div>
+                <div style="font-size:12px;color:#4a4d54">${s.p.vtype} · ${s.p.neighborhood}</div>
+                <div style="font-size:11px;color:#8a8d94;margin-top:2px">${s.p.time}</div>
+            </div>`);
+            matchdayMarkers.push(m);
+        });
+
+        // Draw route polyline
+        const coords = stops.map(s => [s.p.lat, s.p.lng]);
+        matchdayLine = L.polyline(coords, {
+            color: '#a855f7',
+            weight: 4,
+            opacity: 0.85,
+            dashArray: '8, 10',
+            lineCap: 'round'
+        }).addTo(matchdayMap);
+
+        // Fit bounds
+        const bounds = L.latLngBounds(coords);
+        matchdayMap.fitBounds(bounds, { padding: [60, 60], maxZoom: 14 });
+    }, 50);
+
+    window.matchdayStops = stops;
+}
+
+function zoomMatchdayStop(i) {
+    const s = window.matchdayStops?.[i];
+    if (!s || !matchdayMap) return;
+    matchdayMap.flyTo([s.p.lat, s.p.lng], 15, { duration: 0.7 });
+    setTimeout(() => matchdayMarkers[i]?.openPopup(), 700);
+}
 function closeAI() { document.getElementById('ai-modal').classList.remove('open'); }
 function fillPrompt(el) {
     const ta = document.getElementById('ai-prompt');
@@ -4103,7 +4526,7 @@ applyFilters();
 initRouting();
 window.addEventListener('hashchange', () => {
     const hash = location.hash.replace('#/', '');
-    if (['home','events','fanhub','worldcup'].includes(hash)) route(hash);
+    if (['home','events','fanhub','worldcup','matchday'].includes(hash)) route(hash);
 });
 </script>
 
