@@ -376,6 +376,86 @@
         transition: transform 0.25s cubic-bezier(.2,.7,.2,1);
     }
     .browse-map-btn:hover .browse-map-arrow { transform: translateX(3px) rotate(-8deg); }
+    .browse-map-btn.open .browse-map-arrow { transform: rotate(90deg); }
+
+    .browse-wrap {
+        position: relative;
+        display: inline-block;
+        text-align: left;
+    }
+
+    .browse-menu {
+        position: absolute;
+        top: calc(100% + 12px);
+        left: 0;
+        min-width: 320px;
+        background: #0e0f11;
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 18px;
+        padding: 8px;
+        box-shadow:
+            0 24px 56px rgba(0,0,0,0.5),
+            inset 0 1px 0 rgba(255,255,255,0.08);
+        opacity: 0;
+        transform: translateY(-8px) scale(0.96);
+        transform-origin: top left;
+        pointer-events: none;
+        transition: opacity 0.2s ease, transform 0.25s cubic-bezier(.2,.7,.2,1);
+        z-index: 50;
+    }
+    .browse-menu.open {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        pointer-events: auto;
+    }
+
+    .browse-item {
+        width: 100%;
+        display: flex; align-items: center; justify-content: space-between;
+        gap: 14px;
+        padding: 12px 14px;
+        background: transparent;
+        border: none;
+        color: white;
+        border-radius: 12px;
+        cursor: pointer;
+        text-align: left;
+        font-family: inherit;
+        transition: background 0.15s ease;
+    }
+    .browse-item:hover {
+        background: rgba(255,255,255,0.08);
+    }
+    .browse-item-label {
+        display: flex; flex-direction: column; gap: 2px;
+    }
+    .browse-item-name {
+        font-weight: 800; font-size: 15px;
+        letter-spacing: -0.01em;
+    }
+    .browse-item-sub {
+        font-size: 12px; font-weight: 500;
+        color: rgba(255,255,255,0.55);
+    }
+    .browse-item-arrow {
+        display: inline-grid; place-items: center;
+        width: 32px; height: 32px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.08);
+        color: white;
+        font-size: 14px; font-weight: 900;
+        transition: background 0.15s, transform 0.2s;
+    }
+    .browse-item:hover .browse-item-arrow {
+        background: var(--green);
+        color: #0e0f11;
+        transform: translateX(3px);
+    }
+    .browse-divider {
+        height: 1px;
+        background: rgba(255,255,255,0.08);
+        margin: 6px 8px;
+    }
 
     .hero-search {
         display: flex; gap: 0;
@@ -1630,10 +1710,43 @@
             <div class="hero-eyebrow"><span class="live-dot"></span><span id="hero-live-count">47 live · 12,840 fans tonight</span></div>
             <h1>Pick a <span class="gradient">sport.</span><br>Find your <span class="gradient">crowd.</span></h1>
             <p class="lede">Choose your game below — we'll show you every watch party, parade, and pickup happening near you.</p>
-            <button class="browse-map-btn" onclick="openMapView()">
-                <span>Browse the map</span>
-                <span class="browse-map-arrow">→</span>
-            </button>
+            <div class="browse-wrap">
+                <button class="browse-map-btn" id="browse-trigger" onclick="toggleBrowseMenu(event)">
+                    <span>Browse the map</span>
+                    <span class="browse-map-arrow">→</span>
+                </button>
+                <div class="browse-menu" id="browse-menu">
+                    <button class="browse-item" onclick="openMapView('watch-party')">
+                        <span class="browse-item-label">
+                            <span class="browse-item-name">Watch parties</span>
+                            <span class="browse-item-sub">Bars, breweries, rooftops</span>
+                        </span>
+                        <span class="browse-item-arrow">→</span>
+                    </button>
+                    <button class="browse-item" onclick="openMapView('parade')">
+                        <span class="browse-item-label">
+                            <span class="browse-item-name">Post-game parades</span>
+                            <span class="browse-item-sub">Routes & start times</span>
+                        </span>
+                        <span class="browse-item-arrow">→</span>
+                    </button>
+                    <button class="browse-item" onclick="openMapView('pickup')">
+                        <span class="browse-item-label">
+                            <span class="browse-item-name">Pickup games</span>
+                            <span class="browse-item-sub">Open runs in the park</span>
+                        </span>
+                        <span class="browse-item-arrow">→</span>
+                    </button>
+                    <div class="browse-divider"></div>
+                    <button class="browse-item" onclick="openMapView();route('polls')">
+                        <span class="browse-item-label">
+                            <span class="browse-item-name">Community polls</span>
+                            <span class="browse-item-sub">Vote on best spots</span>
+                        </span>
+                        <span class="browse-item-arrow">→</span>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -2596,7 +2709,14 @@ function pickSport(sport) {
     route('events');
 }
 
-function openMapView() {
+function openMapView(eventType) {
+    closeBrowseMenu();
+    if (eventType) {
+        activeSubtab = eventType;
+        document.querySelectorAll('.subtab').forEach(x => {
+            x.classList.toggle('active', x.dataset.id === eventType);
+        });
+    }
     activeSport = null;
     route('events');
     setTimeout(() => {
@@ -2604,6 +2724,29 @@ function openMapView() {
         if (wrap) wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
 }
+
+function toggleBrowseMenu(e) {
+    if (e) e.stopPropagation();
+    const menu = document.getElementById('browse-menu');
+    const trigger = document.getElementById('browse-trigger');
+    const open = menu.classList.toggle('open');
+    trigger.classList.toggle('open', open);
+}
+
+function closeBrowseMenu() {
+    const menu = document.getElementById('browse-menu');
+    const trigger = document.getElementById('browse-trigger');
+    if (menu) menu.classList.remove('open');
+    if (trigger) trigger.classList.remove('open');
+}
+
+document.addEventListener('click', (e) => {
+    const wrap = document.querySelector('.browse-wrap');
+    if (wrap && !wrap.contains(e.target)) closeBrowseMenu();
+});
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeBrowseMenu();
+});
 
 function renderSportChip() {
     const chip = document.getElementById('events-sport-chip');
