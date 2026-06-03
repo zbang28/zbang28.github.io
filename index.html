@@ -3638,9 +3638,9 @@
                     <img src="https://images.unsplash.com/photo-1505666287802-931dc83a0fe4?w=900&q=80&auto=format&fit=crop" alt="" loading="lazy">
                 </div>
                 <div class="feature-body">
-                    <div class="feature-kicker" style="color:#a855f7">AI MATCHDAY</div>
-                    <h3>Plan your matchday in seconds</h3>
-                    <p>Tell us who you're rooting for and we'll build a route — primary spot, pregame, parade, backup.</p>
+                    <div class="feature-kicker" style="color:#a855f7">AI VIBE MATCH</div>
+                    <h3>Describe the vibe, find the spot</h3>
+                    <p>Tell us the game, your crew, and what kind of place you want — we'll match you to it.</p>
                 </div>
             </article>
 
@@ -3814,17 +3814,17 @@
     <div class="matchday-head" id="matchday-head">
         <div class="matchday-head-inner">
             <div class="matchday-eyebrow">
-                <span class="spark">✦</span> AI Matchday Planner
+                <span class="spark">✦</span> AI Vibe Match
             </div>
-            <h1 class="matchday-title">Plan your <span class="grad">matchday</span></h1>
-            <p class="matchday-sub">Tell us who you're cheering for, where, and how many. We'll route your day across the city.</p>
+            <h1 class="matchday-title">Match the <span class="grad">vibe</span></h1>
+            <p class="matchday-sub">Describe the game, your crew, and the vibe — we'll find the perfect spot.</p>
 
             <div class="prompt-box matchday-prompt-box">
                 <div class="prompt-files" id="matchday-files"></div>
                 <textarea
                     id="matchday-prompt"
                     class="prompt-textarea"
-                    placeholder="e.g. 'I'm cheering for Argentina with 3 friends — food, beer, big screen, Brooklyn'"
+                    placeholder="e.g. 'Bills vs Chiefs with 4 friends, big screens, sports bar in Midtown'"
                     rows="1"
                 ></textarea>
                 <div class="prompt-actions">
@@ -3849,9 +3849,10 @@
             </div>
 
             <div class="matchday-quick">
-                <button class="ai-sugg" onclick="fillMatchdayPrompt('Argentina match in Brooklyn with friends')">Argentina · Brooklyn · friends</button>
-                <button class="ai-sugg" onclick="fillMatchdayPrompt('Family-friendly outdoor World Cup watch')">Family · outdoor · World Cup</button>
-                <button class="ai-sugg" onclick="fillMatchdayPrompt('Liverpool fans pub crawl, Manhattan')">Liverpool · pub crawl · NYC</button>
+                <button class="ai-sugg" onclick="fillMatchdayPrompt('Knicks game with 6 friends, rooftop with skyline views')">Knicks · group · rooftop</button>
+                <button class="ai-sugg" onclick="fillMatchdayPrompt('Bills vs Chiefs, big screens, sports bar with wings in Midtown')">Bills · big screens · Midtown</button>
+                <button class="ai-sugg" onclick="fillMatchdayPrompt('Argentina match, cozy bar with Argentine crowd, Brooklyn')">Argentina · cozy bar · Brooklyn</button>
+                <button class="ai-sugg" onclick="fillMatchdayPrompt('Date night, quiet restaurant with the game on, Williamsburg')">Date · restaurant · Williamsburg</button>
             </div>
         </div>
     </div>
@@ -3860,12 +3861,6 @@
         <div class="matchday-stops" id="matchday-stops"></div>
         <div class="matchday-map-wrap">
             <div id="matchday-map"></div>
-            <div class="matchday-map-legend">
-                <span class="dot dot-1"></span>Pregame
-                <span class="dot dot-2"></span>Watch party
-                <span class="dot dot-3"></span>Post-game
-                <span class="dot dot-4"></span>Backup
-            </div>
         </div>
     </div>
   </div>
@@ -4972,111 +4967,153 @@ function buildMatchday() {
     const ta = document.getElementById('matchday-prompt');
     const prompt = (ta?.value || '').trim();
     if (!prompt) { ta?.focus(); return; }
+    const lower = prompt.toLowerCase();
 
-    // Pick a country based on prompt
-    const country = countries.find(c => prompt.toLowerCase().includes(c.name.toLowerCase())) || activeCountry || countries[0];
+    // Detect borough
+    const boroughs = ['Manhattan','Queens','Bronx','Staten Island','Brooklyn'];
+    const targetBorough = boroughs.find(b => lower.includes(b.toLowerCase())) || null;
+    // Detect neighborhood keywords
+    const neighborhoods = ['Midtown','Williamsburg','Greenpoint','East Village','West Village','DUMBO','Hell\'s Kitchen','Park Slope','Greenwich Village','Carroll Gardens'];
+    const targetHood = neighborhoods.find(h => lower.includes(h.toLowerCase())) || null;
+    // Detect country / team
+    const country = countries.find(c => lower.includes(c.name.toLowerCase()));
+    const teamMention = Object.keys(teamData).find(t => lower.includes(t.toLowerCase()));
 
-    // Choose 4 stops in Brooklyn unless prompt mentions another borough
-    const targetBorough = ['Manhattan','Queens','Bronx','Staten Island'].find(b => prompt.toLowerCase().includes(b.toLowerCase())) || 'Brooklyn';
-    const pool = parties.filter(p => unlockedBoroughs.has(p.borough) && (p.borough === targetBorough || targetBorough === 'Brooklyn'));
+    // Vibe flags
+    const wantsScreen   = /big screen|screens?|projector|tv|hd/i.test(prompt);
+    const wantsBar      = /\bbar\b|pub|tavern|sports bar/i.test(prompt);
+    const wantsRooftop  = /rooftop|skyline|view/i.test(prompt);
+    const wantsOutdoor  = /outdoor|patio|park|outside/i.test(prompt);
+    const wantsBrewery  = /brewery|beer|craft|ipa|pints?/i.test(prompt);
+    const wantsRestaur  = /restaurant|food|dinner|eat|wings|tacos|burger/i.test(prompt);
+    const wantsCozy     = /cozy|quiet|date|romantic|intimate/i.test(prompt);
+    const wantsGroup    = /\b(\d+)\s*(friends|people|guys|girls)\b|group|crew|squad|crowd/i.test(prompt);
+    const wantsFamily   = /family|kids|child/i.test(prompt);
+    const wantsFree     = /free|cheap|no cover|budget/i.test(prompt);
 
-    const watch = pool.find(p => p.eventType === 'watch-party' && p.country === country.code)
-        || pool.find(p => p.eventType === 'watch-party');
-    const pregame = pool.find(p => ['Brewery','Restaurant'].includes(p.vtype) && p !== watch)
-        || pool.find(p => p.vtype === 'Sports Bar' && p !== watch);
-    const post = pool.find(p => p.eventType === 'parade') || pool.find(p => p.vtype === 'Park' && p !== watch && p !== pregame);
-    const backup = pool.find(p => p.vtype === 'Park' && ![watch, pregame, post].includes(p))
-        || pool.find(p => ![watch, pregame, post].includes(p));
+    // Score each available watch-party
+    const pool = parties.filter(p =>
+        p.eventType === 'watch-party' &&
+        unlockedBoroughs.has(p.borough)
+    );
 
-    const stops = [
-        { tag: 'PREGAME', label: '2h before kickoff', color: '#a855f7', p: pregame },
-        { tag: 'WATCH PARTY', label: 'Kickoff', color: '#ff2d3a', p: watch },
-        { tag: 'POST-GAME', label: 'Final whistle', color: '#ffb800', p: post },
-        { tag: 'BACKUP', label: 'If plans change', color: '#00d96f', p: backup },
-    ].filter(s => s.p);
+    const scored = pool.map(p => {
+        let score = 30;
+        const reasons = [];
 
-    if (stops.length < 2) { toast('Not enough venues to plan a route'); return; }
+        if (targetBorough && p.borough === targetBorough) { score += 22; reasons.push(`In ${targetBorough}`); }
+        if (targetHood && p.neighborhood.toLowerCase().includes(targetHood.toLowerCase())) { score += 18; reasons.push(`Right in ${targetHood}`); }
+        if (country && p.country === country.code) { score += 16; reasons.push(`${country.flag} ${country.name} crowd`); }
+        if (teamMention && p.match.includes(teamMention)) { score += 18; reasons.push(`Showing ${teamMention}`); }
 
-    // Hide the prompt header — map takes the full page
+        if (wantsBar && p.vtype === 'Sports Bar') { score += 20; reasons.push('Sports-bar vibe'); }
+        if (wantsRooftop && p.vtype === 'Rooftop') { score += 22; reasons.push('Rooftop'); }
+        if (wantsBrewery && p.vtype === 'Brewery') { score += 18; reasons.push('Brewery'); }
+        if (wantsRestaur && p.vtype === 'Restaurant') { score += 16; reasons.push('Restaurant'); }
+        if (wantsOutdoor && (p.vtype === 'Park' || p.vtype === 'Plaza' || p.vtype === 'Beach')) { score += 18; reasons.push('Outdoor'); }
+        if (wantsCozy && (p.vtype === 'Restaurant' || p.vtype === 'Sports Bar')) { score += 6; }
+        if (wantsFamily && p.perks.some(pk => /family|all ages|kids/i.test(pk))) { score += 14; reasons.push('Family-friendly'); }
+        if (wantsFree && (p.price === 'Free' || p.price === 'No cover')) { score += 12; reasons.push('No cover'); }
+        if (wantsGroup && p.perks.some(pk => /reserved|booth|big|200|led|wall/i.test(pk))) { score += 10; reasons.push('Room for the crew'); }
+
+        if (wantsScreen) {
+            const hasScreen = p.perks.some(pk => /screen|led|wall|projector/i.test(pk));
+            if (hasScreen) { score += 18; reasons.push('Big screens'); }
+        }
+
+        // Always-on perks (wings, BBQ, etc.)
+        p.perks.forEach(pk => {
+            if (new RegExp('\\b' + pk.toLowerCase() + '\\b').test(lower) && !reasons.includes(pk)) {
+                score += 6; reasons.push(pk);
+            }
+        });
+
+        // Tiny jitter as tiebreaker
+        score += Math.random() * 2;
+        return { p, score, reasons };
+    }).sort((a, b) => b.score - a.score);
+
+    const top = scored.slice(0, 3).filter(s => s.score > 35);
+    if (top.length === 0) { toast('No matching spots — try fewer specifics'); return; }
+
+    // Hide the prompt header
     document.getElementById('matchday-head').style.display = 'none';
 
     // Show result panel
     const result = document.getElementById('matchday-result');
     result.style.display = '';
 
-    // Render stops
+    const maxScore = top[0].score;
+    const matchPct = (s) => Math.min(99, Math.round((s.score / Math.max(maxScore, 1)) * 96 + 3));
+
     const wrap = document.getElementById('matchday-stops');
+    const summaryBits = [];
+    if (country) summaryBits.push(`${country.flag} ${country.name}`);
+    if (teamMention) summaryBits.push(teamMention);
+    if (targetHood) summaryBits.push(targetHood);
+    else if (targetBorough) summaryBits.push(targetBorough);
+    const summary = summaryBits.join(' · ') || 'Vibe match';
+    const stopColors = ['#a855f7','#ff3eb5','#06d6f7'];
+
     wrap.innerHTML = `
-        <button class="matchday-new" onclick="resetMatchday()">← New plan</button>
+        <button class="matchday-new" onclick="resetMatchday()">← Try again</button>
         <div style="font-size:10px;font-weight:800;color:rgba(255,255,255,0.55);letter-spacing:2px;text-transform:uppercase">
-            ${country.flag} ${country.name} · ${targetBorough}
+            Match · ${summary}
         </div>
         <div style="font-family:'Inter',sans-serif;font-weight:900;font-size:20px;letter-spacing:-0.03em;margin-bottom:8px;color:white">
-            Your matchday in ${stops.length} stops
+            ${top.length === 1 ? 'Your spot' : `Top ${top.length} matches`}
         </div>
-    ` + stops.map((s, i) => `
-        <div class="stop-card" style="--stop-color:${s.color}" onclick="zoomMatchdayStop(${i})">
-            <div class="stop-card-num">${i + 1}</div>
-            <div class="stop-card-body">
-                <div class="stop-card-kicker">${s.tag} · ${s.label}</div>
-                <div class="stop-card-venue">${s.p.venue}</div>
-                <div class="stop-card-meta">${s.p.vtype} · ${s.p.neighborhood} · ${s.p.time}</div>
-                <div class="stop-card-tags">
-                    ${s.p.perks.slice(0,3).map(pk => `<span class="stop-card-tag">${pk}</span>`).join('')}
+    ` + top.map((s, i) => {
+        const pct = matchPct(s);
+        const color = stopColors[i] || '#a855f7';
+        return `
+            <div class="stop-card" style="--stop-color:${color}" onclick="zoomMatchdayStop(${i})">
+                <div class="stop-card-num">${pct}</div>
+                <div class="stop-card-body">
+                    <div class="stop-card-kicker">${pct}% vibe match · ${s.p.vtype}</div>
+                    <div class="stop-card-venue">${s.p.venue}</div>
+                    <div class="stop-card-meta">${s.p.neighborhood}, ${s.p.borough} · ${s.p.time}</div>
+                    <div class="stop-card-tags">
+                        ${s.reasons.slice(0, 4).map(r => `<span class="stop-card-tag">${r}</span>`).join('')}
+                    </div>
                 </div>
             </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 
-    // Init map + plot
+    // Stash for zoom helper
+    window.matchdayStops = top.map((s, i) => ({ p: s.p, color: stopColors[i] || '#a855f7' }));
+
+    // Map markers — no route line (it's not a route, it's recommendations)
     setTimeout(() => {
         initMatchdayMap();
         matchdayMap.invalidateSize();
 
-        // Clear old
         matchdayMarkers.forEach(m => matchdayMap.removeLayer(m));
-        if (matchdayLine) matchdayMap.removeLayer(matchdayLine);
+        if (matchdayLine) { matchdayMap.removeLayer(matchdayLine); matchdayLine = null; }
         matchdayMarkers = [];
 
-        // Add markers
-        stops.forEach((s, i) => {
+        top.forEach((s, i) => {
+            const color = stopColors[i] || '#a855f7';
+            const pct = matchPct(s);
             const icon = L.divIcon({
-                className: 'route-pin-wrap', iconSize: [36, 36], iconAnchor: [18, 18],
-                html: `<div class="route-pin" style="background:${s.color}">${i + 1}</div>`
+                className: 'route-pin-wrap', iconSize: [42, 42], iconAnchor: [21, 21],
+                html: `<div class="route-pin" style="background:${color};width:42px;height:42px;font-size:13px">${pct}</div>`
             });
             const m = L.marker([s.p.lat, s.p.lng], { icon }).addTo(matchdayMap);
-            m.bindPopup(`<div style="font-family:Inter,sans-serif;padding:8px 12px;min-width:200px">
-                <div style="font-size:10px;font-weight:800;color:${s.color};letter-spacing:2px;text-transform:uppercase">STOP ${i + 1} · ${s.tag}</div>
+            m.bindPopup(`<div style="font-family:Inter,sans-serif;padding:8px 12px;min-width:220px">
+                <div style="font-size:10px;font-weight:800;color:${color};letter-spacing:2px;text-transform:uppercase">${pct}% MATCH</div>
                 <div style="font-weight:900;font-size:14px;margin:4px 0;color:#0e0f11">${s.p.venue}</div>
                 <div style="font-size:12px;color:#4a4d54">${s.p.vtype} · ${s.p.neighborhood}</div>
-                <div style="font-size:11px;color:#8a8d94;margin-top:2px">${s.p.time}</div>
+                <div style="font-size:11px;color:#8a8d94;margin-top:2px">${s.p.time} · ${s.p.price}</div>
             </div>`);
             matchdayMarkers.push(m);
         });
 
-        // Draw glowing orange route — three stacked polylines for the stream effect
-        const coords = stops.map(s => [s.p.lat, s.p.lng]);
-        const glowOuter = L.polyline(coords, {
-            color: '#ff7a1a', weight: 20, opacity: 0.18,
-            lineCap: 'round', lineJoin: 'round', className: 'route-glow'
-        }).addTo(matchdayMap);
-        const glowMid = L.polyline(coords, {
-            color: '#ff7a1a', weight: 10, opacity: 0.45,
-            lineCap: 'round', lineJoin: 'round', className: 'route-glow'
-        }).addTo(matchdayMap);
-        matchdayLine = L.polyline(coords, {
-            color: '#ffae3b', weight: 4, opacity: 1,
-            lineCap: 'round', lineJoin: 'round'
-        }).addTo(matchdayMap);
-        // Track the glow lines so we clean them up
-        matchdayMarkers.push(glowOuter, glowMid);
-
-        // Fit bounds
+        const coords = top.map(s => [s.p.lat, s.p.lng]);
         const bounds = L.latLngBounds(coords);
-        matchdayMap.fitBounds(bounds, { padding: [60, 60], maxZoom: 14 });
+        matchdayMap.fitBounds(bounds, { padding: [80, 80], maxZoom: 14 });
     }, 50);
-
-    window.matchdayStops = stops;
 }
 
 // ============ VENUE DETAIL PANEL ============
