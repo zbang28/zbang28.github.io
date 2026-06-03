@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Lineup — Find watch parties, parades & pickup</title>
+<title>Lineup — Find watch parties, parades & pickup</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -1686,7 +1686,7 @@
     <div class="nav-inner">
         <a class="brand" href="#/discover">
             <div class="brand-mark">L</div>
-            <div class="brand-name">The Lineup</div>
+            <div class="brand-name">Lineup</div>
         </a>
         <div class="tabs" id="tabs">
             <button class="tab" data-route="home">Home</button>
@@ -1819,19 +1819,22 @@
 <section class="page" data-page="fanhub">
     <div class="page-head">
         <h1><em>Fan</em> Hub</h1>
-        <p>Live chat with your country's supporters.</p>
+        <p>Live chat with your country's supporters. React to the starting lineup.</p>
     </div>
     <div class="page-content">
-        <div class="panel chat" style="max-width:720px;margin:0 auto">
-            <div class="panel-head">
-                <div class="panel-title"><em id="chat-country">Global</em> Chat</div>
-                <div class="online"><span class="dot"></span><span id="chat-online">2,341 online</span></div>
+        <div class="fanhub-grid">
+            <div class="panel lineup-panel" id="lineup-panel"></div>
+            <div class="panel chat">
+                <div class="panel-head">
+                    <div class="panel-title"><em id="chat-country">Global</em> Chat</div>
+                    <div class="online"><span class="dot"></span><span id="chat-online">2,341 online</span></div>
+                </div>
+                <div class="chat-body" id="chat-body"></div>
+                <form class="chat-input" onsubmit="sendChat(event)">
+                    <input id="chat-input" placeholder="Say something to fellow supporters...">
+                    <button type="submit">Send</button>
+                </form>
             </div>
-            <div class="chat-body" id="chat-body"></div>
-            <form class="chat-input" onsubmit="sendChat(event)">
-                <input id="chat-input" placeholder="Say something to fellow supporters...">
-                <button type="submit">Send</button>
-            </form>
         </div>
     </div>
 </section>
@@ -1851,9 +1854,9 @@
     <div class="footer-inner">
         <div style="display:flex;align-items:center;gap:10px">
             <div class="brand-mark">L</div>
-            <div class="brand-name">The Lineup</div>
+            <div class="brand-name">Lineup</div>
         </div>
-        <div>© 2026 The Lineup. One Game. Every Crowd.</div>
+        <div>© 2026 Lineup. One Game. Every Crowd.</div>
     </div>
 </footer>
 
@@ -2052,7 +2055,7 @@ function route(name) {
     document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.route === name && !t.classList.contains('highlight')));
     if (location.hash !== '#/' + name) history.replaceState(null, '', '#/' + name);
     window.scrollTo(0, 0);
-    if (name === 'fanhub') renderChat();
+    if (name === 'fanhub') { renderLineup(); renderChat(); }
     if (name === 'polls') renderPolls();
     if (name === 'events') { renderSportChip(); applyFilters(); if (currentView === 'map') setTimeout(() => mapInstance?.invalidateSize(), 50); }
     if (name === 'worldcup') { activeSport = 'Soccer'; route('events'); return; }
@@ -2084,7 +2087,7 @@ function buildCountries() {
                 el.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
             }
             applyFilters();
-            if (activeRoute === 'fanhub') renderChat();
+            if (activeRoute === 'fanhub') { renderLineup(); renderChat(); }
             if (activeRoute === 'polls') renderPolls();
         };
         c.appendChild(el);
