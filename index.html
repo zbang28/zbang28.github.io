@@ -7,6 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
     :root {
         --bg: #0a0a0c;
@@ -412,6 +414,127 @@
         letter-spacing: 1.5px;
     }
 
+    /* View toggle */
+    .view-toggle {
+        display: inline-flex;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        padding: 4px;
+    }
+
+    .view-toggle button {
+        background: transparent;
+        border: none;
+        color: var(--text-dim);
+        padding: 8px 16px;
+        font-family: 'Anton', sans-serif;
+        font-size: 13px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+    .view-toggle button.active {
+        background: var(--red);
+        color: white;
+    }
+
+    /* Map */
+    #map {
+        width: 100%;
+        height: 640px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+    }
+
+    .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+        background: var(--surface) !important;
+        color: var(--text) !important;
+        border-radius: 0 !important;
+        border: 1px solid var(--border) !important;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.6) !important;
+    }
+
+    .leaflet-popup-content {
+        margin: 0 !important;
+        width: 240px !important;
+    }
+
+    .map-popup {
+        font-family: 'Inter', sans-serif;
+    }
+
+    .map-popup img {
+        width: 100%;
+        height: 110px;
+        object-fit: cover;
+        display: block;
+    }
+
+    .map-popup .mp-body {
+        padding: 12px 14px;
+    }
+
+    .map-popup .mp-sport {
+        font-family: 'Archivo Black', sans-serif;
+        font-size: 10px;
+        letter-spacing: 2px;
+        color: var(--red);
+        text-transform: uppercase;
+    }
+
+    .map-popup .mp-match {
+        font-family: 'Anton', sans-serif;
+        font-size: 18px;
+        line-height: 1.1;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin: 4px 0 8px;
+        color: var(--text);
+    }
+
+    .map-popup .mp-venue {
+        font-size: 13px;
+        color: var(--text-dim);
+        font-weight: 600;
+    }
+
+    .map-popup .mp-meta {
+        font-size: 11px;
+        color: var(--text-mute);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-top: 4px;
+    }
+
+    .leaflet-popup-close-button {
+        color: var(--text-dim) !important;
+        font-size: 20px !important;
+        padding: 6px 8px 0 0 !important;
+    }
+
+    .map-marker {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: var(--red);
+        border: 3px solid white;
+        display: grid;
+        place-items: center;
+        font-size: 18px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+
+    .map-marker.live {
+        animation: marker-pulse 1.5s infinite;
+    }
+
+    @keyframes marker-pulse {
+        0%, 100% { box-shadow: 0 4px 12px rgba(0,0,0,0.5), 0 0 0 0 rgba(229,27,35,0.7); }
+        50% { box-shadow: 0 4px 12px rgba(0,0,0,0.5), 0 0 0 12px rgba(229,27,35,0); }
+    }
+
     /* Chips */
     .chips {
         display: flex;
@@ -486,29 +609,40 @@
 
     .cover-art {
         flex: 1;
-        display: grid;
-        place-items: center;
         position: relative;
         overflow: hidden;
+        background-size: cover;
+        background-position: center;
+        transition: transform 0.5s cubic-bezier(.2,.7,.2,1);
     }
+
+    .card:hover .cover-art { transform: scale(1.06); }
 
     .cover-art::before {
         content: '';
         position: absolute;
         inset: 0;
         background:
-            radial-gradient(ellipse 60% 80% at 50% 30%, rgba(255,255,255,0.2), transparent 70%),
-            linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.4));
+            linear-gradient(180deg, transparent 30%, rgba(0,0,0,0.55) 75%, rgba(0,0,0,0.85)),
+            linear-gradient(135deg, var(--tint, rgba(229,27,35,0.35)), transparent 60%);
+        mix-blend-mode: multiply;
+    }
+
+    .cover-art::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, transparent 60%, rgba(0,0,0,0.5));
     }
 
     .cover-emoji {
-        font-size: 110px;
-        position: relative;
-        z-index: 1;
-        filter: drop-shadow(0 12px 32px rgba(0,0,0,0.7));
-        transition: transform 0.4s cubic-bezier(.2,.7,.2,1);
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        font-size: 36px;
+        z-index: 2;
+        filter: drop-shadow(0 4px 12px rgba(0,0,0,0.7));
     }
-    .card:hover .cover-emoji { transform: scale(1.12) rotate(-8deg); }
 
     .cover-headline {
         position: absolute;
@@ -534,7 +668,7 @@
     .live-tag {
         position: absolute;
         top: 40px;
-        right: 12px;
+        left: 14px;
         background: var(--red);
         color: white;
         padding: 4px 9px;
@@ -848,11 +982,18 @@
             <span class="bar"></span>
             <h2>Tonight's <em style="color:var(--red);font-style:italic">Lineup</em></h2>
         </div>
-        <div class="sub" id="count"></div>
+        <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+            <div class="sub" id="count"></div>
+            <div class="view-toggle">
+                <button id="view-list" class="active" onclick="setView('list')">List</button>
+                <button id="view-map" onclick="setView('map')">Map</button>
+            </div>
+        </div>
     </div>
 
     <div class="chips" id="chips"></div>
     <div class="grid" id="grid"></div>
+    <div id="map" style="display:none"></div>
 </section>
 
 <footer>
@@ -865,22 +1006,33 @@
 
 <script>
 const parties = [
-    { id:1, sport:'NFL', match:'Bills vs. Chiefs', venue:'The Pourhouse', vtype:'Sports Bar', neighborhood:'Williamsburg', distance:0.4, time:'Sun 4:25 PM', perks:['Wings','Buckets','200" Screen'], live:true, when:'This weekend' },
-    { id:2, sport:'NBA', match:'Knicks vs. Celtics', venue:'McCarren Park Lawn', vtype:'Park', neighborhood:'Greenpoint', distance:0.8, time:'Tonight 7:30 PM', perks:['Outdoor','Food Trucks','BYO Chair'], live:true, when:'Tonight' },
-    { id:3, sport:'Soccer', match:'Arsenal vs. Liverpool', venue:'Other Half Brewery', vtype:'Brewery', neighborhood:'Carroll Gardens', distance:2.1, time:'Sat 9:00 AM', perks:['Craft Beer','Breakfast'], live:false, when:'This weekend' },
-    { id:4, sport:'NHL', match:'Rangers vs. Devils', venue:'Westlight Rooftop', vtype:'Rooftop', neighborhood:'Williamsburg', distance:1.1, time:'Tonight 7:00 PM', perks:['Skyline View','Heated'], live:true, when:'Tonight' },
-    { id:5, sport:'MLB', match:'Yankees vs. Red Sox', venue:'Domino Park', vtype:'Park', neighborhood:'Williamsburg', distance:0.5, time:'Tomorrow 1:05 PM', perks:['Outdoor','Family Friendly'], live:false, when:'Tomorrow' },
-    { id:6, sport:'UFC', match:'UFC 312 Main Card', venue:'Iron Bar', vtype:'Sports Bar', neighborhood:'Midtown', distance:1.5, time:'Sat 10:00 PM', perks:['PPV','Reserved'], live:false, when:'This weekend' },
-    { id:7, sport:'NFL', match:'Cowboys vs. Eagles', venue:'Smorgasburg', vtype:'Plaza', neighborhood:'Williamsburg', distance:0.6, time:'Sun 8:20 PM', perks:['Food Vendors','LED Wall'], live:false, when:'This weekend' },
-    { id:8, sport:'F1', match:'Monaco Grand Prix', venue:'Threes Brewing', vtype:'Brewery', neighborhood:'Gowanus', distance:2.0, time:'Sun 9:00 AM', perks:['Brunch','Espresso'], live:false, when:'This weekend' },
-    { id:9, sport:'NBA', match:'Lakers vs. Warriors', venue:'Brooklyn Bridge Park', vtype:'Park', neighborhood:'DUMBO', distance:1.7, time:'Tonight 10:00 PM', perks:['LED Wall','Bring Blanket'], live:true, when:'Tonight' },
-    { id:10, sport:'College', match:'Michigan vs. Ohio State', venue:'Greenpoint Library Plaza', vtype:'Community Center', neighborhood:'Greenpoint', distance:1.6, time:'Sat 12:00 PM', perks:['Free','All Ages'], live:false, when:'This weekend' },
-    { id:11, sport:'Soccer', match:'Real Madrid vs. Barcelona', venue:'Banc Cafe', vtype:'Restaurant', neighborhood:"Hell's Kitchen", distance:1.9, time:'Sun 3:00 PM', perks:['Tapas','Sangria'], live:false, when:'This weekend' },
-    { id:12, sport:'NFL', match:'49ers vs. Seahawks', venue:'Rockaway Beach', vtype:'Beach', neighborhood:'Rockaway', distance:8.0, time:'Sun 1:00 PM', perks:['Bonfire','Boardwalk'], live:false, when:'This weekend' },
-    { id:13, sport:'Soccer', match:'USA vs. Mexico', venue:'Washington Square Park', vtype:'Park', neighborhood:'Greenwich Village', distance:3.2, time:'Tonight 8:00 PM', perks:['Free','Big Crowd'], live:true, when:'Tonight' },
-    { id:14, sport:'NBA', match:'Nets vs. Heat', venue:'Brooklyn Brewery', vtype:'Brewery', neighborhood:'Williamsburg', distance:0.7, time:'Tomorrow 8:00 PM', perks:['Craft Beer','Pizza'], live:false, when:'Tomorrow' },
-    { id:15, sport:'NHL', match:'Islanders vs. Bruins', venue:'Time Out Market', vtype:'Plaza', neighborhood:'DUMBO', distance:1.5, time:'Sat 7:00 PM', perks:['Food Hall','Multi-Screen'], live:false, when:'This weekend' },
+    { id:1, sport:'NFL', match:'Bills vs. Chiefs', venue:'The Pourhouse', vtype:'Sports Bar', neighborhood:'Williamsburg', distance:0.4, time:'Sun 4:25 PM', perks:['Wings','Buckets','200" Screen'], live:true, when:'This weekend', lat:40.7115, lng:-73.9569 },
+    { id:2, sport:'NBA', match:'Knicks vs. Celtics', venue:'McCarren Park Lawn', vtype:'Park', neighborhood:'Greenpoint', distance:0.8, time:'Tonight 7:30 PM', perks:['Outdoor','Food Trucks','BYO Chair'], live:true, when:'Tonight', lat:40.7205, lng:-73.9520 },
+    { id:3, sport:'Soccer', match:'Arsenal vs. Liverpool', venue:'Other Half Brewery', vtype:'Brewery', neighborhood:'Carroll Gardens', distance:2.1, time:'Sat 9:00 AM', perks:['Craft Beer','Breakfast'], live:false, when:'This weekend', lat:40.6790, lng:-73.9990 },
+    { id:4, sport:'NHL', match:'Rangers vs. Devils', venue:'Westlight Rooftop', vtype:'Rooftop', neighborhood:'Williamsburg', distance:1.1, time:'Tonight 7:00 PM', perks:['Skyline View','Heated'], live:true, when:'Tonight', lat:40.7220, lng:-73.9580 },
+    { id:5, sport:'MLB', match:'Yankees vs. Red Sox', venue:'Domino Park', vtype:'Park', neighborhood:'Williamsburg', distance:0.5, time:'Tomorrow 1:05 PM', perks:['Outdoor','Family Friendly'], live:false, when:'Tomorrow', lat:40.7144, lng:-73.9676 },
+    { id:6, sport:'UFC', match:'UFC 312 Main Card', venue:'Iron Bar', vtype:'Sports Bar', neighborhood:'Midtown', distance:1.5, time:'Sat 10:00 PM', perks:['PPV','Reserved'], live:false, when:'This weekend', lat:40.7549, lng:-73.9840 },
+    { id:7, sport:'NFL', match:'Cowboys vs. Eagles', venue:'Smorgasburg', vtype:'Plaza', neighborhood:'Williamsburg', distance:0.6, time:'Sun 8:20 PM', perks:['Food Vendors','LED Wall'], live:false, when:'This weekend', lat:40.7220, lng:-73.9619 },
+    { id:8, sport:'F1', match:'Monaco Grand Prix', venue:'Threes Brewing', vtype:'Brewery', neighborhood:'Gowanus', distance:2.0, time:'Sun 9:00 AM', perks:['Brunch','Espresso'], live:false, when:'This weekend', lat:40.6798, lng:-73.9870 },
+    { id:9, sport:'NBA', match:'Lakers vs. Warriors', venue:'Brooklyn Bridge Park', vtype:'Park', neighborhood:'DUMBO', distance:1.7, time:'Tonight 10:00 PM', perks:['LED Wall','Bring Blanket'], live:true, when:'Tonight', lat:40.7024, lng:-73.9968 },
+    { id:10, sport:'College', match:'Michigan vs. Ohio State', venue:'Greenpoint Library Plaza', vtype:'Community Center', neighborhood:'Greenpoint', distance:1.6, time:'Sat 12:00 PM', perks:['Free','All Ages'], live:false, when:'This weekend', lat:40.7290, lng:-73.9540 },
+    { id:11, sport:'Soccer', match:'Real Madrid vs. Barcelona', venue:'Banc Cafe', vtype:'Restaurant', neighborhood:"Hell's Kitchen", distance:1.9, time:'Sun 3:00 PM', perks:['Tapas','Sangria'], live:false, when:'This weekend', lat:40.7589, lng:-73.9920 },
+    { id:12, sport:'NFL', match:'49ers vs. Seahawks', venue:'Rockaway Beach', vtype:'Beach', neighborhood:'Rockaway', distance:8.0, time:'Sun 1:00 PM', perks:['Bonfire','Boardwalk'], live:false, when:'This weekend', lat:40.5829, lng:-73.8155 },
+    { id:13, sport:'Soccer', match:'USA vs. Mexico', venue:'Washington Square Park', vtype:'Park', neighborhood:'Greenwich Village', distance:3.2, time:'Tonight 8:00 PM', perks:['Free','Big Crowd'], live:true, when:'Tonight', lat:40.7308, lng:-73.9973 },
+    { id:14, sport:'NBA', match:'Nets vs. Heat', venue:'Brooklyn Brewery', vtype:'Brewery', neighborhood:'Williamsburg', distance:0.7, time:'Tomorrow 8:00 PM', perks:['Craft Beer','Pizza'], live:false, when:'Tomorrow', lat:40.7218, lng:-73.9573 },
+    { id:15, sport:'NHL', match:'Islanders vs. Bruins', venue:'Time Out Market', vtype:'Plaza', neighborhood:'DUMBO', distance:1.5, time:'Sat 7:00 PM', perks:['Food Hall','Multi-Screen'], live:false, when:'This weekend', lat:40.7028, lng:-73.9897 },
 ];
+
+const photos = {
+    NFL:     'https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=800&q=80&auto=format&fit=crop',
+    NBA:     'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&q=80&auto=format&fit=crop',
+    MLB:     'https://images.unsplash.com/photo-1508344928928-7165b67de128?w=800&q=80&auto=format&fit=crop',
+    NHL:     'https://images.unsplash.com/photo-1515703407324-5f51c2ed1e8b?w=800&q=80&auto=format&fit=crop',
+    Soccer:  'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=800&q=80&auto=format&fit=crop',
+    UFC:     'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=80&auto=format&fit=crop',
+    F1:      'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=800&q=80&auto=format&fit=crop',
+    College: 'https://images.unsplash.com/photo-1471295253337-3ceaaedca402?w=800&q=80&auto=format&fit=crop',
+};
 
 const sportData = {
     NFL:     { emoji:'🏈', color:'#013369', tag:'Football' },
@@ -994,13 +1146,15 @@ function render() {
         return;
     }
 
+    if (currentView === 'map' && mapInstance) renderMap();
+
     filtered.forEach(p => {
         const s = sportData[p.sport];
         const v = venueData[p.vtype];
         const isGoing = going.has(p.id);
         const card = document.createElement('article');
         card.className = 'card';
-        card.style.setProperty('--cover-bg', `linear-gradient(160deg, ${s.color}, ${shade(s.color, -40)})`);
+        card.style.setProperty('--tint', hexToRgba(s.color, 0.55));
         card.style.setProperty('--vtype-color', v.color);
 
         const [teamA, teamB] = p.match.split(' vs. ');
@@ -1015,9 +1169,8 @@ function render() {
                     <span>${p.time}</span>
                 </div>
                 ${p.live ? '<div class="live-tag"><span class="dot"></span>LIVE</div>' : ''}
-                <div class="cover-art">
-                    <div class="cover-emoji">${s.emoji}</div>
-                </div>
+                <div class="cover-art" style="background-image:url('${photos[p.sport]}')"></div>
+                <div class="cover-emoji">${s.emoji}</div>
                 <div class="cover-headline">${headline}</div>
             </div>
             <div class="card-body">
@@ -1042,15 +1195,72 @@ function render() {
     });
 }
 
-function shade(hex, percent) {
+function hexToRgba(hex, a) {
     const n = parseInt(hex.slice(1), 16);
-    let r = (n >> 16) + percent;
-    let g = ((n >> 8) & 0xff) + percent;
-    let b = (n & 0xff) + percent;
-    r = Math.max(0, Math.min(255, r));
-    g = Math.max(0, Math.min(255, g));
-    b = Math.max(0, Math.min(255, b));
-    return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
+    const r = (n >> 16) & 0xff;
+    const g = (n >> 8) & 0xff;
+    const b = n & 0xff;
+    return `rgba(${r},${g},${b},${a})`;
+}
+
+let currentView = 'list';
+let mapInstance = null;
+let mapMarkers = [];
+
+function setView(v) {
+    currentView = v;
+    document.getElementById('view-list').classList.toggle('active', v === 'list');
+    document.getElementById('view-map').classList.toggle('active', v === 'map');
+    document.getElementById('grid').style.display = v === 'list' ? 'grid' : 'none';
+    document.getElementById('map').style.display = v === 'map' ? 'block' : 'none';
+    if (v === 'map') {
+        if (!mapInstance) initMap();
+        setTimeout(() => mapInstance.invalidateSize(), 50);
+        renderMap();
+    }
+}
+
+function initMap() {
+    mapInstance = L.map('map', { zoomControl: true, scrollWheelZoom: true })
+        .setView([40.7128, -73.9700], 12);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap &copy; CARTO',
+        subdomains: 'abcd',
+        maxZoom: 19
+    }).addTo(mapInstance);
+}
+
+function renderMap() {
+    mapMarkers.forEach(m => mapInstance.removeLayer(m));
+    mapMarkers = [];
+    const filtered = parties.filter(matchesFilters);
+    if (filtered.length === 0) return;
+
+    filtered.forEach(p => {
+        const s = sportData[p.sport];
+        const icon = L.divIcon({
+            className: '',
+            html: `<div class="map-marker ${p.live ? 'live' : ''}" style="background:${s.color}">${s.emoji}</div>`,
+            iconSize: [38, 38],
+            iconAnchor: [19, 19]
+        });
+        const marker = L.marker([p.lat, p.lng], { icon }).addTo(mapInstance);
+        marker.bindPopup(`
+            <div class="map-popup">
+                <img src="${photos[p.sport]}" alt="">
+                <div class="mp-body">
+                    <div class="mp-sport">${p.sport} ${p.live ? '· LIVE' : ''}</div>
+                    <div class="mp-match">${p.match}</div>
+                    <div class="mp-venue">${p.venue}</div>
+                    <div class="mp-meta">${p.vtype} · ${p.neighborhood} · ${p.time}</div>
+                </div>
+            </div>
+        `);
+        mapMarkers.push(marker);
+    });
+
+    const bounds = L.latLngBounds(filtered.map(p => [p.lat, p.lng]));
+    mapInstance.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
 }
 
 function toggleGoing(id) {
