@@ -100,19 +100,19 @@
     .tab.highlight {
         color: white !important;
         font-weight: 800 !important;
-        background: linear-gradient(135deg, #2563eb 0%, #06d6f7 50%, #16a34a 100%) !important;
+        background: linear-gradient(135deg, #ff2d3a 0%, #2563eb 50%, #16a34a 100%) !important;
         padding: 8px 16px !important;
         border-radius: 10px !important;
-        box-shadow: 0 6px 18px rgba(37,99,235,0.45), 0 0 0 1px rgba(255,255,255,0.18) inset;
+        box-shadow: 0 6px 18px rgba(255,45,58,0.4), 0 0 0 1px rgba(255,255,255,0.18) inset;
         transition: transform 0.18s cubic-bezier(.2,.7,.2,1), box-shadow 0.2s;
     }
     .tab.highlight:hover {
         transform: translateY(-1px);
-        background: linear-gradient(135deg, #2563eb 0%, #06d6f7 50%, #16a34a 100%) !important;
-        box-shadow: 0 10px 24px rgba(37,99,235,0.55), 0 0 0 1px rgba(255,255,255,0.25) inset;
+        background: linear-gradient(135deg, #ff2d3a 0%, #2563eb 50%, #16a34a 100%) !important;
+        box-shadow: 0 10px 24px rgba(255,45,58,0.5), 0 0 0 1px rgba(255,255,255,0.25) inset;
     }
     .tab.highlight.active {
-        box-shadow: 0 10px 24px rgba(37,99,235,0.6), 0 0 0 2px white inset;
+        box-shadow: 0 10px 24px rgba(255,45,58,0.55), 0 0 0 2px white inset;
     }
     .tab-badge {
         display: inline-block;
@@ -181,6 +181,30 @@
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         gap: 20px;
     }
+    /* Horizontal sport rail (replaces the grid on the home page) */
+    .sport-rail-wrap {
+        padding: 24px 0 12px;
+    }
+    .sport-rail {
+        display: flex; gap: 14px;
+        padding: 4px 16px;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scroll-behavior: smooth;
+        scrollbar-width: none;
+        mask-image: linear-gradient(90deg, transparent 0, black 16px, black calc(100% - 16px), transparent 100%);
+        -webkit-mask-image: linear-gradient(90deg, transparent 0, black 16px, black calc(100% - 16px), transparent 100%);
+    }
+    .sport-rail::-webkit-scrollbar { display: none; }
+    .sport-rail .sport-tile {
+        flex: 0 0 220px;
+        aspect-ratio: 5/4;
+        scroll-snap-align: start;
+        border-radius: 16px;
+    }
+    .sport-rail .sport-tile-content { padding: 16px 18px; }
+    .sport-rail .sport-tile-name { font-size: 26px; }
+    .sport-rail .sport-tile-arrow { width: 32px; height: 32px; bottom: 16px; right: 16px; font-size: 14px; }
     .sport-tile {
         position: relative;
         aspect-ratio: 4/5;
@@ -3592,12 +3616,8 @@
         </div>
     </div>
 
-    <div class="home-section">
-        <div class="home-section-head">
-            <h2>What are you <em>watching?</em></h2>
-            <div class="sub">Pick a sport to see every event near you</div>
-        </div>
-        <div class="sport-grid" id="sport-grid"></div>
+    <div class="sport-rail-wrap">
+        <div class="sport-rail" id="sport-grid"></div>
     </div>
 
 </section>
@@ -3623,13 +3643,7 @@
     </div>
 
     <div class="filters">
-        <div class="filter events-only">
-            <select id="sport-select" onchange="applyFilters()">
-                <option value="">All sports</option>
-                <option>Soccer</option><option>NFL</option><option>NBA</option>
-                <option>MLB</option><option>NHL</option><option>UFC</option>
-            </select>
-        </div>
+        <select id="sport-select" type="hidden" style="display:none"></select>
         <div class="filter events-only">
             <select id="when-select" onchange="applyFilters()">
                 <option value="">Anytime</option>
