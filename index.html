@@ -162,8 +162,8 @@
 
     .sport-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-        gap: 16px;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
     }
     .sport-tile {
         position: relative;
@@ -315,6 +315,28 @@
         position: relative;
         aspect-ratio: 16 / 11;
         overflow: hidden;
+        background: var(--surface-2);
+    }
+    .feature-art > img {
+        width: 100%; height: 100%; object-fit: cover;
+        transition: transform 0.5s cubic-bezier(.2,.7,.2,1);
+        display: block;
+    }
+    .feature-card:hover .feature-art > img { transform: scale(1.06); }
+    .feature-art::after {
+        content: ''; position: absolute; inset: 0;
+        background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.45) 100%);
+        pointer-events: none;
+    }
+    .feature-badge {
+        position: absolute; top: 12px; right: 12px;
+        background: linear-gradient(135deg, #ff2d3a, #ff7a1a);
+        color: white;
+        font-size: 10px; font-weight: 900;
+        letter-spacing: 2px;
+        padding: 4px 10px; border-radius: 999px;
+        z-index: 2;
+        box-shadow: 0 6px 14px rgba(255,45,58,0.45);
     }
     .feature-body {
         padding: 18px 20px 22px;
@@ -785,8 +807,8 @@
     .hero h1 {
         font-family: 'Inter', sans-serif;
         font-weight: 900;
-        font-size: clamp(28px, 4vw, 48px);
-        line-height: 1; letter-spacing: -0.04em;
+        font-size: clamp(40px, 6vw, 72px);
+        line-height: 0.98; letter-spacing: -0.04em;
         margin-bottom: 18px;
     }
     .hero h1 .gradient {
@@ -2952,23 +2974,16 @@
         </div>
     </div>
 
-    <div class="home-section home-section-tight">
-        <div class="home-inline-head">
-            <span class="home-inline-tag">Inside <em>Lineup</em></span>
-            <span class="home-inline-sub">everything the app does, in one place</span>
+    <div class="home-section">
+        <div class="home-section-head">
+            <h2>Inside <em>Lineup</em></h2>
+            <div class="sub">Everything the app does, in one place</div>
         </div>
-        <div class="feature-grid feature-grid-compact">
+        <div class="feature-grid">
 
             <article class="feature-card" onclick="openMapView()">
-                <div class="feature-art feature-art-map">
-                    <div class="map-mock">
-                        <div class="map-mock-grid"></div>
-                        <span class="map-pin" style="--c:#ff2d3a;top:32%;left:28%"></span>
-                        <span class="map-pin" style="--c:#a855f7;top:58%;left:62%"></span>
-                        <span class="map-pin" style="--c:#00d96f;top:46%;left:46%"></span>
-                        <span class="map-pin" style="--c:#06d6f7;top:70%;left:32%"></span>
-                        <span class="map-pin live" style="--c:#ff2d3a;top:24%;left:70%"></span>
-                    </div>
+                <div class="feature-art">
+                    <img src="https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=900&q=80&auto=format&fit=crop" alt="" loading="lazy">
                 </div>
                 <div class="feature-body">
                     <div class="feature-kicker">DISCOVER</div>
@@ -2978,14 +2993,8 @@
             </article>
 
             <article class="feature-card" onclick="route('worldcup')">
-                <div class="feature-art feature-art-worldcup">
-                    <div class="wc-stripes"></div>
-                    <div class="wc-flags">
-                        <span>🇦🇷</span><span>🇧🇷</span><span>🇺🇸</span>
-                        <span>🏴󠁧󠁢󠁥󠁮󠁧󠁿</span><span>🇪🇸</span><span>🇫🇷</span>
-                        <span>🇲🇽</span><span>🇩🇪</span><span>🇮🇹</span>
-                    </div>
-                    <div class="wc-stamp">2026</div>
+                <div class="feature-art">
+                    <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=900&q=80&auto=format&fit=crop" alt="" loading="lazy">
                 </div>
                 <div class="feature-body">
                     <div class="feature-kicker" style="color:#ffb800">WORLD CUP</div>
@@ -2994,19 +3003,10 @@
                 </div>
             </article>
 
-            <article class="feature-card feature-card-pro" onclick="route('fanhub')">
-                <div class="feature-art feature-art-fanhub">
-                    <div class="pitch-mock">
-                        <span class="pitch-circle"></span>
-                        <span class="pitch-line"></span>
-                        <span class="pitch-bubble" style="top:18%;left:30%">10</span>
-                        <span class="pitch-bubble" style="top:18%;left:60%">9</span>
-                        <span class="pitch-bubble" style="top:42%;left:22%">8</span>
-                        <span class="pitch-bubble" style="top:42%;left:50%">4</span>
-                        <span class="pitch-bubble" style="top:42%;left:78%">7</span>
-                        <span class="pitch-bubble" style="top:78%;left:46%">1</span>
-                    </div>
-                    <div class="pro-badge">PRO</div>
+            <article class="feature-card" onclick="route('fanhub')">
+                <div class="feature-art">
+                    <img src="https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=900&q=80&auto=format&fit=crop" alt="" loading="lazy">
+                    <div class="feature-badge">PRO</div>
                 </div>
                 <div class="feature-body">
                     <div class="feature-kicker" style="color:#ff3eb5">FAN HUB · PRO</div>
@@ -3016,14 +3016,8 @@
             </article>
 
             <article class="feature-card" onclick="openAI()">
-                <div class="feature-art feature-art-ai">
-                    <div class="ai-stars"></div>
-                    <div class="ai-chip">✦ Plan with AI</div>
-                    <div class="ai-lines">
-                        <span style="width:88%"></span>
-                        <span style="width:66%"></span>
-                        <span style="width:74%"></span>
-                    </div>
+                <div class="feature-art">
+                    <img src="https://images.unsplash.com/photo-1505666287802-931dc83a0fe4?w=900&q=80&auto=format&fit=crop" alt="" loading="lazy">
                 </div>
                 <div class="feature-body">
                     <div class="feature-kicker" style="color:#a855f7">AI MATCHDAY</div>
