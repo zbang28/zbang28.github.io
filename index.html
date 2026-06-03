@@ -6,30 +6,34 @@
 <title>The Lineup — Watch Parties Near You</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
     :root {
-        --bg: #08090c;
-        --bg-2: #0e1014;
-        --surface: #14171d;
-        --surface-2: #1c2029;
-        --border: #262b35;
-        --text: #f4f4f5;
-        --text-dim: #9aa0ad;
-        --text-mute: #6b7280;
-        --accent: #ff6b1a;
-        --accent-2: #ffb800;
-        --court: #00d96f;
-        --court-glow: rgba(0,217,111,0.4);
-        --red: #ff3b30;
+        --bg: #0a0a0c;
+        --bg-2: #111114;
+        --surface: #16171c;
+        --surface-2: #1d1f26;
+        --border: #2a2d36;
+        --text: #f7f7f8;
+        --text-dim: #a3a6b1;
+        --text-mute: #6b6f7a;
+
+        --red: #e51b23;
+        --red-bright: #ff2630;
+        --amber: #ffb800;
+        --orange: #ff6b1a;
+        --green: #00d96f;
+        --blue: #3b82f6;
+        --purple: #a855f7;
+        --pink: #ec4899;
+        --cyan: #06b6d4;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     html, body { background: var(--bg); }
 
     body {
-        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        font-family: 'Inter', system-ui, sans-serif;
         color: var(--text);
         min-height: 100vh;
         line-height: 1.5;
@@ -37,217 +41,270 @@
         overflow-x: hidden;
     }
 
-    /* Stadium-light backdrop */
+    /* Vibrant backdrop */
     .backdrop {
         position: fixed;
         inset: 0;
-        z-index: -1;
+        z-index: -2;
         background:
-            radial-gradient(ellipse 80% 50% at 50% -10%, rgba(255,107,26,0.18), transparent 60%),
-            radial-gradient(ellipse 60% 40% at 10% 30%, rgba(0,217,111,0.10), transparent 60%),
-            radial-gradient(ellipse 60% 40% at 90% 70%, rgba(255,184,0,0.08), transparent 60%),
+            radial-gradient(ellipse 60% 50% at 85% 10%, rgba(229,27,35,0.20), transparent 60%),
+            radial-gradient(ellipse 50% 40% at 10% 30%, rgba(168,85,247,0.15), transparent 60%),
+            radial-gradient(ellipse 50% 50% at 50% 100%, rgba(0,217,111,0.10), transparent 60%),
+            radial-gradient(ellipse 40% 30% at 90% 90%, rgba(255,184,0,0.12), transparent 60%),
             var(--bg);
     }
 
-    .backdrop::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background-image:
-            radial-gradient(circle at 12% 18%, rgba(255,255,255,0.4) 0.5px, transparent 1.5px),
-            radial-gradient(circle at 88% 28%, rgba(255,255,255,0.3) 0.5px, transparent 1.5px),
-            radial-gradient(circle at 30% 75%, rgba(255,255,255,0.25) 0.5px, transparent 1.5px),
-            radial-gradient(circle at 70% 85%, rgba(255,255,255,0.3) 0.5px, transparent 1.5px),
-            radial-gradient(circle at 50% 50%, rgba(255,255,255,0.2) 0.5px, transparent 1.5px);
-        background-size: 250px 250px, 300px 300px, 280px 280px, 320px 320px, 200px 200px;
-        opacity: 0.6;
-    }
-
-    /* Floating sports orbs */
-    .orb {
+    .grain {
         position: fixed;
+        inset: 0;
         z-index: -1;
-        font-size: 80px;
-        opacity: 0.05;
         pointer-events: none;
-        animation: float 18s ease-in-out infinite;
-        filter: blur(0.5px);
-    }
-    .orb:nth-child(1) { top: 12%; left: 4%; animation-delay: 0s; }
-    .orb:nth-child(2) { top: 25%; right: 6%; animation-delay: -4s; font-size: 100px; }
-    .orb:nth-child(3) { bottom: 18%; left: 8%; animation-delay: -8s; font-size: 70px; }
-    .orb:nth-child(4) { bottom: 30%; right: 4%; animation-delay: -12s; font-size: 90px; }
-    .orb:nth-child(5) { top: 55%; left: 50%; animation-delay: -6s; font-size: 60px; }
-
-    @keyframes float {
-        0%, 100% { transform: translateY(0) rotate(0deg); }
-        50% { transform: translateY(-30px) rotate(15deg); }
+        opacity: 0.4;
+        background-image:
+            radial-gradient(circle at 15% 20%, rgba(255,255,255,0.5) 0.5px, transparent 1px),
+            radial-gradient(circle at 70% 60%, rgba(255,255,255,0.4) 0.5px, transparent 1px),
+            radial-gradient(circle at 40% 90%, rgba(255,255,255,0.3) 0.5px, transparent 1px);
+        background-size: 200px 200px, 250px 250px, 180px 180px;
     }
 
     /* Nav */
     nav {
         position: sticky;
         top: 0;
-        z-index: 50;
+        z-index: 100;
+        background: rgba(10,10,12,0.85);
         backdrop-filter: blur(20px);
-        background: rgba(8,9,12,0.7);
         border-bottom: 1px solid var(--border);
     }
 
     .nav-inner {
-        max-width: 1320px;
+        max-width: 1340px;
         margin: 0 auto;
-        padding: 18px 32px;
+        padding: 16px 28px;
         display: flex;
         align-items: center;
-        gap: 32px;
+        gap: 28px;
     }
 
     .brand {
         display: flex;
         align-items: center;
-        gap: 10px;
-        font-family: 'Bebas Neue', sans-serif;
-        font-size: 26px;
-        letter-spacing: 3px;
-        color: var(--text);
+        gap: 12px;
     }
 
     .brand-mark {
-        width: 32px;
-        height: 32px;
-        border-radius: 8px;
-        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        width: 38px;
+        height: 38px;
+        background: var(--red);
         display: grid;
         place-items: center;
-        font-size: 18px;
-        box-shadow: 0 0 24px rgba(255,107,26,0.5);
+        color: white;
+        font-family: 'Archivo Black', sans-serif;
+        font-size: 22px;
+        letter-spacing: -1px;
+        transform: skewX(-8deg);
+        box-shadow: 4px 4px 0 #000;
+    }
+
+    .brand-name {
+        font-family: 'Anton', sans-serif;
+        font-size: 26px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
     }
 
     .nav-links {
         display: flex;
         gap: 28px;
-        margin-left: 16px;
+        margin-left: 12px;
     }
 
     .nav-links a {
         color: var(--text-dim);
         text-decoration: none;
-        font-size: 14px;
-        font-weight: 500;
-        transition: color 0.15s;
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
     }
     .nav-links a:hover { color: var(--text); }
 
-    .nav-cta {
-        margin-left: auto;
-        padding: 10px 18px;
-        background: var(--text);
-        color: var(--bg);
-        border: none;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 14px;
-        cursor: pointer;
-    }
+    .nav-right { margin-left: auto; display: flex; gap: 10px; align-items: center; }
 
-    @media (max-width: 720px) {
+    .nav-cta {
+        padding: 10px 18px;
+        background: var(--red);
+        color: white;
+        border: none;
+        font-family: 'Anton', sans-serif;
+        font-size: 14px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: background 0.15s, transform 0.1s;
+    }
+    .nav-cta:hover { background: var(--red-bright); transform: translateY(-1px); }
+
+    @media (max-width: 800px) {
         .nav-links { display: none; }
-        .nav-inner { padding: 16px 20px; }
     }
 
     /* Hero */
     .hero {
-        max-width: 1320px;
+        max-width: 1340px;
         margin: 0 auto;
-        padding: 80px 32px 48px;
-        text-align: center;
+        padding: 60px 28px 40px;
         position: relative;
     }
 
-    .eyebrow {
-        display: inline-flex;
+    .hero-grid {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        gap: 40px;
         align-items: center;
-        gap: 8px;
-        padding: 6px 14px;
-        background: rgba(255,107,26,0.1);
-        border: 1px solid rgba(255,107,26,0.3);
-        border-radius: 999px;
-        color: var(--accent);
-        font-size: 12px;
-        font-weight: 600;
-        letter-spacing: 1.5px;
-        text-transform: uppercase;
-        margin-bottom: 24px;
     }
 
-    .eyebrow .dot {
-        width: 6px; height: 6px; border-radius: 50%;
-        background: var(--accent);
-        box-shadow: 0 0 10px var(--accent);
-        animation: pulse 1.6s infinite;
+    @media (max-width: 900px) {
+        .hero-grid { grid-template-columns: 1fr; }
+        .hero-art { display: none; }
+    }
+
+    .kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 6px 12px;
+        background: var(--red);
+        color: white;
+        font-family: 'Archivo Black', sans-serif;
+        font-size: 11px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-bottom: 24px;
+        transform: skewX(-8deg);
+    }
+
+    .kicker > * { transform: skewX(8deg); }
+    .kicker .dot {
+        width: 8px; height: 8px; background: white; border-radius: 50%;
+        animation: pulse 1.4s infinite;
     }
 
     .hero h1 {
-        font-family: 'Bebas Neue', sans-serif;
-        font-size: clamp(56px, 9vw, 128px);
-        line-height: 0.92;
+        font-family: 'Anton', sans-serif;
+        font-size: clamp(64px, 9vw, 132px);
+        line-height: 0.88;
         letter-spacing: 1px;
-        margin-bottom: 24px;
         text-transform: uppercase;
+        margin-bottom: 24px;
     }
 
-    .hero h1 .accent {
-        background: linear-gradient(180deg, var(--accent-2), var(--accent));
-        -webkit-background-clip: text;
-        background-clip: text;
+    .hero h1 .stroke {
+        -webkit-text-stroke: 2px var(--text);
         color: transparent;
+    }
+
+    .hero h1 .red {
+        color: var(--red);
         font-style: italic;
+        display: inline-block;
     }
 
     .hero p.lede {
-        font-size: clamp(16px, 1.6vw, 19px);
+        font-size: clamp(16px, 1.5vw, 19px);
         color: var(--text-dim);
-        max-width: 560px;
-        margin: 0 auto 40px;
+        max-width: 540px;
+        margin-bottom: 36px;
     }
 
-    /* Search bar */
-    .search {
-        max-width: 920px;
+    /* Hero art — stack of magazine covers */
+    .hero-art {
+        position: relative;
+        height: 480px;
+    }
+
+    .mag {
+        position: absolute;
+        width: 240px;
+        height: 320px;
+        border: 6px solid var(--text);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .mag .mag-band {
+        background: var(--text);
+        color: var(--bg);
+        padding: 6px 10px;
+        font-family: 'Archivo Black', sans-serif;
+        font-size: 10px;
+        letter-spacing: 2px;
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    .mag .mag-body {
+        flex: 1;
+        display: grid;
+        place-items: center;
+        font-size: 80px;
+        position: relative;
+    }
+
+    .mag .mag-title {
+        background: var(--text);
+        color: var(--bg);
+        padding: 8px 10px;
+        font-family: 'Anton', sans-serif;
+        font-size: 22px;
+        letter-spacing: 1px;
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    .mag-1 { background: linear-gradient(160deg, #e51b23, #6a0a0e); top: 20px; left: 0; transform: rotate(-8deg); }
+    .mag-2 { background: linear-gradient(160deg, #00d96f, #0a5a2e); top: 60px; left: 140px; transform: rotate(4deg); z-index: 2; }
+    .mag-3 { background: linear-gradient(160deg, #ffb800, #8a6010); top: 130px; left: 280px; transform: rotate(-3deg); }
+
+    /* Search */
+    .search-wrap {
+        max-width: 1340px;
         margin: 0 auto;
+        padding: 0 28px 32px;
+    }
+
+    .search {
         background: var(--surface);
         border: 1px solid var(--border);
-        border-radius: 16px;
-        padding: 12px;
+        padding: 14px;
         display: grid;
-        grid-template-columns: 1.4fr 1fr 1fr auto;
-        gap: 8px;
-        box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.02) inset;
+        grid-template-columns: 1.3fr 1fr 1fr 1fr auto;
+        gap: 10px;
+        box-shadow: 0 30px 80px rgba(0,0,0,0.5);
     }
 
-    @media (max-width: 760px) {
+    @media (max-width: 880px) {
         .search { grid-template-columns: 1fr 1fr; }
         .search .go { grid-column: 1 / -1; }
     }
 
     .field {
-        position: relative;
         background: var(--surface-2);
-        border-radius: 10px;
         padding: 10px 14px;
         transition: background 0.15s;
     }
 
-    .field:focus-within { background: #232833; }
+    .field:focus-within { background: #252832; }
 
     .field label {
         display: block;
-        font-size: 11px;
-        font-weight: 600;
+        font-family: 'Archivo Black', sans-serif;
+        font-size: 10px;
         color: var(--text-mute);
         text-transform: uppercase;
-        letter-spacing: 1.2px;
+        letter-spacing: 1.5px;
         margin-bottom: 4px;
     }
 
@@ -263,94 +320,99 @@
         cursor: pointer;
     }
 
-    .field select option { background: var(--surface-2); color: var(--text); }
+    .field select option { background: var(--surface-2); }
 
     .go {
-        background: linear-gradient(135deg, var(--accent), var(--accent-2));
-        color: #1a0f08;
+        background: var(--red);
+        color: white;
         border: none;
-        padding: 0 28px;
-        border-radius: 10px;
-        font-size: 14px;
-        font-weight: 700;
-        letter-spacing: 0.5px;
-        cursor: pointer;
-        text-transform: uppercase;
-        transition: transform 0.1s, box-shadow 0.15s;
-        box-shadow: 0 8px 24px rgba(255,107,26,0.4);
-    }
-
-    .go:hover { transform: translateY(-1px); box-shadow: 0 12px 30px rgba(255,107,26,0.55); }
-    .go:active { transform: translateY(1px); }
-
-    /* Stats strip */
-    .stats {
-        max-width: 1320px;
-        margin: 56px auto 0;
         padding: 0 32px;
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 24px;
-    }
-
-    @media (max-width: 720px) { .stats { grid-template-columns: repeat(2, 1fr); } }
-
-    .stat {
-        text-align: center;
-        padding: 20px;
-        border-left: 2px solid var(--border);
-    }
-    .stat:first-child { border-left: none; }
-
-    .stat .num {
-        font-family: 'Bebas Neue', sans-serif;
-        font-size: 42px;
+        font-family: 'Anton', sans-serif;
+        font-size: 18px;
         letter-spacing: 2px;
-        color: var(--accent-2);
-    }
-    .stat .lbl {
-        color: var(--text-mute);
-        font-size: 12px;
         text-transform: uppercase;
-        letter-spacing: 1.5px;
-        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.15s, transform 0.1s;
+    }
+    .go:hover { background: var(--red-bright); transform: translateY(-1px); }
+
+    /* Marquee strip */
+    .marquee {
+        background: var(--red);
+        color: white;
+        padding: 12px 0;
+        overflow: hidden;
+        position: relative;
+        margin-bottom: 48px;
+        border-top: 1px solid #000;
+        border-bottom: 1px solid #000;
     }
 
-    /* Section header */
+    .marquee-track {
+        display: flex;
+        gap: 48px;
+        white-space: nowrap;
+        animation: scroll 30s linear infinite;
+        font-family: 'Anton', sans-serif;
+        font-size: 18px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+    }
+
+    .marquee-track span { display: inline-flex; align-items: center; gap: 12px; }
+    .marquee-track .sep { font-size: 12px; opacity: 0.7; }
+
+    @keyframes scroll {
+        from { transform: translateX(0); }
+        to { transform: translateX(-50%); }
+    }
+
+    /* Section */
     .section {
-        max-width: 1320px;
+        max-width: 1340px;
         margin: 0 auto;
-        padding: 64px 32px 32px;
+        padding: 16px 28px 32px;
     }
 
     .sec-head {
         display: flex;
         align-items: end;
         justify-content: space-between;
-        margin-bottom: 32px;
+        margin-bottom: 24px;
         gap: 24px;
         flex-wrap: wrap;
     }
 
-    .sec-head h2 {
-        font-family: 'Bebas Neue', sans-serif;
-        font-size: clamp(36px, 5vw, 56px);
-        letter-spacing: 2px;
-        line-height: 1;
-        text-transform: uppercase;
+    .sec-head .title {
+        display: flex;
+        align-items: baseline;
+        gap: 14px;
     }
 
-    .sec-head h2 .accent {
-        color: var(--accent);
+    .sec-head .bar {
+        width: 8px;
+        height: 38px;
+        background: var(--red);
+        display: inline-block;
+    }
+
+    .sec-head h2 {
+        font-family: 'Anton', sans-serif;
+        font-size: clamp(34px, 4.5vw, 52px);
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        line-height: 1;
     }
 
     .sec-head .sub {
         color: var(--text-dim);
-        font-size: 14px;
-        font-weight: 500;
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
     }
 
-    /* Filter chips */
+    /* Chips */
     .chips {
         display: flex;
         gap: 8px;
@@ -359,123 +421,133 @@
     }
 
     .chip {
-        padding: 8px 16px;
-        background: var(--surface);
+        padding: 9px 16px;
+        background: transparent;
         color: var(--text-dim);
-        border: 1px solid var(--border);
-        border-radius: 999px;
-        font-size: 13px;
-        font-weight: 500;
+        border: 1.5px solid var(--border);
+        font-size: 12px;
+        font-weight: 700;
         cursor: pointer;
         transition: all 0.15s;
         user-select: none;
+        text-transform: uppercase;
+        letter-spacing: 1px;
     }
-    .chip:hover { color: var(--text); border-color: #3a4150; }
+    .chip:hover { color: var(--text); border-color: var(--text-dim); }
     .chip.active {
         background: var(--text);
         color: var(--bg);
         border-color: var(--text);
-        font-weight: 600;
     }
 
-    /* Cards */
+    /* Cards as mini magazine covers */
     .grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-        gap: 20px;
+        gap: 22px;
     }
 
     .card {
         position: relative;
         background: var(--surface);
         border: 1px solid var(--border);
-        border-radius: 16px;
         overflow: hidden;
-        transition: transform 0.25s cubic-bezier(.2,.7,.2,1), border-color 0.2s, box-shadow 0.25s;
+        transition: transform 0.25s cubic-bezier(.2,.7,.2,1), box-shadow 0.25s;
         display: flex;
         flex-direction: column;
+        cursor: pointer;
     }
 
     .card:hover {
         transform: translateY(-6px);
-        border-color: #3a4150;
-        box-shadow: 0 24px 48px rgba(0,0,0,0.5), 0 0 0 1px var(--accent);
+        box-shadow: 0 24px 48px rgba(0,0,0,0.6);
     }
 
-    .card-img {
+    .card-cover {
         position: relative;
-        height: 180px;
+        height: 220px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        background: var(--cover-bg, var(--red));
+    }
+
+    .cover-top {
+        background: var(--text);
+        color: var(--bg);
+        padding: 8px 14px;
+        font-family: 'Archivo Black', sans-serif;
+        font-size: 10px;
+        letter-spacing: 2.5px;
+        text-transform: uppercase;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .cover-art {
+        flex: 1;
         display: grid;
         place-items: center;
+        position: relative;
         overflow: hidden;
-        background: #000;
     }
 
-    .card-img::before {
+    .cover-art::before {
         content: '';
         position: absolute;
         inset: 0;
         background:
-            radial-gradient(ellipse 70% 50% at 50% 100%, var(--glow, rgba(255,107,26,0.4)), transparent 70%),
-            linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.7) 100%);
+            radial-gradient(ellipse 60% 80% at 50% 30%, rgba(255,255,255,0.2), transparent 70%),
+            linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.4));
     }
 
-    .card-img::after {
-        content: '';
-        position: absolute;
-        top: -20%;
-        left: 20%;
-        width: 60%;
-        height: 70%;
-        background: radial-gradient(ellipse, rgba(255,255,255,0.15), transparent 60%);
-        filter: blur(20px);
-    }
-
-    .card-emoji {
-        font-size: 96px;
+    .cover-emoji {
+        font-size: 110px;
         position: relative;
         z-index: 1;
-        filter: drop-shadow(0 8px 24px rgba(0,0,0,0.6));
+        filter: drop-shadow(0 12px 32px rgba(0,0,0,0.7));
         transition: transform 0.4s cubic-bezier(.2,.7,.2,1);
     }
+    .card:hover .cover-emoji { transform: scale(1.12) rotate(-8deg); }
 
-    .card:hover .card-emoji { transform: scale(1.1) rotate(-6deg); }
-
-    .badges {
+    .cover-headline {
         position: absolute;
-        top: 14px;
+        bottom: 12px;
         left: 14px;
         right: 14px;
-        display: flex;
-        justify-content: space-between;
+        font-family: 'Anton', sans-serif;
+        font-size: 32px;
+        line-height: 0.9;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: white;
+        text-shadow: 0 2px 12px rgba(0,0,0,0.6);
         z-index: 2;
     }
 
-    .badge {
-        font-family: 'Bebas Neue', sans-serif;
-        letter-spacing: 1.5px;
-        font-size: 12px;
-        padding: 5px 10px;
-        background: rgba(0,0,0,0.6);
-        backdrop-filter: blur(8px);
-        border-radius: 6px;
-        border: 1px solid rgba(255,255,255,0.1);
-        color: var(--text);
+    .cover-headline em {
+        color: var(--amber);
+        font-style: italic;
+        display: inline-block;
     }
 
-    .badge.live {
+    .live-tag {
+        position: absolute;
+        top: 40px;
+        right: 12px;
         background: var(--red);
-        border-color: transparent;
         color: white;
+        padding: 4px 9px;
+        font-family: 'Archivo Black', sans-serif;
+        font-size: 10px;
+        letter-spacing: 2px;
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 5px;
+        z-index: 2;
     }
-
-    .badge.live .dot {
-        width: 6px; height: 6px;
-        background: white;
-        border-radius: 50%;
+    .live-tag .dot {
+        width: 6px; height: 6px; background: white; border-radius: 50%;
         animation: pulse 1.4s infinite;
     }
 
@@ -485,49 +557,47 @@
     }
 
     .card-body {
-        padding: 20px;
-        flex: 1;
+        padding: 18px;
         display: flex;
         flex-direction: column;
         gap: 12px;
+        flex: 1;
     }
 
-    .card-match {
-        font-family: 'Bebas Neue', sans-serif;
-        font-size: 24px;
-        letter-spacing: 1px;
-        line-height: 1.1;
-        text-transform: uppercase;
-    }
-
-    .card-venue {
+    .venue-row {
         display: flex;
         align-items: center;
-        gap: 10px;
-        padding: 12px;
-        background: var(--surface-2);
-        border-radius: 10px;
+        gap: 12px;
     }
 
-    .venue-mark {
-        width: 36px;
-        height: 36px;
-        background: linear-gradient(135deg, var(--accent), var(--accent-2));
-        border-radius: 8px;
+    .venue-icon {
+        width: 42px;
+        height: 42px;
+        background: var(--surface-2);
+        border: 1px solid var(--border);
         display: grid;
         place-items: center;
-        font-size: 16px;
+        font-size: 18px;
         flex-shrink: 0;
     }
 
     .venue-info { flex: 1; min-width: 0; }
+
     .venue-name {
-        font-weight: 600;
+        font-weight: 700;
         font-size: 15px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        line-height: 1.2;
+        margin-bottom: 2px;
     }
+
+    .venue-type {
+        font-family: 'Archivo Black', sans-serif;
+        font-size: 9px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: var(--vtype-color, var(--text-mute));
+    }
+
     .venue-loc {
         font-size: 12px;
         color: var(--text-mute);
@@ -536,11 +606,10 @@
     .card-meta {
         display: flex;
         gap: 14px;
-        color: var(--text-dim);
         font-size: 13px;
+        color: var(--text-dim);
         font-weight: 500;
     }
-    .card-meta span { display: inline-flex; align-items: center; gap: 5px; }
 
     .perks {
         display: flex;
@@ -549,21 +618,22 @@
     }
 
     .perk {
-        font-size: 11px;
+        font-size: 10px;
         background: transparent;
         color: var(--text-dim);
-        padding: 4px 10px;
-        border-radius: 999px;
+        padding: 4px 9px;
         border: 1px solid var(--border);
-        font-weight: 500;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
     }
 
     .card-foot {
         margin-top: auto;
-        display: flex;
-        gap: 8px;
         padding-top: 14px;
         border-top: 1px solid var(--border);
+        display: flex;
+        gap: 8px;
     }
 
     .rsvp {
@@ -572,33 +642,26 @@
         color: var(--bg);
         border: none;
         padding: 12px;
-        border-radius: 10px;
-        font-weight: 700;
-        font-size: 13px;
-        cursor: pointer;
+        font-family: 'Anton', sans-serif;
+        font-size: 15px;
+        letter-spacing: 2px;
         text-transform: uppercase;
-        letter-spacing: 1px;
-        transition: background 0.15s, transform 0.1s;
-        font-family: inherit;
+        cursor: pointer;
+        transition: background 0.15s;
     }
-    .rsvp:hover { background: #e5e5e7; transform: translateY(-1px); }
-    .rsvp.going {
-        background: var(--court);
-        color: #001a0c;
-        box-shadow: 0 0 24px var(--court-glow);
-    }
+    .rsvp:hover { background: #d4d4d8; }
+    .rsvp.going { background: var(--green); color: #001a0c; }
 
     .icon-btn {
         background: var(--surface-2);
         border: 1px solid var(--border);
         color: var(--text-dim);
-        padding: 0 14px;
-        border-radius: 10px;
+        width: 44px;
         cursor: pointer;
         font-size: 16px;
         transition: all 0.15s;
     }
-    .icon-btn:hover { color: var(--text); border-color: #3a4150; }
+    .icon-btn:hover { color: var(--text); border-color: var(--text-dim); }
 
     .empty {
         grid-column: 1 / -1;
@@ -607,12 +670,57 @@
         color: var(--text-dim);
     }
     .empty .big { font-size: 80px; margin-bottom: 16px; opacity: 0.6; }
-    .empty h3 { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 2px; margin-bottom: 8px; }
+    .empty h3 { font-family: 'Anton', sans-serif; font-size: 32px; letter-spacing: 2px; margin-bottom: 8px; }
+
+    /* Venue type showcase */
+    .venues-strip {
+        max-width: 1340px;
+        margin: 0 auto;
+        padding: 32px 28px;
+    }
+
+    .venues-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 12px;
+    }
+
+    .vtype {
+        padding: 18px 12px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .vtype:hover {
+        border-color: var(--text-dim);
+        transform: translateY(-2px);
+    }
+    .vtype.active {
+        border-color: var(--red);
+        background: rgba(229,27,35,0.08);
+    }
+    .vtype-emoji { font-size: 28px; margin-bottom: 6px; }
+    .vtype-name {
+        font-family: 'Anton', sans-serif;
+        font-size: 14px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+    }
+    .vtype-count {
+        font-size: 11px;
+        color: var(--text-mute);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-top: 2px;
+    }
 
     footer {
-        max-width: 1320px;
+        max-width: 1340px;
         margin: 80px auto 0;
-        padding: 40px 32px;
+        padding: 40px 28px;
         border-top: 1px solid var(--border);
         display: flex;
         justify-content: space-between;
@@ -620,46 +728,71 @@
         flex-wrap: wrap;
         gap: 16px;
         color: var(--text-mute);
-        font-size: 13px;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 600;
     }
-
-    footer .brand { font-size: 22px; }
 </style>
 </head>
 <body>
 
 <div class="backdrop"></div>
-<div class="orb">🏀</div>
-<div class="orb">⚽</div>
-<div class="orb">🏈</div>
-<div class="orb">⚾</div>
-<div class="orb">🏒</div>
+<div class="grain"></div>
 
 <nav>
     <div class="nav-inner">
         <div class="brand">
-            <div class="brand-mark">🍺</div>
-            The Lineup
+            <div class="brand-mark">L</div>
+            <div class="brand-name">The Lineup</div>
         </div>
         <div class="nav-links">
             <a href="#tonight">Tonight</a>
-            <a href="#tonight">Bars</a>
+            <a href="#venues">Venues</a>
             <a href="#tonight">Sports</a>
             <a href="#tonight">Host</a>
         </div>
-        <button class="nav-cta">Sign in</button>
+        <div class="nav-right">
+            <button class="nav-cta">Sign in</button>
+        </div>
     </div>
 </nav>
 
 <section class="hero">
-    <div class="eyebrow"><span class="dot"></span>Live now · 47 watch parties</div>
-    <h1>Find your <span class="accent">crowd.</span><br>Catch the <span class="accent">game.</span></h1>
-    <p class="lede">The fastest way to find a sports bar showing the match you care about — wings hot, beer cold, crowd loud.</p>
+    <div class="hero-grid">
+        <div>
+            <div class="kicker"><span class="dot"></span><span>Live · 47 watch parties</span></div>
+            <h1>
+                <span class="stroke">One</span> <span class="red">Game.</span><br>
+                Every <span class="red">Crowd.</span>
+            </h1>
+            <p class="lede">Find watch parties wherever they're happening — sports bars, public parks, breweries, rooftops, plazas, even your neighbor's backyard. Every sport. Every venue. One lineup.</p>
+        </div>
+        <div class="hero-art">
+            <div class="mag mag-1">
+                <div class="mag-band">Issue 047 · Tonight</div>
+                <div class="mag-body">🏀</div>
+                <div class="mag-title">Court Side</div>
+            </div>
+            <div class="mag mag-2">
+                <div class="mag-band">Issue 047 · Weekend</div>
+                <div class="mag-body">⚽</div>
+                <div class="mag-title">In the Park</div>
+            </div>
+            <div class="mag mag-3">
+                <div class="mag-band">Issue 047 · Sunday</div>
+                <div class="mag-body">🏈</div>
+                <div class="mag-title">Big Game</div>
+            </div>
+        </div>
+    </div>
+</section>
 
+<div class="search-wrap">
     <div class="search">
         <div class="field">
             <label>Location</label>
-            <input id="loc" type="text" placeholder="City, ZIP, or neighborhood" value="Brooklyn, NY">
+            <input id="loc" type="text" placeholder="City, ZIP, neighborhood" value="Brooklyn, NY">
         </div>
         <div class="field">
             <label>Sport</label>
@@ -667,6 +800,20 @@
                 <option value="">All sports</option>
                 <option>NFL</option><option>NBA</option><option>MLB</option><option>NHL</option>
                 <option>Soccer</option><option>UFC</option><option>F1</option><option>College</option>
+            </select>
+        </div>
+        <div class="field">
+            <label>Venue Type</label>
+            <select id="vtype">
+                <option value="">All venues</option>
+                <option>Sports Bar</option>
+                <option>Park</option>
+                <option>Brewery</option>
+                <option>Rooftop</option>
+                <option>Restaurant</option>
+                <option>Plaza</option>
+                <option>Community Center</option>
+                <option>Beach</option>
             </select>
         </div>
         <div class="field">
@@ -678,63 +825,88 @@
         </div>
         <button class="go" onclick="render()">Search</button>
     </div>
+</div>
 
-    <div class="stats">
-        <div class="stat"><div class="num">2,400+</div><div class="lbl">Bars</div></div>
-        <div class="stat"><div class="num">12</div><div class="lbl">Sports</div></div>
-        <div class="stat"><div class="num">180</div><div class="lbl">Cities</div></div>
-        <div class="stat"><div class="num">47</div><div class="lbl">Live now</div></div>
+<div class="marquee">
+    <div class="marquee-track" id="marquee"></div>
+</div>
+
+<section class="venues-strip" id="venues">
+    <div class="sec-head">
+        <div class="title">
+            <span class="bar"></span>
+            <h2>Browse <em style="color:var(--red);font-style:italic">venues</em></h2>
+        </div>
+        <div class="sub">Where the watch parties happen</div>
     </div>
+    <div class="venues-row" id="vtype-row"></div>
 </section>
 
 <section class="section" id="tonight">
     <div class="sec-head">
-        <h2>Tonight's <span class="accent">Lineup</span></h2>
+        <div class="title">
+            <span class="bar"></span>
+            <h2>Tonight's <em style="color:var(--red);font-style:italic">Lineup</em></h2>
+        </div>
         <div class="sub" id="count"></div>
     </div>
 
     <div class="chips" id="chips"></div>
-
     <div class="grid" id="grid"></div>
 </section>
 
 <footer>
     <div class="brand">
-        <div class="brand-mark">🍺</div>
-        The Lineup
+        <div class="brand-mark">L</div>
+        <div class="brand-name">The Lineup</div>
     </div>
-    <div>© 2026 — Watch parties, wings, and a cold one.</div>
+    <div>© 2026 — One Game. Every Crowd.</div>
 </footer>
 
 <script>
 const parties = [
-    { id:1, sport:'NFL', match:'Bills vs. Chiefs', venue:'The Pourhouse', neighborhood:'Williamsburg', distance:0.4, time:'Sun 4:25 PM', perks:['Wings','Buckets','200" Screen'], live:true, when:'This weekend' },
-    { id:2, sport:'NBA', match:'Knicks vs. Celtics', venue:"Foley's Bar & Grill", neighborhood:'Midtown', distance:1.2, time:'Tonight 7:30 PM', perks:['Happy Hour','Trivia'], live:true, when:'Tonight' },
-    { id:3, sport:'Soccer', match:'Arsenal vs. Liverpool', venue:'The Football Factory', neighborhood:'East Village', distance:2.1, time:'Sat 9:00 AM', perks:['Pints','Breakfast'], live:false, when:'This weekend' },
-    { id:4, sport:'NHL', match:'Rangers vs. Devils', venue:'Stout NYC', neighborhood:"Hell's Kitchen", distance:1.8, time:'Tonight 7:00 PM', perks:['Buckets','Booths'], live:true, when:'Tonight' },
-    { id:5, sport:'MLB', match:'Yankees vs. Red Sox', venue:'Standings Bar', neighborhood:'East Village', distance:2.3, time:'Tomorrow 1:05 PM', perks:['Outdoor','Wings'], live:false, when:'Tomorrow' },
-    { id:6, sport:'UFC', match:'UFC 312 Main Card', venue:'Iron Bar', neighborhood:'Midtown', distance:1.5, time:'Sat 10:00 PM', perks:['PPV','Reserved'], live:false, when:'This weekend' },
-    { id:7, sport:'NFL', match:'Cowboys vs. Eagles', venue:"Brother Jimmy's BBQ", neighborhood:'Upper East Side', distance:3.0, time:'Sun 8:20 PM', perks:['Wings','BBQ','Buckets'], live:false, when:'This weekend' },
-    { id:8, sport:'F1', match:'Monaco Grand Prix', venue:'Boilermaker', neighborhood:'East Village', distance:2.0, time:'Sun 9:00 AM', perks:['Brunch','Espresso'], live:false, when:'This weekend' },
-    { id:9, sport:'NBA', match:'Lakers vs. Warriors', venue:'The Ainsworth', neighborhood:'Chelsea', distance:1.7, time:'Tonight 10:00 PM', perks:['200" Screen','Bottle Service'], live:true, when:'Tonight' },
-    { id:10, sport:'College', match:'Michigan vs. Ohio State', venue:'Tonic Times Square', neighborhood:'Midtown', distance:1.6, time:'Sat 12:00 PM', perks:['Alumni','Pitchers'], live:false, when:'This weekend' },
-    { id:11, sport:'Soccer', match:'Real Madrid vs. Barcelona', venue:'Banc Cafe', neighborhood:"Hell's Kitchen", distance:1.9, time:'Sun 3:00 PM', perks:['Tapas','Sangria'], live:false, when:'This weekend' },
-    { id:12, sport:'NFL', match:'49ers vs. Seahawks', venue:'The Greens', neighborhood:'Williamsburg', distance:0.6, time:'Sun 1:00 PM', perks:['Mini Golf','Wings'], live:false, when:'This weekend' },
+    { id:1, sport:'NFL', match:'Bills vs. Chiefs', venue:'The Pourhouse', vtype:'Sports Bar', neighborhood:'Williamsburg', distance:0.4, time:'Sun 4:25 PM', perks:['Wings','Buckets','200" Screen'], live:true, when:'This weekend' },
+    { id:2, sport:'NBA', match:'Knicks vs. Celtics', venue:'McCarren Park Lawn', vtype:'Park', neighborhood:'Greenpoint', distance:0.8, time:'Tonight 7:30 PM', perks:['Outdoor','Food Trucks','BYO Chair'], live:true, when:'Tonight' },
+    { id:3, sport:'Soccer', match:'Arsenal vs. Liverpool', venue:'Other Half Brewery', vtype:'Brewery', neighborhood:'Carroll Gardens', distance:2.1, time:'Sat 9:00 AM', perks:['Craft Beer','Breakfast'], live:false, when:'This weekend' },
+    { id:4, sport:'NHL', match:'Rangers vs. Devils', venue:'Westlight Rooftop', vtype:'Rooftop', neighborhood:'Williamsburg', distance:1.1, time:'Tonight 7:00 PM', perks:['Skyline View','Heated'], live:true, when:'Tonight' },
+    { id:5, sport:'MLB', match:'Yankees vs. Red Sox', venue:'Domino Park', vtype:'Park', neighborhood:'Williamsburg', distance:0.5, time:'Tomorrow 1:05 PM', perks:['Outdoor','Family Friendly'], live:false, when:'Tomorrow' },
+    { id:6, sport:'UFC', match:'UFC 312 Main Card', venue:'Iron Bar', vtype:'Sports Bar', neighborhood:'Midtown', distance:1.5, time:'Sat 10:00 PM', perks:['PPV','Reserved'], live:false, when:'This weekend' },
+    { id:7, sport:'NFL', match:'Cowboys vs. Eagles', venue:'Smorgasburg', vtype:'Plaza', neighborhood:'Williamsburg', distance:0.6, time:'Sun 8:20 PM', perks:['Food Vendors','LED Wall'], live:false, when:'This weekend' },
+    { id:8, sport:'F1', match:'Monaco Grand Prix', venue:'Threes Brewing', vtype:'Brewery', neighborhood:'Gowanus', distance:2.0, time:'Sun 9:00 AM', perks:['Brunch','Espresso'], live:false, when:'This weekend' },
+    { id:9, sport:'NBA', match:'Lakers vs. Warriors', venue:'Brooklyn Bridge Park', vtype:'Park', neighborhood:'DUMBO', distance:1.7, time:'Tonight 10:00 PM', perks:['LED Wall','Bring Blanket'], live:true, when:'Tonight' },
+    { id:10, sport:'College', match:'Michigan vs. Ohio State', venue:'Greenpoint Library Plaza', vtype:'Community Center', neighborhood:'Greenpoint', distance:1.6, time:'Sat 12:00 PM', perks:['Free','All Ages'], live:false, when:'This weekend' },
+    { id:11, sport:'Soccer', match:'Real Madrid vs. Barcelona', venue:'Banc Cafe', vtype:'Restaurant', neighborhood:"Hell's Kitchen", distance:1.9, time:'Sun 3:00 PM', perks:['Tapas','Sangria'], live:false, when:'This weekend' },
+    { id:12, sport:'NFL', match:'49ers vs. Seahawks', venue:'Rockaway Beach', vtype:'Beach', neighborhood:'Rockaway', distance:8.0, time:'Sun 1:00 PM', perks:['Bonfire','Boardwalk'], live:false, when:'This weekend' },
+    { id:13, sport:'Soccer', match:'USA vs. Mexico', venue:'Washington Square Park', vtype:'Park', neighborhood:'Greenwich Village', distance:3.2, time:'Tonight 8:00 PM', perks:['Free','Big Crowd'], live:true, when:'Tonight' },
+    { id:14, sport:'NBA', match:'Nets vs. Heat', venue:'Brooklyn Brewery', vtype:'Brewery', neighborhood:'Williamsburg', distance:0.7, time:'Tomorrow 8:00 PM', perks:['Craft Beer','Pizza'], live:false, when:'Tomorrow' },
+    { id:15, sport:'NHL', match:'Islanders vs. Bruins', venue:'Time Out Market', vtype:'Plaza', neighborhood:'DUMBO', distance:1.5, time:'Sat 7:00 PM', perks:['Food Hall','Multi-Screen'], live:false, when:'This weekend' },
 ];
 
 const sportData = {
-    NFL:     { emoji:'🏈', glow:'rgba(0,128,255,0.45)' },
-    NBA:     { emoji:'🏀', glow:'rgba(255,107,26,0.55)' },
-    MLB:     { emoji:'⚾', glow:'rgba(255,255,255,0.35)' },
-    NHL:     { emoji:'🏒', glow:'rgba(0,200,255,0.45)' },
-    Soccer:  { emoji:'⚽', glow:'rgba(0,217,111,0.5)' },
-    UFC:     { emoji:'🥊', glow:'rgba(255,59,48,0.5)' },
-    F1:      { emoji:'🏎️', glow:'rgba(255,59,48,0.45)' },
-    College: { emoji:'🎓', glow:'rgba(255,184,0,0.45)' },
+    NFL:     { emoji:'🏈', color:'#013369', tag:'Football' },
+    NBA:     { emoji:'🏀', color:'#c8102e', tag:'Hoops' },
+    MLB:     { emoji:'⚾', color:'#002d72', tag:'Baseball' },
+    NHL:     { emoji:'🏒', color:'#111111', tag:'Hockey' },
+    Soccer:  { emoji:'⚽', color:'#00853f', tag:'Football' },
+    UFC:     { emoji:'🥊', color:'#d20a0a', tag:'MMA' },
+    F1:      { emoji:'🏎️', color:'#e10600', tag:'Racing' },
+    College: { emoji:'🎓', color:'#8a4a0e', tag:'NCAA' },
 };
 
-const quickFilters = ['Live Now','Wings','Buckets','Happy Hour','Outdoor','Within 1 mi'];
+const venueData = {
+    'Sports Bar':       { emoji:'🍺', color:'#ff6b1a' },
+    'Park':             { emoji:'🌳', color:'#00d96f' },
+    'Brewery':          { emoji:'🍻', color:'#ffb800' },
+    'Rooftop':          { emoji:'🌃', color:'#06b6d4' },
+    'Restaurant':       { emoji:'🍽️', color:'#ec4899' },
+    'Plaza':            { emoji:'🏛️', color:'#a855f7' },
+    'Community Center': { emoji:'🏘️', color:'#3b82f6' },
+    'Beach':            { emoji:'🏖️', color:'#fbbf24' },
+};
+
+const quickFilters = ['Live Now','Free','Outdoor','Wings','Happy Hour','Within 1 mi','Family Friendly'];
 let activeChips = new Set();
+let activeVtype = null;
 let going = new Set();
 
 function buildChips() {
@@ -752,18 +924,58 @@ function buildChips() {
     });
 }
 
+function buildVtypeRow() {
+    const row = document.getElementById('vtype-row');
+    Object.entries(venueData).forEach(([name, data]) => {
+        const count = parties.filter(p => p.vtype === name).length;
+        const el = document.createElement('div');
+        el.className = 'vtype';
+        el.innerHTML = `
+            <div class="vtype-emoji">${data.emoji}</div>
+            <div class="vtype-name">${name}</div>
+            <div class="vtype-count">${count} ${count === 1 ? 'spot' : 'spots'}</div>
+        `;
+        el.onclick = () => {
+            if (activeVtype === name) {
+                activeVtype = null;
+                el.classList.remove('active');
+            } else {
+                document.querySelectorAll('.vtype').forEach(x => x.classList.remove('active'));
+                activeVtype = name;
+                el.classList.add('active');
+            }
+            render();
+        };
+        row.appendChild(el);
+    });
+}
+
+function buildMarquee() {
+    const items = ['🔥 47 watch parties live now', '⚡ Bills vs. Chiefs · Sunday 4:25', '🏀 Lakers vs. Warriors tonight', '⚽ USA vs. Mexico — Washington Square', '🍻 Brooklyn Brewery — Nets vs. Heat', '🏖️ Beach watch party Sunday'];
+    const html = items.map(t => `<span>${t}</span><span class="sep">◆</span>`).join('');
+    document.getElementById('marquee').innerHTML = html + html;
+}
+
 function matchesFilters(p) {
     const sport = document.getElementById('sport').value;
     const when = document.getElementById('when').value;
+    const vtype = document.getElementById('vtype').value;
     if (sport && p.sport !== sport) return false;
     if (when && p.when !== when) return false;
+    if (vtype && p.vtype !== vtype) return false;
+    if (activeVtype && p.vtype !== activeVtype) return false;
     for (const f of activeChips) {
         if (f === 'Live Now' && !p.live) return false;
         else if (f === 'Within 1 mi' && p.distance > 1) return false;
-        else if (['Wings','Buckets','Happy Hour','Outdoor'].includes(f)
+        else if (f === 'Free' && !p.perks.some(pk => pk.toLowerCase() === 'free')) return false;
+        else if (['Outdoor','Wings','Happy Hour','Family Friendly'].includes(f)
                  && !p.perks.some(pk => pk.toLowerCase().includes(f.toLowerCase()))) return false;
     }
     return true;
+}
+
+function shortMatch(m) {
+    return m.replace(' vs. ', ' v ');
 }
 
 function render() {
@@ -775,8 +987,8 @@ function render() {
 
     if (filtered.length === 0) {
         grid.innerHTML = `<div class="empty">
-            <div class="big">🍺</div>
-            <h3>No watch parties match</h3>
+            <div class="big">📭</div>
+            <h3>Nothing in the lineup</h3>
             <p>Try clearing a filter or widening your search.</p>
         </div>`;
         return;
@@ -784,41 +996,61 @@ function render() {
 
     filtered.forEach(p => {
         const s = sportData[p.sport];
+        const v = venueData[p.vtype];
         const isGoing = going.has(p.id);
         const card = document.createElement('article');
         card.className = 'card';
+        card.style.setProperty('--cover-bg', `linear-gradient(160deg, ${s.color}, ${shade(s.color, -40)})`);
+        card.style.setProperty('--vtype-color', v.color);
+
+        const [teamA, teamB] = p.match.split(' vs. ');
+        const headline = teamB
+            ? `${teamA}<br><em>vs ${teamB}</em>`
+            : p.match;
+
         card.innerHTML = `
-            <div class="card-img" style="--glow:${s.glow}">
-                <div class="badges">
-                    <div class="badge">${p.sport}</div>
-                    ${p.live ? '<div class="badge live"><span class="dot"></span>LIVE</div>' : ''}
+            <div class="card-cover">
+                <div class="cover-top">
+                    <span>${s.tag} · Issue 047</span>
+                    <span>${p.time}</span>
                 </div>
-                <div class="card-emoji">${s.emoji}</div>
+                ${p.live ? '<div class="live-tag"><span class="dot"></span>LIVE</div>' : ''}
+                <div class="cover-art">
+                    <div class="cover-emoji">${s.emoji}</div>
+                </div>
+                <div class="cover-headline">${headline}</div>
             </div>
             <div class="card-body">
-                <div class="card-match">${p.match}</div>
-                <div class="card-venue">
-                    <div class="venue-mark">🍺</div>
+                <div class="venue-row">
+                    <div class="venue-icon">${v.emoji}</div>
                     <div class="venue-info">
                         <div class="venue-name">${p.venue}</div>
-                        <div class="venue-loc">${p.neighborhood} · ${p.distance} mi</div>
+                        <div class="venue-type">${p.vtype} · <span style="color:var(--text-mute)">${p.neighborhood} · ${p.distance} mi</span></div>
                     </div>
-                </div>
-                <div class="card-meta">
-                    <span>🕒 ${p.time}</span>
                 </div>
                 <div class="perks">${p.perks.map(x => `<span class="perk">${x}</span>`).join('')}</div>
                 <div class="card-foot">
-                    <button class="rsvp ${isGoing ? 'going' : ''}" onclick="toggleGoing(${p.id})">
+                    <button class="rsvp ${isGoing ? 'going' : ''}" onclick="event.stopPropagation();toggleGoing(${p.id})">
                         ${isGoing ? "✓ You're In" : "I'm In"}
                     </button>
-                    <button class="icon-btn" title="Save">♡</button>
-                    <button class="icon-btn" title="Share">↗</button>
+                    <button class="icon-btn" onclick="event.stopPropagation()" title="Save">♡</button>
+                    <button class="icon-btn" onclick="event.stopPropagation()" title="Share">↗</button>
                 </div>
             </div>
         `;
         grid.appendChild(card);
     });
+}
+
+function shade(hex, percent) {
+    const n = parseInt(hex.slice(1), 16);
+    let r = (n >> 16) + percent;
+    let g = ((n >> 8) & 0xff) + percent;
+    let b = (n & 0xff) + percent;
+    r = Math.max(0, Math.min(255, r));
+    g = Math.max(0, Math.min(255, g));
+    b = Math.max(0, Math.min(255, b));
+    return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
 }
 
 function toggleGoing(id) {
@@ -828,6 +1060,8 @@ function toggleGoing(id) {
 }
 
 buildChips();
+buildVtypeRow();
+buildMarquee();
 render();
 </script>
 
