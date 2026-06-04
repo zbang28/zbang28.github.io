@@ -1,0 +1,31 @@
+{
+  "name": "fanhub",
+  "version": "1.0.0",
+  "description": "NYC fan-event finder — watch parties, parades, pickup games. Express + Postgres API with a static frontend.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "migrate": "node src/migrate.js",
+    "seed": "node src/seed.js",
+    "reset": "node src/seed.js --reset",
+    "bundle": "esbuild src/app.js --bundle --platform=node --target=node20 --format=esm --packages=external --outfile=api/index.js --banner:js=\"// AUTO-GENERATED from src/app.js by 'npm run bundle'. Do not edit by hand.\"",
+    "deploy": "npm run bundle && vercel deploy --prod"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.13.1",
+    "stripe": "^17.5.0",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.0"
+  }
+}

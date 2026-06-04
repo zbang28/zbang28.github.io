@@ -1,0 +1,7 @@
+# The function is bundled into api/index.js (npm run bundle), so the raw
+# server source under src/ is not needed at runtime and should not be served
+# as static files. Keep it out of the deployment.
+src/
+.env
+.env.local
+*.log

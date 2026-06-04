@@ -3655,6 +3655,41 @@
         box-shadow: 0 12px 36px rgba(0,0,0,0.3);
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ===== Live scores rail (real ESPN data) ===== */
+    .scores-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+    .scores-tab {
+        font: inherit; font-size: 12px; font-weight: 700; letter-spacing: 0.3px;
+        padding: 6px 14px; border-radius: 999px; cursor: pointer;
+        background: var(--surface); color: var(--text-mute);
+        border: 1px solid var(--border); transition: all 0.18s;
+    }
+    .scores-tab:hover { color: var(--text); }
+    .scores-tab.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+    .scores-rail {
+        display: grid; grid-auto-flow: column; grid-auto-columns: minmax(248px, 1fr);
+        gap: 14px; overflow-x: auto; padding: 4px 2px 14px; scroll-snap-type: x mandatory;
+    }
+    .scores-rail::-webkit-scrollbar { height: 6px; }
+    .scores-rail::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    .score-card {
+        scroll-snap-align: start; background: var(--surface); border: 1px solid var(--border);
+        border-radius: 16px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px;
+    }
+    .score-card-top {
+        display: flex; justify-content: space-between; align-items: center;
+        font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--text-mute);
+    }
+    .score-live { display: inline-flex; align-items: center; gap: 5px; color: #ff2d3a; }
+    .score-live .dot { width: 7px; height: 7px; border-radius: 50%; background: #ff2d3a; animation: scorePulse 1.2s infinite; }
+    @keyframes scorePulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+    .score-team { display: flex; align-items: center; gap: 10px; }
+    .score-team img { width: 24px; height: 24px; object-fit: contain; }
+    .score-team-name { font-size: 14px; font-weight: 700; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .score-team-name.win { color: var(--text); }
+    .score-num { font-size: 18px; font-weight: 900; font-variant-numeric: tabular-nums; min-width: 26px; text-align: right; }
+    .score-card-foot { font-size: 11px; color: var(--text-mute); border-top: 1px solid var(--border); padding-top: 8px; }
+    .scores-empty { color: var(--text-mute); font-size: 14px; padding: 8px 2px; }
 </style>
 </head>
 <body>
@@ -3671,8 +3706,7 @@
             <button class="tab highlight" data-route="worldcup">World Cup</button>
         </div>
         <div class="nav-right">
-            <button class="nav-btn ai" onclick="openAI()">✦ <span class="lbl">Plan with AI</span></button>
-            <button class="nav-btn" onclick="openSignIn()">Sign in</button>
+            <button class="nav-btn" id="signin-btn" onclick="openSignIn()">Sign in</button>
         </div>
     </div>
 </nav>
@@ -3687,6 +3721,16 @@
                 <span>Browse the map</span>
                 <span class="browse-map-arrow">→</span>
             </button>
+        </div>
+    </div>
+
+    <div class="home-section" id="scores-section">
+        <div class="home-section-head">
+            <h2>Live <em>scores</em></h2>
+            <div class="scores-tabs" id="scores-tabs"></div>
+        </div>
+        <div class="scores-rail" id="scores-rail">
+            <div class="scores-empty">Loading real fixtures…</div>
         </div>
     </div>
 
@@ -3729,14 +3773,14 @@
                 </div>
             </article>
 
-            <article class="feature-card" onclick="openAI()">
+            <article class="feature-card" onclick="route('fanhub')">
                 <div class="feature-art">
                     <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=900&q=80&auto=format&fit=crop" alt="" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=900&q=80&auto=format&fit=crop'">
                 </div>
                 <div class="feature-body">
-                    <div class="feature-kicker" style="color:#a855f7">AI VIBE MATCH</div>
-                    <h3>Describe the vibe, find the spot</h3>
-                    <p>Tell us the game, your crew, and what kind of place you want — we'll match you to it.</p>
+                    <div class="feature-kicker" style="color:#a855f7">COMMUNITY</div>
+                    <h3>Live chat with fellow fans</h3>
+                    <p>Join the conversation by country, react to the starting XI, and vote on the best watch spots.</p>
                 </div>
             </article>
 
@@ -3916,81 +3960,28 @@
             <button class="modal-close" onclick="closeSignIn()">✕</button>
         </div>
         <div class="modal-body">
-            <form onsubmit="event.preventDefault();handleSignIn()">
+            <form onsubmit="event.preventDefault();submitAuth()">
+                <div class="signin-field" id="signin-name-field" style="display:none">
+                    <label>Display name</label>
+                    <input id="signin-name" type="text" placeholder="Your name">
+                </div>
                 <div class="signin-field">
                     <label>Email</label>
                     <input id="signin-email" type="email" placeholder="you@example.com" required>
                 </div>
                 <div class="signin-field">
                     <label>Password</label>
-                    <input id="signin-pass" type="password" placeholder="••••••••" required>
+                    <input id="signin-pass" type="password" placeholder="••••••••" minlength="6" required>
                 </div>
-                <button type="submit" class="ai-submit" style="margin-top:18px">Sign in</button>
-                <div class="signin-divider"><span>or</span></div>
-                <button type="button" class="signin-oauth" onclick="handleSignIn('Google')">Continue with Google</button>
-                <button type="button" class="signin-oauth" onclick="handleSignIn('Apple')">Continue with Apple</button>
-                <p class="signin-foot">No account? <a onclick="closeSignIn()">Create one</a></p>
+                <div id="signin-error" style="display:none;color:#ff3a4e;font-size:13px;margin-top:10px"></div>
+                <button type="submit" class="ai-submit" id="signin-submit" style="margin-top:18px">Sign in</button>
+                <p class="signin-foot">
+                    <span id="signin-toggle-text">No account?</span>
+                    <a id="signin-toggle" onclick="toggleAuthMode()">Create one</a>
+                </p>
             </form>
         </div>
     </div>
-</div>
-
-<div class="matchday-modal" id="matchday-modal" onclick="if(event.target===this)closeMatchdayModal()">
-  <div class="matchday-sheet">
-    <div class="matchday-head" id="matchday-head">
-        <div class="matchday-head-inner">
-            <div class="matchday-eyebrow">
-                <span class="spark">✦</span> AI Vibe Match
-            </div>
-            <h1 class="matchday-title">Match the <span class="grad">vibe</span></h1>
-            <p class="matchday-sub">Describe the game, your crew, and the vibe — we'll find the perfect spot.</p>
-            <div class="ai-quota" id="ai-quota"></div>
-
-            <div class="prompt-box matchday-prompt-box">
-                <div class="prompt-files" id="matchday-files"></div>
-                <textarea
-                    id="matchday-prompt"
-                    class="prompt-textarea"
-                    placeholder="e.g. 'Bills vs Chiefs with 4 friends, big screens, sports bar in Midtown'"
-                    rows="1"
-                ></textarea>
-                <div class="prompt-actions">
-                    <div class="prompt-actions-left">
-                        <div class="prompt-mode-row">
-                            <button type="button" class="prompt-mode" data-mode="search" onclick="toggleMatchdayMode('search')">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
-                                <span class="prompt-mode-label">Search</span>
-                            </button>
-                            <span class="prompt-divider"></span>
-                            <button type="button" class="prompt-mode" data-mode="think" onclick="toggleMatchdayMode('think')">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 0 0 12 21Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 0 1 12 21Z"/></svg>
-                                <span class="prompt-mode-label">Think</span>
-                            </button>
-                        </div>
-                    </div>
-                    <button id="matchday-send" class="prompt-send" onclick="buildMatchday()">
-                        <svg class="ic-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg>
-                        <svg class="ic-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                    </button>
-                </div>
-            </div>
-
-            <div class="matchday-quick">
-                <button class="ai-sugg" onclick="fillMatchdayPrompt('Knicks game with 6 friends, rooftop with skyline views')">Knicks · group · rooftop</button>
-                <button class="ai-sugg" onclick="fillMatchdayPrompt('Bills vs Chiefs, big screens, sports bar with wings in Midtown')">Bills · big screens · Midtown</button>
-                <button class="ai-sugg" onclick="fillMatchdayPrompt('Argentina match, cozy bar with Argentine crowd, Brooklyn')">Argentina · cozy bar · Brooklyn</button>
-                <button class="ai-sugg" onclick="fillMatchdayPrompt('Date night, quiet restaurant with the game on, Williamsburg')">Date · restaurant · Williamsburg</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="matchday-result" id="matchday-result" style="display:none">
-        <div class="matchday-stops" id="matchday-stops"></div>
-        <div class="matchday-map-wrap">
-            <div id="matchday-map"></div>
-        </div>
-    </div>
-  </div>
 </div>
 
 <footer id="site-footer">
@@ -4003,87 +3994,6 @@
     </div>
 </footer>
 
-<!-- AI Modal -->
-<div class="modal-bg" id="ai-modal" onclick="if(event.target===this)closeAI()">
-    <div class="modal">
-        <div class="modal-head">
-            <h3><em>Plan your</em><strong>Matchday</strong></h3>
-            <button class="modal-close" onclick="closeAI()">✕</button>
-        </div>
-        <div class="modal-body">
-            <div class="ai-suggestions">
-                <button class="ai-sugg" onclick="fillPrompt(this)">Argentina match + dinner spot</button>
-                <button class="ai-sugg" onclick="fillPrompt(this)">Family-friendly outdoor World Cup</button>
-                <button class="ai-sugg" onclick="fillPrompt(this)">Pub crawl with Liverpool fans</button>
-            </div>
-
-            <div class="prompt-box" id="prompt-box">
-                <div class="prompt-files" id="prompt-files"></div>
-                <textarea
-                    id="ai-prompt"
-                    class="prompt-textarea"
-                    placeholder="Tell us who you're cheering for, where, and with how many people…"
-                    rows="1"
-                ></textarea>
-
-                <div class="prompt-actions">
-                    <div class="prompt-actions-left">
-                        <label class="prompt-icon-btn" title="Attach image">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
-                                <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
-                            </svg>
-                            <input id="prompt-upload" type="file" accept="image/*" hidden onchange="handlePromptUpload(this)">
-                        </label>
-
-                        <div class="prompt-mode-row">
-                            <button type="button" class="prompt-mode" data-mode="search" onclick="togglePromptMode('search')">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
-                                    <circle cx="12" cy="12" r="10"/>
-                                    <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
-                                    <path d="M2 12h20"/>
-                                </svg>
-                                <span class="prompt-mode-label">Search</span>
-                            </button>
-                            <span class="prompt-divider"></span>
-                            <button type="button" class="prompt-mode" data-mode="think" onclick="togglePromptMode('think')">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
-                                    <path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 0 0 12 21Z"/>
-                                    <path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 0 1 12 21Z"/>
-                                    <path d="M15 13a3 3 0 0 0-3 3"/>
-                                </svg>
-                                <span class="prompt-mode-label">Think</span>
-                            </button>
-                            <span class="prompt-divider"></span>
-                            <button type="button" class="prompt-mode" data-mode="canvas" onclick="togglePromptMode('canvas')">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
-                                    <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>
-                                    <path d="m9 13 2 2 4-4"/>
-                                </svg>
-                                <span class="prompt-mode-label">Canvas</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <button id="prompt-send" type="button" class="prompt-send" onclick="runAI()" title="Send">
-                        <!-- Mic (no content) -->
-                        <svg class="ic-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
-                            <rect x="9" y="3" width="6" height="12" rx="3"/>
-                            <path d="M5 11a7 7 0 0 0 14 0"/>
-                            <path d="M12 18v3"/>
-                        </svg>
-                        <!-- Arrow up (has content) -->
-                        <svg class="ic-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
-                            <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-
-            <div class="ai-response" id="ai-response" style="display:none"></div>
-        </div>
-    </div>
-</div>
-
 <!-- Paywall -->
 <div class="modal-bg paywall" id="paywall" onclick="if(event.target===this)closePaywall()">
     <div class="modal">
@@ -4095,9 +4005,9 @@
             <div class="paywall-feature"><span class="check">✓</span><span><strong>Every watch-party location</strong> in all 5 boroughs</span></div>
             <div class="paywall-feature"><span class="check">✓</span><span>Post-game parade routes & start points</span></div>
             <div class="paywall-feature"><span class="check">✓</span><span>Pickup-game locations in every park</span></div>
-            <div class="paywall-feature"><span class="check">✓</span><span><strong>Unlimited AI vibe matches</strong> (free tier gets 1)</span></div>
+            <div class="paywall-feature"><span class="check">✓</span><span><strong>Community polls & chat</strong> in every borough</span></div>
         </div>
-        <div class="paywall-price">$1.99<span class="small">FIRST MONTH · THEN $4.99/MO · CANCEL ANYTIME</span></div>
+        <div class="paywall-price">$5<span class="small">ONE-TIME · UNLOCK ALL BOROUGHS FOR LIFE</span></div>
         <div class="paywall-actions">
             <button class="paywall-pay" onclick="unlockBoroughs()">Unlock all locations</button>
             <button class="paywall-skip" onclick="closePaywall()">Maybe later</button>
@@ -4109,7 +4019,7 @@
 
 <script>
 // ============ DATA ============
-const countries = [
+let countries = [
     { code:'US', name:'USA',         flag:'🇺🇸' },
     { code:'AR', name:'Argentina',   flag:'🇦🇷' },
     { code:'BR', name:'Brazil',      flag:'🇧🇷' },
@@ -4160,7 +4070,7 @@ const subtabs = [
     { id:'pickup',      label:'Pickup Games' },
 ];
 
-const parties = [
+let parties = [
     { id:1, sport:'Soccer', country:'AR', match:'Argentina vs. Brazil', venue:'La Boqueria', vtype:'Restaurant', neighborhood:'Williamsburg', borough:'Brooklyn', distance:0.4, time:'Sat · 4:00 PM', perks:['Tango','Empanadas'], live:true, when:'This weekend', lat:40.7115, lng:-73.9569, eventType:'watch-party', price:'No cover' },
     { id:2, sport:'Soccer', country:'AR', match:'Argentina vs. Brazil', venue:'McCarren Park Lawn', vtype:'Park', neighborhood:'Greenpoint', borough:'Brooklyn', distance:0.8, time:'Sat · 4:00 PM', perks:['Outdoor','Free','Food Trucks'], live:true, when:'This weekend', lat:40.7205, lng:-73.9520, eventType:'watch-party', price:'Free' },
     { id:3, sport:'Soccer', country:'BR', match:'Brazil vs. Argentina', venue:'Miss Favela', vtype:'Restaurant', neighborhood:'Williamsburg', borough:'Brooklyn', distance:0.6, time:'Sat · 4:00 PM', perks:['Caipirinhas','Samba'], live:false, when:'This weekend', lat:40.7126, lng:-73.9637, eventType:'watch-party', price:'No cover' },
@@ -4182,7 +4092,7 @@ const parties = [
     { id:32, sport:'Soccer', country:'US', match:'Pickup Soccer', venue:'Pier 40', vtype:'Park', neighborhood:'West Village', borough:'Manhattan', distance:5.5, time:'Sun · 9:00 AM', perks:['Free'], live:false, when:'This weekend', lat:40.7282, lng:-74.0107, eventType:'pickup', price:'Free' },
 ];
 
-const polls = [
+let polls = [
     { id:101, country:'AR', borough:'Brooklyn', question:"Best Argentina watch spot in Brooklyn?", sub:'Brooklyn · Saturday match', options:[
         { name:'La Boqueria', votes:284 },
         { name:'McCarren Park Lawn', votes:412 },
@@ -4204,7 +4114,7 @@ const polls = [
     ], totalVotes:650, closes:'Closes Friday' },
 ];
 
-const schedule = [
+let schedule = [
     { country:'AR', sport:'Soccer', home:{name:'Argentina', flag:'🇦🇷'}, away:{name:'Brazil', flag:'🇧🇷'}, tournament:'Copa America', date:'Sat · 4:00 PM', venue:'Maracanã' },
     { country:'AR', sport:'Soccer', home:{name:'Argentina', flag:'🇦🇷'}, away:{name:'Uruguay', flag:'🇺🇾'}, tournament:'Copa America', date:'Wed · 8:00 PM', venue:'Monumental' },
     { country:'US', sport:'Soccer', home:{name:'USA', flag:'🇺🇸'}, away:{name:'Mexico', flag:'🇲🇽'}, tournament:'CONCACAF', date:'Tonight · 8:00 PM', venue:'AT&T Stadium' },
@@ -4220,7 +4130,7 @@ const lineupBanners = {
     US: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=1200&q=80&auto=format&fit=crop',
     EN: 'https://images.unsplash.com/photo-1488003700468-a3b69dd3afc1?w=1200&q=80&auto=format&fit=crop',
 };
-const lineups = {
+let lineups = {
     AR: { team:'Argentina', formation:'4-3-3', color:['#7DB9E8','#3074C0'], rows:[
         [{num:11,name:'Di Maria'},{num:10,name:'Messi',c:true},{num:9,name:'Alvarez'}],
         [{num:8,name:'Mac Allister'},{num:5,name:'Paredes'},{num:20,name:'De Paul'}],
@@ -4248,7 +4158,7 @@ const lineups = {
     ]},
 };
 
-const chatMessages = {
+let chatMessages = {
     AR: [{user:'lionel_88',msg:'VAMOS ARGENTINA!! 🇦🇷 see you at La Boqueria',time:'2m'},
          {user:'mariana_b',msg:'McCarren Park is filling up already',time:'4m'},
          {user:'pablo_g',msg:'who else getting matching jerseys?',time:'7m'}],
@@ -4420,7 +4330,6 @@ let unlockedBoroughs = new Set(['Brooklyn']);
 let currentView = 'list';
 let mapInstance = null;
 let mapMarkers = [];
-let chatExtra = {};
 
 // ============ ROUTING ============
 function route(name) {
@@ -4738,9 +4647,20 @@ function scrollRow(id, dir) {
     el.scrollBy({ left: dir * 320, behavior: 'smooth' });
 }
 
-function toggleSaved(id) {
-    if (saved.has(id)) saved.delete(id); else saved.add(id);
+async function toggleSaved(id) {
+    if (!isSignedIn()) { openSignIn(); return; }
+    const wasSaved = saved.has(id);
+    // optimistic
+    if (wasSaved) saved.delete(id); else saved.add(id);
     applyFilters();
+    try {
+        await api('/saved/' + id, { method: wasSaved ? 'DELETE' : 'POST' });
+    } catch (e) {
+        // revert on failure
+        if (wasSaved) saved.add(id); else saved.delete(id);
+        applyFilters();
+        toast('Could not update saved');
+    }
 }
 
 // ============ MAP ============
@@ -4889,6 +4809,10 @@ function renderFanHub() {
     if (head) head.style.display = 'block';
     if (body) body.style.display = 'block';
     renderLineup(); renderChat(); renderPolls(); refreshChatGate();
+    // Load live chat history + join the realtime room for this country
+    const code = activeCountry?.code || 'US';
+    joinChatRoom(code);
+    loadChatHistory(code).then(() => { if (activeRoute === 'fanhub') renderChat(); });
 }
 
 function renderLineup() {
@@ -4936,17 +4860,98 @@ function renderLineup() {
     `;
 }
 
+// ---- Chat: WebSocket when available (local), polling fallback (Vercel) ----
+let chatHistory = {};       // country code -> [{id,user,msg,createdAt}]
+let chatSeen = {};          // country code -> Set of message ids (dedupe)
+let chatSocket = null;
+let chatRoom = null;
+let chatPollTimer = null;
+let wsFailed = false;       // once WS errors, stop trying and rely on polling
+
+function chatHtmlTime(createdAt) {
+    if (!createdAt) return '';
+    const d = new Date(String(createdAt).replace(' ', 'T') + (String(createdAt).endsWith('Z') ? '' : 'Z'));
+    if (isNaN(d)) return '';
+    return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+}
+
+// Append messages, skipping ids we've already shown. Re-render if active.
+function appendChatMessages(code, msgs) {
+    if (!msgs || !msgs.length) return;
+    const seen = chatSeen[code] = chatSeen[code] || new Set();
+    const list = chatHistory[code] = chatHistory[code] || [];
+    let added = false;
+    for (const m of msgs) {
+        if (m.id != null && seen.has(m.id)) continue;
+        if (m.id != null) seen.add(m.id);
+        list.push(m);
+        added = true;
+    }
+    if (added && activeRoute === 'fanhub' && (activeCountry?.code || 'US') === code) renderChat();
+}
+
+function connectChatSocket() {
+    if (wsFailed) return;
+    if (chatSocket && (chatSocket.readyState === WebSocket.OPEN || chatSocket.readyState === WebSocket.CONNECTING)) return;
+    const wsBase = API_BASE.replace(/^http/, 'ws').replace(/\/api$/, '');
+    try { chatSocket = new WebSocket(wsBase + '/ws' + (authToken ? '?token=' + encodeURIComponent(authToken) : '')); }
+    catch { wsFailed = true; return; }
+    chatSocket.onopen = () => { if (chatRoom) chatSocket.send(JSON.stringify({ type: 'join', country: chatRoom })); };
+    chatSocket.onmessage = (ev) => {
+        let d; try { d = JSON.parse(ev.data); } catch { return; }
+        if (d.type === 'message') appendChatMessages(d.country, [d]);
+        else if (d.type === 'error') toast(d.error);
+    };
+    chatSocket.onerror = () => { wsFailed = true; };   // serverless: no WS → polling takes over
+    chatSocket.onclose = () => { chatSocket = null; };
+}
+
+function chatIsLive() { return chatSocket && chatSocket.readyState === WebSocket.OPEN; }
+
+// Poll for messages newer than the last one we have (used when WS isn't live).
+async function pollChat() {
+    if (activeRoute !== 'fanhub' || chatIsLive()) return;
+    const code = chatRoom || activeCountry?.code || 'US';
+    const list = chatHistory[code] || [];
+    const lastId = list.length ? list[list.length - 1].id : 0;
+    try {
+        const data = await api('/chat/' + code + (lastId ? '?after=' + lastId : ''));
+        appendChatMessages(code, data.messages);
+    } catch {}
+}
+
+function startChatPolling() {
+    if (chatPollTimer) clearInterval(chatPollTimer);
+    chatPollTimer = setInterval(pollChat, 3000);
+}
+
+function joinChatRoom(code) {
+    chatRoom = code;
+    connectChatSocket();
+    if (chatIsLive()) chatSocket.send(JSON.stringify({ type: 'join', country: code }));
+    startChatPolling();
+}
+
+async function loadChatHistory(code) {
+    try {
+        const data = await api('/chat/' + code);
+        chatHistory[code] = [];
+        chatSeen[code] = new Set();
+        appendChatMessages(code, data.messages);
+    } catch { chatHistory[code] = chatHistory[code] || []; }
+}
+
 function renderChat() {
     const code = activeCountry?.code || 'US';
     const co = countries.find(c => c.code === code);
     document.getElementById('chat-country').textContent = co.name;
-    document.getElementById('chat-online').textContent = `${(Math.floor(Math.random()*5000)+500).toLocaleString()} online`;
-    const msgs = [...(chatMessages[code] || chatMessages.US), ...(chatExtra[code] || [])];
+    const msgs = chatHistory[code] || [];
+    document.getElementById('chat-online').textContent = `${msgs.length} messages`;
     document.getElementById('chat-body').innerHTML = msgs.map(m => `
         <div class="chat-msg">
             <div class="chat-avatar" style="background:${stringColor(m.user)}">${m.user[0].toUpperCase()}</div>
             <div>
-                <div class="chat-meta"><strong>${m.user}</strong>${m.time}</div>
+                <div class="chat-meta"><strong>${m.user}</strong>${chatHtmlTime(m.createdAt)}</div>
                 <div class="chat-text">${m.msg}</div>
             </div>
         </div>
@@ -4957,15 +4962,21 @@ function renderChat() {
 
 function sendChat(e) {
     e.preventDefault();
-    if (!isAISubscriber()) { openPaywall(); return; }
+    if (!isSignedIn()) { openSignIn(); return; }
     const input = document.getElementById('chat-input');
     const text = input.value.trim();
     if (!text) return;
     const code = activeCountry?.code || 'US';
-    if (!chatExtra[code]) chatExtra[code] = [];
-    chatExtra[code].push({ user: signedInAs ? signedInAs.split('@')[0] : 'you', msg:text, time:'now' });
+    if (chatIsLive()) {
+        // WebSocket path — server echoes the message back to everyone (incl. us).
+        chatSocket.send(JSON.stringify({ type: 'message', country: code, msg: text }));
+    } else {
+        // Serverless path — POST and show the saved message immediately.
+        api('/chat/' + code, { method: 'POST', body: { msg: text } })
+            .then(res => appendChatMessages(code, [res.message]))
+            .catch(() => toast('Could not send'));
+    }
     input.value = '';
-    renderChat();
 }
 
 function refreshChatGate() {
@@ -4973,14 +4984,14 @@ function refreshChatGate() {
     const banner = document.getElementById('chat-premium-banner');
     const input = document.getElementById('chat-input');
     if (!form || !banner || !input) return;
-    if (isAISubscriber()) {
+    if (isSignedIn()) {
         form.classList.remove('premium-locked');
         banner.style.display = 'none';
         input.placeholder = 'Say something to fellow supporters…';
     } else {
         form.classList.add('premium-locked');
         banner.style.display = '';
-        input.placeholder = 'Subscribe to chat with fellow supporters…';
+        input.placeholder = 'Sign in to chat with fellow supporters…';
     }
 }
 
@@ -5011,11 +5022,10 @@ function renderPolls() {
                 </div>
             </div>`;
         }
-        const userVote = votedPolls[p.id];
-        const total = p.totalVotes + (userVote !== undefined ? 1 : 0);
+        const userVote = votedPolls[p.id]; // option index, or undefined
+        const total = p.totalVotes;
         const optsHtml = p.options.map((opt, i) => {
-            const voteCount = opt.votes + (userVote === i ? 1 : 0);
-            const pct = total > 0 ? Math.round((voteCount / total) * 100) : 0;
+            const pct = total > 0 ? Math.round((opt.votes / total) * 100) : 0;
             return `<div class="poll-opt ${userVote === i ? 'voted' : ''}" onclick="vote(${p.id}, ${i})">
                 <div class="poll-opt-bar" style="width:${userVote !== undefined ? pct : 0}%"></div>
                 <div class="poll-opt-content">
@@ -5033,285 +5043,136 @@ function renderPolls() {
     }).join('');
 }
 
-function vote(id, i) {
+async function vote(id, i) {
+    if (!isSignedIn()) { openSignIn(); return; }
     if (votedPolls[id] !== undefined) return;
-    votedPolls[id] = i;
-    toast('Vote counted ✓');
-    renderPolls();
+    const poll = polls.find(p => p.id === id);
+    const option = poll?.options[i];
+    if (!option) return;
+    try {
+        const data = await api('/polls/' + id + '/vote', { method: 'POST', body: { optionId: option.id } });
+        // Replace local poll with server truth and record the user's choice
+        const idx = polls.findIndex(p => p.id === id);
+        if (idx >= 0) polls[idx] = data.poll;
+        votedPolls[id] = optionIndexFromId(data.poll, data.poll.votedOptionId);
+        toast('Vote counted ✓');
+        renderPolls();
+    } catch (e) {
+        toast(e.message === 'Already voted' ? 'You already voted' : 'Could not vote');
+    }
 }
 
-// ============ AI ============
-let signedInAs = null;
+function optionIndexFromId(poll, optionId) {
+    const i = poll.options.findIndex(o => o.id === optionId);
+    return i >= 0 ? i : undefined;
+}
+
+// ============ API CLIENT ============
+const API_BASE = (location.origin && location.origin.startsWith('http'))
+    ? location.origin + '/api'
+    : 'http://localhost:4000/api';
+
+let authToken = localStorage.getItem('lineup_token') || null;
+let currentUser = null; // { id, email, displayName }
+let signedInAs = null;  // email/display name, for chat attribution
+
+async function api(path, { method = 'GET', body } = {}) {
+    const headers = {};
+    if (body !== undefined) headers['Content-Type'] = 'application/json';
+    if (authToken) headers['Authorization'] = 'Bearer ' + authToken;
+    const res = await fetch(API_BASE + path, {
+        method, headers,
+        body: body !== undefined ? JSON.stringify(body) : undefined,
+    });
+    let data = null;
+    try { data = await res.json(); } catch {}
+    if (!res.ok) throw new Error(data?.error || ('Request failed: ' + res.status));
+    return data;
+}
+
+function isSignedIn() { return Boolean(currentUser); }
+
+function applyEntitlements(ent) {
+    unlockedBoroughs = new Set(ent?.boroughs?.length ? ent.boroughs : ['Brooklyn']);
+}
+
+function applyAuthState() {
+    const btn = document.getElementById('signin-btn');
+    if (btn) {
+        btn.textContent = currentUser ? (currentUser.displayName || currentUser.email.split('@')[0]) : 'Sign in';
+        btn.onclick = currentUser ? signOut : openSignIn;
+    }
+}
+
+// ============ AUTH ============
+let authMode = 'login'; // 'login' | 'register'
+
 function openSignIn() {
     document.getElementById('signin-modal').classList.add('open');
 }
 function closeSignIn() {
     document.getElementById('signin-modal').classList.remove('open');
+    const err = document.getElementById('signin-error');
+    if (err) err.style.display = 'none';
 }
-function handleSignIn(provider) {
-    const email = document.getElementById('signin-email').value.trim() || `user@${(provider || 'lineup').toLowerCase()}.com`;
-    signedInAs = email;
-    closeSignIn();
-    // Reflect in nav
-    const btn = document.querySelector('.nav-right .nav-btn:not(.ai)');
-    if (btn) btn.textContent = email.split('@')[0];
-    toast(provider ? `Signed in via ${provider}` : 'Signed in');
-}
-
-function openAI() {
-    const modal = document.getElementById('matchday-modal');
-    modal.classList.add('open');
-    document.body.style.overflow = 'hidden';
-    setupMatchdayPrompt();
-    refreshAIQuotaUI();
-    setTimeout(() => {
-        document.getElementById('matchday-prompt')?.focus();
-        matchdayMap?.invalidateSize();
-    }, 80);
-}
-function closeMatchdayModal() {
-    const modal = document.getElementById('matchday-modal');
-    modal.classList.remove('open');
-    document.body.style.overflow = '';
-}
-function openAIModal() { document.getElementById('ai-modal').classList.add('open'); setupPromptBox(); }
-
-let matchdayMap = null;
-let matchdayMarkers = [];
-let matchdayLine = null;
-let activeMatchdayMode = null;
-
-function fillMatchdayPrompt(text) {
-    const ta = document.getElementById('matchday-prompt');
-    ta.value = text;
-    autosizeTextarea(ta);
-    refreshMatchdaySend();
-    ta.focus();
+function toggleAuthMode() {
+    authMode = authMode === 'login' ? 'register' : 'login';
+    const isReg = authMode === 'register';
+    document.getElementById('signin-name-field').style.display = isReg ? '' : 'none';
+    document.getElementById('signin-submit').textContent = isReg ? 'Create account' : 'Sign in';
+    document.getElementById('signin-toggle-text').textContent = isReg ? 'Have an account?' : 'No account?';
+    document.getElementById('signin-toggle').textContent = isReg ? 'Sign in' : 'Create one';
+    document.querySelector('#signin-modal .modal-head h3').innerHTML = isReg ? 'Create <em>account</em>' : 'Sign <em>in</em>';
 }
 
-function toggleMatchdayMode(mode) {
-    activeMatchdayMode = (activeMatchdayMode === mode) ? null : mode;
-    document.querySelectorAll('#matchday-prompt-box-placeholder .prompt-mode, .matchday-prompt-box .prompt-mode').forEach(b => {
-        b.classList.toggle('active', b.dataset.mode === activeMatchdayMode);
-    });
-}
-
-function refreshMatchdaySend() {
-    const ta = document.getElementById('matchday-prompt');
-    const send = document.getElementById('matchday-send');
-    if (!ta || !send) return;
-    send.classList.toggle('has-content', ta.value.trim().length > 0);
-}
-
-function setupMatchdayPrompt() {
-    const ta = document.getElementById('matchday-prompt');
-    if (!ta || ta._wired) return;
-    ta._wired = true;
-    ta.addEventListener('input', () => { autosizeTextarea(ta); refreshMatchdaySend(); });
-    ta.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            buildMatchday();
-        }
-    });
-    refreshMatchdaySend();
-}
-
-function initMatchdayMap() {
-    if (matchdayMap) return;
-    matchdayMap = L.map('matchday-map', { zoomControl: true, scrollWheelZoom: true })
-        .setView([40.7128, -73.97], 12);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; OpenStreetMap &copy; CARTO', subdomains: 'abcd', maxZoom: 19
-    }).addTo(matchdayMap);
-}
-
-let aiUsesUsed = 0;
-const AI_FREE_LIMIT = 1;
-
-function isAISubscriber() {
-    return unlockedBoroughs.size > 1;
-}
-
-function refreshAIQuotaUI() {
-    const el = document.getElementById('ai-quota');
-    if (!el) return;
-    if (isAISubscriber()) {
-        el.className = 'ai-quota pro';
-        el.innerHTML = `✦ PRO · Unlimited vibe matches`;
-        return;
-    }
-    const left = Math.max(0, AI_FREE_LIMIT - aiUsesUsed);
-    if (left > 0) {
-        el.className = 'ai-quota';
-        el.innerHTML = `<span class="dot"></span>${left} free vibe match · then \$1.99 first month`;
-    } else {
-        el.className = 'ai-quota used';
-        el.innerHTML = `🔒 Free match used · <a onclick="closeMatchdayModal();openPaywall()">Subscribe for unlimited</a>`;
+async function submitAuth() {
+    const email = document.getElementById('signin-email').value.trim();
+    const password = document.getElementById('signin-pass').value;
+    const displayName = document.getElementById('signin-name').value.trim();
+    const errEl = document.getElementById('signin-error');
+    errEl.style.display = 'none';
+    try {
+        const path = authMode === 'register' ? '/auth/register' : '/auth/login';
+        const data = await api(path, { method: 'POST', body: { email, password, displayName } });
+        await onAuthenticated(data);
+        closeSignIn();
+        toast(authMode === 'register' ? 'Account created' : 'Signed in');
+    } catch (e) {
+        errEl.textContent = e.message;
+        errEl.style.display = '';
     }
 }
 
-function buildMatchday() {
-    const ta = document.getElementById('matchday-prompt');
-    const prompt = (ta?.value || '').trim();
-    if (!prompt) { ta?.focus(); return; }
+async function onAuthenticated(data) {
+    authToken = data.token;
+    localStorage.setItem('lineup_token', authToken);
+    currentUser = data.user;
+    signedInAs = data.user.displayName || data.user.email;
+    applyEntitlements(data.entitlements);
+    applyAuthState();
+    await loadSaved();
+    document.getElementById('borough-banner').innerHTML = '';
+    applyFilters();
+    if (activeRoute === 'fanhub') renderFanHub();
+}
 
-    if (!isAISubscriber() && aiUsesUsed >= AI_FREE_LIMIT) {
-        closeMatchdayModal();
-        setTimeout(openPaywall, 250);
-        toast('Your free vibe match is used — subscribe for unlimited');
-        return;
-    }
-    aiUsesUsed++;
-    refreshAIQuotaUI();
+function signOut() {
+    authToken = null; currentUser = null; signedInAs = null;
+    localStorage.removeItem('lineup_token');
+    saved = new Set();
+    unlockedBoroughs = new Set(['Brooklyn']);
+    applyAuthState();
+    applyFilters();
+    if (activeRoute === 'fanhub') renderFanHub();
+    toast('Signed out');
+}
 
-    const lower = prompt.toLowerCase();
-
-    // Detect borough
-    const boroughs = ['Manhattan','Queens','Bronx','Staten Island','Brooklyn'];
-    const targetBorough = boroughs.find(b => lower.includes(b.toLowerCase())) || null;
-    // Detect neighborhood keywords
-    const neighborhoods = ['Midtown','Williamsburg','Greenpoint','East Village','West Village','DUMBO','Hell\'s Kitchen','Park Slope','Greenwich Village','Carroll Gardens'];
-    const targetHood = neighborhoods.find(h => lower.includes(h.toLowerCase())) || null;
-    // Detect country / team
-    const country = countries.find(c => lower.includes(c.name.toLowerCase()));
-    const teamMention = Object.keys(teamData).find(t => lower.includes(t.toLowerCase()));
-
-    // Vibe flags
-    const wantsScreen   = /big screen|screens?|projector|tv|hd/i.test(prompt);
-    const wantsBar      = /\bbar\b|pub|tavern|sports bar/i.test(prompt);
-    const wantsRooftop  = /rooftop|skyline|view/i.test(prompt);
-    const wantsOutdoor  = /outdoor|patio|park|outside/i.test(prompt);
-    const wantsBrewery  = /brewery|beer|craft|ipa|pints?/i.test(prompt);
-    const wantsRestaur  = /restaurant|food|dinner|eat|wings|tacos|burger/i.test(prompt);
-    const wantsCozy     = /cozy|quiet|date|romantic|intimate/i.test(prompt);
-    const wantsGroup    = /\b(\d+)\s*(friends|people|guys|girls)\b|group|crew|squad|crowd/i.test(prompt);
-    const wantsFamily   = /family|kids|child/i.test(prompt);
-    const wantsFree     = /free|cheap|no cover|budget/i.test(prompt);
-
-    // Score each available watch-party
-    const pool = parties.filter(p =>
-        p.eventType === 'watch-party' &&
-        unlockedBoroughs.has(p.borough)
-    );
-
-    const scored = pool.map(p => {
-        let score = 30;
-        const reasons = [];
-
-        if (targetBorough && p.borough === targetBorough) { score += 22; reasons.push(`In ${targetBorough}`); }
-        if (targetHood && p.neighborhood.toLowerCase().includes(targetHood.toLowerCase())) { score += 18; reasons.push(`Right in ${targetHood}`); }
-        if (country && p.country === country.code) { score += 16; reasons.push(`${country.flag} ${country.name} crowd`); }
-        if (teamMention && p.match.includes(teamMention)) { score += 18; reasons.push(`Showing ${teamMention}`); }
-
-        if (wantsBar && p.vtype === 'Sports Bar') { score += 20; reasons.push('Sports-bar vibe'); }
-        if (wantsRooftop && p.vtype === 'Rooftop') { score += 22; reasons.push('Rooftop'); }
-        if (wantsBrewery && p.vtype === 'Brewery') { score += 18; reasons.push('Brewery'); }
-        if (wantsRestaur && p.vtype === 'Restaurant') { score += 16; reasons.push('Restaurant'); }
-        if (wantsOutdoor && (p.vtype === 'Park' || p.vtype === 'Plaza' || p.vtype === 'Beach')) { score += 18; reasons.push('Outdoor'); }
-        if (wantsCozy && (p.vtype === 'Restaurant' || p.vtype === 'Sports Bar')) { score += 6; }
-        if (wantsFamily && p.perks.some(pk => /family|all ages|kids/i.test(pk))) { score += 14; reasons.push('Family-friendly'); }
-        if (wantsFree && (p.price === 'Free' || p.price === 'No cover')) { score += 12; reasons.push('No cover'); }
-        if (wantsGroup && p.perks.some(pk => /reserved|booth|big|200|led|wall/i.test(pk))) { score += 10; reasons.push('Room for the crew'); }
-
-        if (wantsScreen) {
-            const hasScreen = p.perks.some(pk => /screen|led|wall|projector/i.test(pk));
-            if (hasScreen) { score += 18; reasons.push('Big screens'); }
-        }
-
-        // Always-on perks (wings, BBQ, etc.)
-        p.perks.forEach(pk => {
-            if (new RegExp('\\b' + pk.toLowerCase() + '\\b').test(lower) && !reasons.includes(pk)) {
-                score += 6; reasons.push(pk);
-            }
-        });
-
-        // Tiny jitter as tiebreaker
-        score += Math.random() * 2;
-        return { p, score, reasons };
-    }).sort((a, b) => b.score - a.score);
-
-    const top = scored.slice(0, 3).filter(s => s.score > 35);
-    if (top.length === 0) { toast('No matching spots — try fewer specifics'); return; }
-
-    // Hide the prompt header
-    document.getElementById('matchday-head').style.display = 'none';
-
-    // Show result panel
-    const result = document.getElementById('matchday-result');
-    result.style.display = '';
-
-    const maxScore = top[0].score;
-    const matchPct = (s) => Math.min(99, Math.round((s.score / Math.max(maxScore, 1)) * 96 + 3));
-
-    const wrap = document.getElementById('matchday-stops');
-    const summaryBits = [];
-    if (country) summaryBits.push(`${country.flag} ${country.name}`);
-    if (teamMention) summaryBits.push(teamMention);
-    if (targetHood) summaryBits.push(targetHood);
-    else if (targetBorough) summaryBits.push(targetBorough);
-    const summary = summaryBits.join(' · ') || 'Vibe match';
-    const stopColors = ['#a855f7','#ff3eb5','#06d6f7'];
-
-    wrap.innerHTML = `
-        <button class="matchday-new" onclick="resetMatchday()">← Try again</button>
-        <div style="font-size:10px;font-weight:800;color:rgba(255,255,255,0.55);letter-spacing:2px;text-transform:uppercase">
-            Match · ${summary}
-        </div>
-        <div style="font-family:'Inter',sans-serif;font-weight:900;font-size:20px;letter-spacing:-0.03em;margin-bottom:8px;color:white">
-            ${top.length === 1 ? 'Your spot' : `Top ${top.length} matches`}
-        </div>
-    ` + top.map((s, i) => {
-        const pct = matchPct(s);
-        const color = stopColors[i] || '#a855f7';
-        return `
-            <div class="stop-card" style="--stop-color:${color}" onclick="zoomMatchdayStop(${i})">
-                <div class="stop-card-num">${pct}</div>
-                <div class="stop-card-body">
-                    <div class="stop-card-kicker">${pct}% vibe match · ${s.p.vtype}</div>
-                    <div class="stop-card-venue">${s.p.venue}</div>
-                    <div class="stop-card-meta">${s.p.neighborhood}, ${s.p.borough} · ${s.p.time}</div>
-                    <div class="stop-card-tags">
-                        ${s.reasons.slice(0, 4).map(r => `<span class="stop-card-tag">${r}</span>`).join('')}
-                    </div>
-                </div>
-            </div>
-        `;
-    }).join('');
-
-    // Stash for zoom helper
-    window.matchdayStops = top.map((s, i) => ({ p: s.p, color: stopColors[i] || '#a855f7' }));
-
-    // Map markers — no route line (it's not a route, it's recommendations)
-    setTimeout(() => {
-        initMatchdayMap();
-        matchdayMap.invalidateSize();
-
-        matchdayMarkers.forEach(m => matchdayMap.removeLayer(m));
-        if (matchdayLine) { matchdayMap.removeLayer(matchdayLine); matchdayLine = null; }
-        matchdayMarkers = [];
-
-        top.forEach((s, i) => {
-            const color = stopColors[i] || '#a855f7';
-            const pct = matchPct(s);
-            const icon = L.divIcon({
-                className: 'route-pin-wrap', iconSize: [42, 42], iconAnchor: [21, 21],
-                html: `<div class="route-pin" style="background:${color};width:42px;height:42px;font-size:13px">${pct}</div>`
-            });
-            const m = L.marker([s.p.lat, s.p.lng], { icon }).addTo(matchdayMap);
-            m.bindPopup(`<div style="font-family:Inter,sans-serif;padding:8px 12px;min-width:220px">
-                <div style="font-size:10px;font-weight:800;color:${color};letter-spacing:2px;text-transform:uppercase">${pct}% MATCH</div>
-                <div style="font-weight:900;font-size:14px;margin:4px 0;color:#0e0f11">${s.p.venue}</div>
-                <div style="font-size:12px;color:#4a4d54">${s.p.vtype} · ${s.p.neighborhood}</div>
-                <div style="font-size:11px;color:#8a8d94;margin-top:2px">${s.p.time} · ${s.p.price}</div>
-            </div>`);
-            matchdayMarkers.push(m);
-        });
-
-        const coords = top.map(s => [s.p.lat, s.p.lng]);
-        const bounds = L.latLngBounds(coords);
-        matchdayMap.fitBounds(bounds, { padding: [80, 80], maxZoom: 14 });
-    }, 50);
+async function loadSaved() {
+    if (!currentUser) { saved = new Set(); return; }
+    try {
+        const data = await api('/saved');
+        saved = new Set(data.ids);
+    } catch { saved = new Set(); }
 }
 
 // ============ VENUE DETAIL PANEL ============
@@ -5467,147 +5328,30 @@ function setVenueTab(tab) {
     });
 }
 
-function zoomMatchdayStop(i) {
-    const s = window.matchdayStops?.[i];
-    if (!s || !matchdayMap) return;
-    matchdayMap.flyTo([s.p.lat, s.p.lng], 15, { duration: 0.7 });
-    setTimeout(() => matchdayMarkers[i]?.openPopup(), 700);
-}
-
-function resetMatchday() {
-    document.getElementById('matchday-head').style.display = '';
-    document.getElementById('matchday-result').style.display = 'none';
-    const ta = document.getElementById('matchday-prompt');
-    if (ta) { ta.value = ''; autosizeTextarea(ta); refreshMatchdaySend(); ta.focus(); }
-    window.scrollTo(0, 0);
-}
-function closeAI() { document.getElementById('ai-modal').classList.remove('open'); }
-function fillPrompt(el) {
-    const ta = document.getElementById('ai-prompt');
-    ta.value = el.textContent.trim();
-    autosizeTextarea(ta);
-    refreshSendState();
-}
-
-let activePromptMode = null;
-let promptFiles = [];
-
-function togglePromptMode(mode) {
-    activePromptMode = (activePromptMode === mode) ? null : mode;
-    document.querySelectorAll('.prompt-mode').forEach(b => {
-        b.classList.toggle('active', b.dataset.mode === activePromptMode);
-    });
-    const ta = document.getElementById('ai-prompt');
-    const placeholders = {
-        search: "Search the web for events…",
-        think: "Think deeply about your matchday…",
-        canvas: "Build a visual itinerary…",
-    };
-    ta.placeholder = placeholders[activePromptMode] || "Tell us who you're cheering for, where, and with how many people…";
-}
-
-function autosizeTextarea(ta) {
-    ta.style.height = 'auto';
-    ta.style.height = Math.min(ta.scrollHeight, 240) + 'px';
-}
-
-function refreshSendState() {
-    const ta = document.getElementById('ai-prompt');
-    const send = document.getElementById('prompt-send');
-    const has = ta.value.trim().length > 0 || promptFiles.length > 0;
-    send.classList.toggle('has-content', has);
-}
-
-function handlePromptUpload(input) {
-    const file = input.files?.[0];
-    if (!file || !file.type.startsWith('image/')) return;
-    if (file.size > 10 * 1024 * 1024) return;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        promptFiles = [{ name: file.name, src: e.target.result }];
-        renderPromptFiles();
-        refreshSendState();
-    };
-    reader.readAsDataURL(file);
-    input.value = '';
-}
-
-function renderPromptFiles() {
-    const wrap = document.getElementById('prompt-files');
-    wrap.innerHTML = promptFiles.map((f, i) => `
-        <div class="prompt-file">
-            <img src="${f.src}" alt="">
-            <button class="prompt-file-x" onclick="removePromptFile(${i})">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><path d="M18 6 6 18M6 6l12 12"/></svg>
-            </button>
-        </div>
-    `).join('');
-}
-
-function removePromptFile(i) {
-    promptFiles.splice(i, 1);
-    renderPromptFiles();
-    refreshSendState();
-}
-
-function setupPromptBox() {
-    const ta = document.getElementById('ai-prompt');
-    if (!ta || ta._wired) return;
-    ta._wired = true;
-    ta.addEventListener('input', () => { autosizeTextarea(ta); refreshSendState(); });
-    ta.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            runAI();
-        }
-    });
-    refreshSendState();
-}
-function runAI() {
-    const resp = document.getElementById('ai-response');
-    const prompt = document.getElementById('ai-prompt').value.trim();
-    if (!prompt) return;
-    resp.style.display = 'block';
-    resp.innerHTML = `<span style="font-style:italic;color:var(--text-mute)">✦ Building your matchday plan...</span>`;
-    setTimeout(() => {
-        const country = activeCountry || countries.find(c => prompt.toLowerCase().includes(c.name.toLowerCase())) || countries[0];
-        const candidates = parties.filter(p => unlockedBoroughs.has(p.borough) && (p.country === country.code || p.eventType === 'watch-party')).slice(0,3);
-        const main = candidates[0] || parties[0];
-        const upcoming = schedule.find(m => m.country === country.code) || schedule[0];
-        resp.innerHTML = `
-<strong>YOUR ${country.flag} ${country.name.toUpperCase()} MATCHDAY</strong>
-
-<strong>THE MATCH</strong>
-${upcoming.home.flag} ${upcoming.home.name} vs ${upcoming.away.name} ${upcoming.away.flag}
-${upcoming.date} · ${upcoming.tournament}
-
-<strong>PRIMARY SPOT</strong>
-${main.venue} (${main.neighborhood}, ${main.borough})
-${main.vtype} · ${main.perks.join(' · ')}
-
-<strong>PRE-GAME</strong>
-Arrive 90 min early. Grab food + first round on Bedford Ave.
-
-<strong>POST-GAME</strong>
-${parties.find(p => p.eventType === 'parade' && p.country === country.code)?.venue || 'Walk to McCarren Park for the afterparty'}
-
-<strong>BACKUP</strong>
-${candidates[1]?.venue || 'McCarren Park Lawn (free, outdoor)'}`;
-    }, 700);
-}
-
 // ============ PAYWALL ============
 function openPaywall() { document.getElementById('paywall').classList.add('open'); }
 function closePaywall() { document.getElementById('paywall').classList.remove('open'); }
-function unlockBoroughs() {
-    ['Manhattan','Queens','Bronx','Staten Island'].forEach(b => unlockedBoroughs.add(b));
-    closePaywall();
-    toast('Subscription active — vibe match unlimited');
-    document.getElementById('borough-banner').innerHTML = '';
-    applyFilters();
-    if (activeRoute === 'fanhub') renderFanHub();
-    refreshAIQuotaUI();
-    refreshChatGate();
+async function unlockBoroughs() {
+    if (!isSignedIn()) { closePaywall(); openSignIn(); return; }
+    try {
+        const data = await api('/billing/checkout', { method: 'POST' });
+        if (data.url) {
+            // Real Stripe checkout — redirect to hosted page.
+            window.location.href = data.url;
+            return;
+        }
+        // Dev mode (no Stripe keys): unlock instantly.
+        const res = await api('/billing/dev-unlock', { method: 'POST' });
+        applyEntitlements(res.entitlements);
+        closePaywall();
+        toast('All boroughs unlocked');
+        document.getElementById('borough-banner').innerHTML = '';
+        applyFilters();
+        if (activeRoute === 'fanhub') renderFanHub();
+        refreshChatGate();
+    } catch (e) {
+        toast('Could not start checkout');
+    }
 }
 
 function renderBoroughBanner() {
@@ -5743,7 +5487,6 @@ document.addEventListener('click', (e) => {
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         closeBrowseMenu();
-        if (document.getElementById('matchday-modal')?.classList.contains('open')) closeMatchdayModal();
     }
 });
 
@@ -5766,13 +5509,140 @@ function clearSport() {
     applyFilters();
 }
 
+// ============ LIVE SCORES (real ESPN data) ============
+const SCORE_SPORTS = ['Soccer', 'NBA', 'NFL', 'MLB', 'NHL'];
+let activeScoreSport = 'Soccer';
+let scoresTimer = null;
+
+function renderScoresTabs() {
+    const tabs = document.getElementById('scores-tabs');
+    if (!tabs) return;
+    tabs.innerHTML = SCORE_SPORTS.map(s =>
+        `<button class="scores-tab ${s === activeScoreSport ? 'active' : ''}" onclick="pickScoreSport('${s}')">${s}</button>`
+    ).join('');
+}
+
+function pickScoreSport(s) {
+    activeScoreSport = s;
+    renderScoresTabs();
+    loadScores();
+}
+
+function scoreFixtureTime(f) {
+    if (f.live || f.completed) return f.statusDetail || (f.live ? 'LIVE' : 'Final');
+    const d = new Date(f.date);
+    if (isNaN(d)) return f.statusDetail || '';
+    return d.toLocaleDateString([], { weekday: 'short' }) + ' · ' +
+           d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+}
+
+function scoreSide(side, showScore, isWinner) {
+    const logo = side.logo ? `<img src="${side.logo}" alt="" loading="lazy">` : '';
+    const num = showScore && side.score != null ? `<span class="score-num">${side.score}</span>` : '';
+    return `<div class="score-team">
+        ${logo}
+        <span class="score-team-name ${isWinner ? 'win' : ''}">${side.name}</span>
+        ${num}
+    </div>`;
+}
+
+async function loadScores() {
+    const rail = document.getElementById('scores-rail');
+    if (!rail) return;
+    try {
+        const data = await api('/scores?sport=' + encodeURIComponent(activeScoreSport));
+        const fixtures = data.fixtures || [];
+        if (!fixtures.length) {
+            rail.innerHTML = `<div class="scores-empty">No ${activeScoreSport} fixtures right now — check another sport.</div>`;
+            return;
+        }
+        const showScore = (f) => f.live || f.completed;
+        rail.innerHTML = fixtures.slice(0, 20).map(f => `
+            <div class="score-card">
+                <div class="score-card-top">
+                    <span>${f.league || activeScoreSport}</span>
+                    ${f.live ? '<span class="score-live"><span class="dot"></span>LIVE</span>' : ''}
+                </div>
+                ${scoreSide(f.away, showScore(f), f.away.winner)}
+                ${scoreSide(f.home, showScore(f), f.home.winner)}
+                <div class="score-card-foot">${scoreFixtureTime(f)}${f.venue ? ' · ' + f.venue : ''}</div>
+            </div>
+        `).join('');
+    } catch (e) {
+        rail.innerHTML = `<div class="scores-empty">Live scores unavailable right now.</div>`;
+    }
+}
+
+function startScoresAutoRefresh() {
+    if (scoresTimer) clearInterval(scoresTimer);
+    // Refresh every 60s while the home page is visible.
+    scoresTimer = setInterval(() => { if (activeRoute === 'home') loadScores(); }, 60000);
+}
+
 // ============ INIT ============
-buildCountries();
-buildSubtabs();
-buildSportGrid();
-renderBoroughBanner();
-applyFilters();
-initRouting();
+async function bootstrap() {
+    // Restore session from a stored token
+    if (authToken) {
+        try {
+            const me = await api('/auth/me');
+            currentUser = me.user;
+            signedInAs = me.user.displayName || me.user.email;
+            applyEntitlements(me.entitlements);
+        } catch {
+            authToken = null;
+            localStorage.removeItem('lineup_token');
+        }
+    }
+
+    // Load content from the API. The built-in arrays remain as a fallback if
+    // the backend is unreachable (e.g. opening index.html with no server).
+    try {
+        const [c, e, pl, sc, ln] = await Promise.all([
+            api('/countries'), api('/events'), api('/polls'),
+            api('/schedule'), api('/lineups'),
+        ]);
+        if (c?.countries?.length) countries = c.countries;
+        if (e?.events) parties = e.events;
+        if (pl?.polls) {
+            polls = pl.polls;
+            votedPolls = {};
+            polls.forEach(p => {
+                if (p.votedOptionId != null) {
+                    const i = p.options.findIndex(o => o.id === p.votedOptionId);
+                    if (i >= 0) votedPolls[p.id] = i;
+                }
+            });
+        }
+        if (sc?.schedule) schedule = sc.schedule;
+        if (ln?.lineups && Object.keys(ln.lineups).length) lineups = ln.lineups;
+    } catch (err) {
+        console.warn('Using built-in data — API unavailable:', err.message);
+    }
+
+    await loadSaved();
+
+    // Handle returning from a real Stripe checkout
+    if (/[?&]unlocked=1/.test(location.search)) {
+        toast('Payment complete — boroughs unlocked');
+        history.replaceState(null, '', location.pathname + location.hash);
+    }
+
+    applyAuthState();
+    buildCountries();
+    buildSubtabs();
+    buildSportGrid();
+    renderBoroughBanner();
+    applyFilters();
+    initRouting();
+
+    // Live scores (real data)
+    renderScoresTabs();
+    loadScores();
+    startScoresAutoRefresh();
+}
+
+bootstrap();
+
 window.addEventListener('hashchange', () => {
     const hash = location.hash.replace('#/', '');
     if (['home','events','fanhub','worldcup'].includes(hash)) route(hash);
