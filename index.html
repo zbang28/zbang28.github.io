@@ -925,12 +925,18 @@
         padding: 56px 32px 60px;
         overflow: hidden;
     }
-    .hero-video {
+    .hero-photo {
         position: absolute; inset: 0;
-        width: 100%; height: 100%;
-        object-fit: cover;
+        background-image: url('https://images.unsplash.com/photo-1577223625816-7546f13df25d?w=1800&q=85&auto=format&fit=crop');
+        background-size: cover;
+        background-position: center 38%;
         z-index: 0;
-        opacity: 0.78;
+        opacity: 0.85;
+        animation: hero-zoom 18s ease-in-out infinite alternate;
+    }
+    @keyframes hero-zoom {
+        0%   { transform: scale(1)    translate3d(0,0,0); }
+        100% { transform: scale(1.12) translate3d(-1%,-2%,0); }
     }
     .hero::before {
         content: ''; position: absolute; inset: 0;
@@ -3829,14 +3835,7 @@
 <!-- ============ HOME PAGE ============ -->
 <section class="page" data-page="home">
     <div class="hero">
-        <video class="hero-video" autoplay muted loop playsinline
-            poster="https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=1800&q=85&auto=format&fit=crop"
-            onerror="this.style.display='none'">
-            <!-- Bar crowd erupting after a goal -->
-            <source src="https://videos.pexels.com/video-files/8973290/8973290-uhd_2560_1440_30fps.mp4" type="video/mp4">
-            <source src="https://videos.pexels.com/video-files/7625859/7625859-uhd_2560_1440_25fps.mp4" type="video/mp4">
-            <source src="https://videos.pexels.com/video-files/3209828/3209828-uhd_2560_1440_25fps.mp4" type="video/mp4">
-        </video>
+        <div class="hero-photo"></div>
         <div class="hero-content">
             <div class="hero-eyebrow"><span class="live-dot"></span><span id="hero-live-count">FIFA 2026 · NYC · 47 watch parties live</span></div>
             <h1>Find your <span class="gradient">HomeTurf.</span></h1>
@@ -4268,7 +4267,6 @@ let schedule = [
     { country:'AR', sport:'Soccer', home:{name:'Argentina', flag:'🇦🇷'}, away:{name:'Brazil', flag:'🇧🇷'}, tournament:'Copa America', date:'Sat · 4:00 PM', venue:'Maracanã' },
     { country:'AR', sport:'Soccer', home:{name:'Argentina', flag:'🇦🇷'}, away:{name:'Uruguay', flag:'🇺🇾'}, tournament:'Copa America', date:'Wed · 8:00 PM', venue:'Monumental' },
     { country:'US', sport:'Soccer', home:{name:'USA', flag:'🇺🇸'}, away:{name:'Mexico', flag:'🇲🇽'}, tournament:'CONCACAF', date:'Tonight · 8:00 PM', venue:'AT&T Stadium' },
-    { country:'US', sport:'NBA', home:{name:'Knicks', flag:''}, away:{name:'Celtics', flag:''}, tournament:'NBA Playoffs', date:'Tonight · 7:30 PM', venue:'MSG' },
     { country:'BR', sport:'Soccer', home:{name:'Brazil', flag:'🇧🇷'}, away:{name:'Argentina', flag:'🇦🇷'}, tournament:'Copa America', date:'Sat · 4:00 PM', venue:'Maracanã' },
     { country:'EN', sport:'Soccer', home:{name:'England', flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿'}, away:{name:'Spain', flag:'🇪🇸'}, tournament:'Euro Qualifier', date:'Sun · 11:00 AM', venue:'Wembley' },
 ];
@@ -4336,80 +4334,30 @@ const matchPhotos = {
     'Argentina vs. Brazil':         'https://images.unsplash.com/photo-1577223625816-7546f13df25d?w=800&q=80&auto=format&fit=crop',
     'Brazil vs. Argentina':         'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=80&auto=format&fit=crop',
     'USA vs. Mexico':               'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=800&q=80&auto=format&fit=crop',
-    'Arsenal vs. Liverpool':        'https://images.unsplash.com/photo-1488003700468-a3b69dd3afc1?w=800&q=80&auto=format&fit=crop',
-    'Real Madrid vs. Barcelona':    'https://images.unsplash.com/photo-1551958219-acbc608c6377?w=800&q=80&auto=format&fit=crop',
-    'Knicks vs. Celtics':           'https://images.unsplash.com/photo-1518604666860-9ed391f76460?w=800&q=80&auto=format&fit=crop',
-    'Lakers vs. Warriors':          'https://images.unsplash.com/photo-1519861531473-9200262188bf?w=800&q=80&auto=format&fit=crop',
-    'Nets vs. Heat':                'https://images.unsplash.com/photo-1571019613540-996a692acfd5?w=800&q=80&auto=format&fit=crop',
-    'Bills vs. Chiefs':             'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&q=80&auto=format&fit=crop',
-    'Cowboys vs. Eagles':           'https://images.unsplash.com/photo-1495555687398-3f50d6e79e1e?w=800&q=80&auto=format&fit=crop',
-    '49ers vs. Seahawks':           'https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=800&q=80&auto=format&fit=crop',
-    'Yankees vs. Red Sox':          'https://images.unsplash.com/photo-1471295253337-3ceaaedca402?w=800&q=80&auto=format&fit=crop',
-    'Rangers vs. Devils':           'https://images.unsplash.com/photo-1517649763962-0c623066013b?w=900&q=80&auto=format&fit=crop',
-    'Islanders vs. Bruins':         'https://images.unsplash.com/photo-1580692114672-b3aaccdb5fd8?w=800&q=80&auto=format&fit=crop',
-    'UFC 312 Main Card':            'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=80&auto=format&fit=crop',
-    'Monaco Grand Prix':            'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=800&q=80&auto=format&fit=crop',
-    'Michigan vs. Ohio State':      'https://images.unsplash.com/photo-1495555687398-3f50d6e79e1e?w=800&q=80&auto=format&fit=crop',
     'Argentina Victory Parade':     'https://images.unsplash.com/photo-1577223625816-7546f13df25d?w=800&q=80&auto=format&fit=crop',
     'Brazil Carnival March':        'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=80&auto=format&fit=crop',
-    'Knicks Championship Parade':   'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=800&q=80&auto=format&fit=crop',
-    'Pickup Soccer · 5v5':          'https://images.unsplash.com/photo-1551958219-acbc608c6377?w=800&q=80&auto=format&fit=crop',
-    'Pickup Basketball · Open Run': 'https://images.unsplash.com/photo-1519861531473-9200262188bf?w=800&q=80&auto=format&fit=crop',
-    'Pickup Soccer':                'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=800&q=80&auto=format&fit=crop',
 };
 
 function photoFor(p) {
     return matchPhotos[p.match] || photos[p.sport] || photos.Soccer;
 }
 
-// Per-team color + short name + logo URL. Used to render Team A vs Team B card art.
+// Per-nation color + flag. Used to render Team A vs Team B card art (World Cup only).
 const teamData = {
-    // Nations (use country flags)
-    'Argentina':       { color:'#75aadb', flag:'🇦🇷' },
-    'Brazil':          { color:'#009c3b', flag:'🇧🇷' },
-    'USA':             { color:'#3c3b6e', flag:'🇺🇸' },
-    'Mexico':          { color:'#006847', flag:'🇲🇽' },
-    'England':         { color:'#ce1124', flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿' },
-    'Spain':           { color:'#aa151b', flag:'🇪🇸' },
-    'Uruguay':         { color:'#7b8fa8', flag:'🇺🇾' },
-    // Soccer clubs
-    'Arsenal':         { color:'#ef0107', label:'ARS' },
-    'Liverpool':       { color:'#c8102e', label:'LIV' },
-    'Real Madrid':     { color:'#ffffff', label:'RMA', text:'#0e0f11' },
-    'Barcelona':       { color:'#a50044', label:'FCB' },
-    // NBA — ESPN CDN team logos
-    'Knicks':          { color:'#006bb6', label:'NYK', logo:'https://a.espncdn.com/i/teamlogos/nba/500/nyk.png' },
-    'Celtics':         { color:'#007a33', label:'BOS', logo:'https://a.espncdn.com/i/teamlogos/nba/500/bos.png' },
-    'Lakers':          { color:'#552583', label:'LAL', logo:'https://a.espncdn.com/i/teamlogos/nba/500/lal.png' },
-    'Warriors':        { color:'#1d428a', label:'GSW', logo:'https://a.espncdn.com/i/teamlogos/nba/500/gs.png'  },
-    'Nets':            { color:'#000000', label:'BKN', logo:'https://a.espncdn.com/i/teamlogos/nba/500/bkn.png' },
-    'Heat':            { color:'#98002e', label:'MIA', logo:'https://a.espncdn.com/i/teamlogos/nba/500/mia.png' },
-    // NFL
-    'Bills':           { color:'#00338d', label:'BUF', logo:'https://a.espncdn.com/i/teamlogos/nfl/500/buf.png' },
-    'Chiefs':          { color:'#e31837', label:'KC',  logo:'https://a.espncdn.com/i/teamlogos/nfl/500/kc.png'  },
-    'Cowboys':         { color:'#003594', label:'DAL', logo:'https://a.espncdn.com/i/teamlogos/nfl/500/dal.png' },
-    'Eagles':          { color:'#004c54', label:'PHI', logo:'https://a.espncdn.com/i/teamlogos/nfl/500/phi.png' },
-    '49ers':           { color:'#aa0000', label:'SF',  logo:'https://a.espncdn.com/i/teamlogos/nfl/500/sf.png'  },
-    'Seahawks':        { color:'#002244', label:'SEA', logo:'https://a.espncdn.com/i/teamlogos/nfl/500/sea.png' },
-    // MLB
-    'Yankees':         { color:'#0c2340', label:'NYY', logo:'https://a.espncdn.com/i/teamlogos/mlb/500/nyy.png' },
-    'Red Sox':         { color:'#bd3039', label:'BOS', logo:'https://a.espncdn.com/i/teamlogos/mlb/500/bos.png' },
-    'Mets':            { color:'#002d72', label:'NYM', logo:'https://a.espncdn.com/i/teamlogos/mlb/500/nym.png' },
-    'Dodgers':         { color:'#005a9c', label:'LAD', logo:'https://a.espncdn.com/i/teamlogos/mlb/500/lad.png' },
-    'Cubs':            { color:'#0e3386', label:'CHC', logo:'https://a.espncdn.com/i/teamlogos/mlb/500/chc.png' },
-    'Phillies':        { color:'#e81828', label:'PHI', logo:'https://a.espncdn.com/i/teamlogos/mlb/500/phi.png' },
-    // NHL
-    'Rangers':         { color:'#0033a0', label:'NYR', logo:'https://a.espncdn.com/i/teamlogos/nhl/500/nyr.png' },
-    'Devils':          { color:'#c8102e', label:'NJD', logo:'https://a.espncdn.com/i/teamlogos/nhl/500/nj.png'  },
-    'Islanders':       { color:'#00539b', label:'NYI', logo:'https://a.espncdn.com/i/teamlogos/nhl/500/nyi.png' },
-    'Bruins':          { color:'#fcb514', label:'BOS', text:'#0e0f11', logo:'https://a.espncdn.com/i/teamlogos/nhl/500/bos.png' },
-    // College football
-    'Michigan':        { color:'#00274c', label:'MICH', logo:'https://a.espncdn.com/i/teamlogos/ncaa/500/130.png' },
-    'Ohio State':      { color:'#bb0000', label:'OSU',  logo:'https://a.espncdn.com/i/teamlogos/ncaa/500/194.png' },
-    'Alabama':         { color:'#9e1b32', label:'ALA' },
-    'Georgia':         { color:'#ba0c2f', label:'UGA' },
-    'Texas':           { color:'#bf5700', label:'TEX' },
-    'USC':             { color:'#990000', label:'USC' },
+    'Argentina':   { color:'#75aadb', flag:'🇦🇷' },
+    'Brazil':      { color:'#009c3b', flag:'🇧🇷' },
+    'USA':         { color:'#3c3b6e', flag:'🇺🇸' },
+    'Mexico':      { color:'#006847', flag:'🇲🇽' },
+    'England':     { color:'#ce1124', flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿' },
+    'Spain':       { color:'#aa151b', flag:'🇪🇸' },
+    'France':      { color:'#0055a4', flag:'🇫🇷' },
+    'Germany':     { color:'#000000', flag:'🇩🇪' },
+    'Italy':       { color:'#008c45', flag:'🇮🇹' },
+    'Portugal':    { color:'#046a38', flag:'🇵🇹' },
+    'Netherlands': { color:'#ff6900', flag:'🇳🇱' },
+    'Croatia':     { color:'#f0263c', flag:'🇭🇷' },
+    'Uruguay':     { color:'#7b8fa8', flag:'🇺🇾' },
+    'Canada':      { color:'#d80621', flag:'🇨🇦' },
 };
 
 function cardArtHTML(p) {
@@ -5660,11 +5608,12 @@ function buildSportGrid() {
 
 function buildFeatured() {
     const grid = document.getElementById('featured-grid');
+    if (!grid) return;
     const featured = [
-        { kicker:'WORLD CUP', title:'USA vs Mexico — tonight at Washington Square', photo:photos.Soccer, sport:'Soccer' },
-        { kicker:'NBA PLAYOFFS', title:'Knicks vs Celtics — Foley\'s & beyond', photo:photos.NBA, sport:'NBA' },
-        { kicker:'COPA AMERICA', title:'Argentina vs Brazil — Brooklyn watch parties', photo:photos.Soccer, sport:'Soccer' },
-        { kicker:'NFL SUNDAY', title:'Bills vs Chiefs — get a booth early', photo:photos.NFL, sport:'NFL' },
+        { kicker:'GROUP STAGE', title:'USA vs Mexico — tonight at Washington Square', photo:photos.Soccer, sport:'Soccer' },
+        { kicker:'EL CLÁSICO', title:'Argentina vs Brazil — Brooklyn watch parties', photo:photos.Soccer, sport:'Soccer' },
+        { kicker:'EURO PREVIEW', title:'England vs France — Sunday at Churchill', photo:photos.Soccer, sport:'Soccer' },
+        { kicker:'FINAL WEEKEND', title:'Times Square Fan Festival — 30k cap', photo:photos.Soccer, sport:'Soccer' },
     ];
     grid.innerHTML = featured.map(f => `
         <button class="featured-tile" onclick="pickSport('${f.sport}')">
