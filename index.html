@@ -2386,24 +2386,63 @@
         box-shadow: 0 2px 6px rgba(232,185,35,0.4);
         z-index: 3;
     }
-    /* BASIC — name-only directory row */
+    /* BASIC — name-only directory row that expands on hover */
     .mini-basic {
+        position: relative;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        cursor: pointer;
+        overflow: hidden;
+        transition: border-color .2s, box-shadow .2s, transform .2s;
+    }
+    .mini-basic-row {
         display: grid;
         grid-template-columns: 1fr auto;
         align-items: center;
         gap: 12px;
         padding: 12px 14px;
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        cursor: pointer;
-        transition: border-color .15s, background .15s, transform .15s;
     }
-    .mini-basic:hover { border-color: var(--text); background: var(--surface-2); transform: translateY(-1px); }
     .mini-basic-name { font-size: 14px; font-weight: 800; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .mini-basic-meta { font-size: 11px; color: var(--text-mute); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .mini-basic-stars { font-size: 11px; color: #e8b923; letter-spacing: 1px; white-space: nowrap; }
     .mini-basic-rating { font-size: 11px; font-weight: 800; color: var(--text-dim); margin-left: 4px; }
+
+    /* Hidden expanded preview — slides in on hover */
+    .mini-basic-expand {
+        display: grid;
+        grid-template-columns: 110px 1fr;
+        gap: 12px;
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        transition: max-height .25s ease, opacity .2s ease, padding .25s ease;
+        padding: 0 14px;
+    }
+    .mini-basic-expand img {
+        width: 100%; height: 100%;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+    .mini-basic-expand-img { position: relative; min-height: 90px; }
+    .mini-basic-expand-body { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--text-dim); }
+    .mini-basic-expand-body strong { color: var(--text); font-size: 13px; font-weight: 800; }
+    .mini-basic-expand-perks { display: flex; flex-wrap: wrap; gap: 4px; }
+    .mini-basic-expand-perks span {
+        font-size: 10px; font-weight: 700;
+        background: var(--surface-2); color: var(--text);
+        padding: 2px 7px; border-radius: 999px;
+    }
+    .mini-basic:hover {
+        border-color: var(--text);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        transform: translateY(-1px);
+    }
+    .mini-basic:hover .mini-basic-expand {
+        max-height: 140px;
+        opacity: 1;
+        padding: 4px 14px 14px;
+    }
     body.worldcup-mode .mini-basic { background: var(--surface); }
 
     /* ===== Mini cards (compact list items) ===== */
@@ -4642,7 +4681,32 @@ const matchPhotos = {
     'Brazil Carnival March':        'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=80&auto=format&fit=crop',
 };
 
+// Bar/venue interior photos by type — used for the 100 NYC venue listings
+// so they show the actual bar vibe instead of a generic soccer pitch.
+const barPhotosByType = {
+    'Sports Bar':   'https://images.unsplash.com/photo-1572116469696-31de0f17cc34?w=800&q=80&auto=format&fit=crop',
+    'Pub':          'https://images.unsplash.com/photo-1546726747-421c6d69c929?w=800&q=80&auto=format&fit=crop',
+    'Brewery':      'https://images.unsplash.com/photo-1518176258769-f227c798150e?w=800&q=80&auto=format&fit=crop',
+    'Beer Hall':    'https://images.unsplash.com/photo-1538488881038-e252a119ace7?w=800&q=80&auto=format&fit=crop',
+    'Beer Garden':  'https://images.unsplash.com/photo-1505075106905-fb052892c116?w=800&q=80&auto=format&fit=crop',
+    'Beer Bar':     'https://images.unsplash.com/photo-1571613316887-6f8d5cbf7ef7?w=800&q=80&auto=format&fit=crop',
+    'Restaurant':   'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80&auto=format&fit=crop',
+    'Tapas':        'https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=800&q=80&auto=format&fit=crop',
+    'Cocktail Bar': 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=800&q=80&auto=format&fit=crop',
+    'Bar':          'https://images.unsplash.com/photo-1572116469696-31de0f17cc34?w=800&q=80&auto=format&fit=crop',
+    'Dive Bar':     'https://images.unsplash.com/photo-1572116469696-31de0f17cc34?w=800&q=80&auto=format&fit=crop',
+    'Tavern':       'https://images.unsplash.com/photo-1546726747-421c6d69c929?w=800&q=80&auto=format&fit=crop',
+    'Korean Pub':   'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&q=80&auto=format&fit=crop',
+    'Pocha':        'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&q=80&auto=format&fit=crop',
+    'Arcade Bar':   'https://images.unsplash.com/photo-1511213966740-24d719a0a814?w=800&q=80&auto=format&fit=crop',
+    'Rooftop':      'https://images.unsplash.com/photo-1551918120-9739cb430c6d?w=800&q=80&auto=format&fit=crop',
+    'Plaza':        'https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=800&q=80&auto=format&fit=crop',
+    'Park':         'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=800&q=80&auto=format&fit=crop',
+};
+
 function photoFor(p) {
+    // Tiered NYC venues → show the bar interior, not a soccer field.
+    if (p.tier && barPhotosByType[p.vtype]) return barPhotosByType[p.vtype];
     return matchPhotos[p.match] || photos[p.sport] || photos.Soccer;
 }
 
@@ -4828,6 +4892,8 @@ const teamData = {
 };
 
 function cardArtHTML(p) {
+    // Tiered venue listings → show the bar interior photo, not flag art.
+    if (p.tier) return `<img src="${photoFor(p)}" alt="${p.venue}" loading="lazy">`;
     const parts = p.match.split(' vs. ');
     if (parts.length === 2) {
         const aKey = parts[0].trim();
@@ -5176,20 +5242,32 @@ function renderMiniList(filtered) {
     }
 
     filtered.forEach(p => {
-        // BASIC tier → name-only row (no image, no big card)
+        // BASIC tier → name-only row that expands on hover into a card preview
         if (p.tier === 'basic' && !isLocked(p)) {
             const row = document.createElement('div');
             row.className = 'mini-basic';
             row.dataset.id = p.id;
             const g = googleReviewFor(p);
+            const perks = (p.perks || []).slice(0, 3).map(x => `<span>${x}</span>`).join('');
             row.innerHTML = `
-                <div style="min-width:0">
-                    <div class="mini-basic-name">${p.venue}</div>
-                    <div class="mini-basic-meta">${p.neighborhood} · ${p.borough} · ${p.vtype}</div>
+                <div class="mini-basic-row">
+                    <div style="min-width:0">
+                        <div class="mini-basic-name">${p.venue}</div>
+                        <div class="mini-basic-meta">${p.neighborhood} · ${p.borough} · ${p.vtype}</div>
+                    </div>
+                    <div style="text-align:right">
+                        <span class="mini-basic-stars">${starsHTML(g.rating)}</span>
+                        <span class="mini-basic-rating">${g.rating}</span>
+                    </div>
                 </div>
-                <div style="text-align:right">
-                    <span class="mini-basic-stars">${starsHTML(g.rating)}</span>
-                    <span class="mini-basic-rating">${g.rating}</span>
+                <div class="mini-basic-expand">
+                    <div class="mini-basic-expand-img"><img src="${photoFor(p)}" alt="${p.venue}" loading="lazy"></div>
+                    <div class="mini-basic-expand-body">
+                        <strong>${p.venue}</strong>
+                        <div>${p.distance} mi · ${p.time} · ${p.price}</div>
+                        <div>★ ${g.rating} (${g.count} Google reviews)</div>
+                        <div class="mini-basic-expand-perks">${perks}</div>
+                    </div>
                 </div>`;
             row.addEventListener('click', () => { focusCard(p.id); openVenue(p.id); });
             row.addEventListener('mouseenter', () => highlightPin(p.id, true));
@@ -5308,9 +5386,9 @@ function focusCard(id) {
         const m = mapMarkers.find(mm => mm._partyId === id);
         if (m) m.openPopup();
     }
-    // scroll card into view
-    const card = document.querySelector(`.mini-card[data-id="${id}"]`);
-    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    // scroll card (or basic row) into view in the left list
+    const card = document.querySelector(`.mini-card[data-id="${id}"], .mini-basic[data-id="${id}"]`);
+    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 function highlightPin(id, on) {
@@ -5445,10 +5523,18 @@ function renderMap(filtered) {
         `, { offset:[0,-12] });
         marker.on('click', () => {
             if (locked) { setTimeout(openPaywall, 200); return; }
-            focusCard(p.id);
+            focusCard(p.id);   // scrolls list to the matching tile
+            openVenue(p.id);   // and opens the full venue panel
         });
-        marker.on('mouseover', () => highlightPin(p.id, true));
-        marker.on('mouseout', () => highlightPin(p.id, false));
+        marker.on('mouseover', () => {
+            highlightPin(p.id, true);
+            marker.openPopup();
+        });
+        marker.on('mouseout', () => {
+            highlightPin(p.id, false);
+            // Keep popup open if this pin is the active/selected one
+            if (activeCardId !== p.id) marker.closePopup();
+        });
         mapMarkers.push(marker);
     });
     if (!activeCardId) {
