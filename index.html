@@ -3650,6 +3650,116 @@
         color: var(--text-mute); font-size: 13px;
     }
 
+    /* Sponsored recommendation popup */
+    .sponsor-pop {
+        position: fixed;
+        right: 18px; bottom: 18px;
+        width: 340px; max-width: calc(100vw - 36px);
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 16px 18px 14px;
+        box-shadow: 0 24px 60px rgba(0,0,0,0.45);
+        z-index: 220;
+        opacity: 0;
+        transform: translateY(20px) scale(0.96);
+        pointer-events: none;
+        transition: opacity 0.35s cubic-bezier(.2,.7,.2,1),
+                    transform 0.35s cubic-bezier(.2,.7,.2,1);
+    }
+    .sponsor-pop.show {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        pointer-events: auto;
+    }
+    .sponsor-pop-close {
+        position: absolute; top: 10px; right: 10px;
+        width: 26px; height: 26px;
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: 50%;
+        color: var(--text-dim);
+        cursor: pointer;
+        display: grid; place-items: center;
+    }
+    .sponsor-pop-close:hover { color: var(--text); }
+    .sponsor-pop-tag {
+        display: inline-block;
+        background: linear-gradient(135deg, #ffd400, #ff7a1a);
+        color: #1a1408;
+        font-size: 9px; font-weight: 900; letter-spacing: 2px;
+        padding: 3px 8px; border-radius: 4px;
+        margin-bottom: 12px;
+    }
+    .sponsor-pop-body {
+        display: grid;
+        grid-template-columns: 56px 1fr;
+        gap: 12px; align-items: start;
+        margin-bottom: 12px;
+    }
+    .sponsor-pop-img {
+        width: 56px; height: 56px;
+        border-radius: 12px;
+        background-size: cover; background-position: center;
+        flex-shrink: 0;
+    }
+    .sponsor-pop-name {
+        font-family: 'Inter', sans-serif;
+        font-weight: 900; font-size: 15px;
+        letter-spacing: -0.01em;
+        color: var(--text);
+        margin-bottom: 2px;
+    }
+    .sponsor-pop-tagline {
+        font-size: 12px; color: var(--text-dim);
+        line-height: 1.35;
+    }
+    .sponsor-pop-meta {
+        font-size: 11px; color: var(--text-mute);
+        font-weight: 700;
+        margin-top: 4px;
+        display: flex; gap: 4px; align-items: center;
+    }
+    .sponsor-pop-rating { color: var(--amber); }
+    .sponsor-pop-bullet { color: var(--text-mute); }
+    .sponsor-pop-actions {
+        display: flex; gap: 8px; margin-bottom: 10px;
+    }
+    .sponsor-pop-cta {
+        flex: 1;
+        background: var(--grad-1);
+        color: white; border: none;
+        padding: 10px;
+        border-radius: 8px;
+        font: inherit; font-size: 13px; font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 6px 14px rgba(255,45,58,0.35);
+        transition: transform 0.15s;
+    }
+    .sponsor-pop-cta:hover { transform: translateY(-1px); }
+    .sponsor-pop-skip {
+        background: transparent; color: var(--text-dim);
+        border: 1px solid var(--border);
+        padding: 10px 14px;
+        border-radius: 8px;
+        font: inherit; font-size: 12px; font-weight: 700;
+        cursor: pointer;
+    }
+    .sponsor-pop-foot {
+        font-size: 10px; color: var(--text-mute);
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        font-weight: 700;
+    }
+    .sponsor-pop-foot a {
+        background: var(--grad-1);
+        -webkit-background-clip: text; background-clip: text;
+        color: transparent;
+        cursor: pointer;
+        text-decoration: underline;
+    }
+
     /* Toast */
     .toast {
         position: fixed; bottom: 24px; left: 50%;
@@ -4002,6 +4112,33 @@
 </footer>
 
 <div class="toast" id="toast"></div>
+
+<!-- Sponsored recommendation popup -->
+<aside class="sponsor-pop" id="sponsor-pop" aria-hidden="true">
+    <button class="sponsor-pop-close" onclick="closeSponsor()" aria-label="Dismiss">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="sponsor-pop-tag">SPONSORED</div>
+    <div class="sponsor-pop-body">
+        <div class="sponsor-pop-img" id="sponsor-pop-img"></div>
+        <div class="sponsor-pop-text">
+            <div class="sponsor-pop-name" id="sponsor-pop-name"></div>
+            <div class="sponsor-pop-tagline" id="sponsor-pop-tagline"></div>
+            <div class="sponsor-pop-meta">
+                <span class="sponsor-pop-rating" id="sponsor-pop-rating"></span>
+                <span class="sponsor-pop-bullet">·</span>
+                <span id="sponsor-pop-area"></span>
+            </div>
+        </div>
+    </div>
+    <div class="sponsor-pop-actions">
+        <button class="sponsor-pop-cta" id="sponsor-pop-cta">Visit spot</button>
+        <button class="sponsor-pop-skip" onclick="closeSponsor()">Not now</button>
+    </div>
+    <div class="sponsor-pop-foot">
+        Recommended by partner · <a onclick="openSponsorAbout()">Sponsor your spot</a>
+    </div>
+</aside>
 
 <script>
 // ============ DATA ============
@@ -5328,6 +5465,78 @@ function setVenueTab(tab) {
 // Paywall removed — any lingering callers route to sign-in
 function openPaywall() { openSignIn(); }
 function closePaywall() {}
+
+// ============ SPONSORED RECOMMENDATION POPUP ============
+const sponsors = [
+    {
+        name: 'Brooklyn Brewery',
+        tagline: 'Official Argentina watch-party partner. Free first beer with your match RSVP.',
+        rating: '★ 4.7',
+        area: 'Williamsburg, BK · 0.7 mi',
+        img: 'https://images.unsplash.com/photo-1559925393-8be0ec4767c8?w=400&q=80&auto=format&fit=crop',
+        partyId: 14,
+    },
+    {
+        name: 'The Football Factory',
+        tagline: 'England vs. Spain on 24 screens. Reserve a table for your crew.',
+        rating: '★ 4.5',
+        area: "East Village, MNH · 4.1 mi",
+        img: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&q=80&auto=format&fit=crop',
+        partyId: 11,
+    },
+    {
+        name: 'Miss Favela',
+        tagline: 'Brazil match-day caipirinhas, samba band live, no cover before kickoff.',
+        rating: '★ 4.8',
+        area: 'Williamsburg, BK · 0.6 mi',
+        img: 'https://images.unsplash.com/photo-1572116469696-31de0f17cc34?w=400&q=80&auto=format&fit=crop',
+        partyId: 3,
+    },
+    {
+        name: 'Westlight Rooftop',
+        tagline: 'Skyline views + the final on the LED wall. $15 minimum at the bar.',
+        rating: '★ 4.6',
+        area: 'Williamsburg · Heated rooftop',
+        img: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=400&q=80&auto=format&fit=crop',
+        partyId: 4,
+    },
+];
+
+function initSponsorPopup() {
+    if (sessionStorage.getItem('sponsorDismissed')) return;
+    setTimeout(() => showSponsor(), 4500);
+}
+
+function showSponsor() {
+    const pop = document.getElementById('sponsor-pop');
+    if (!pop) return;
+    const s = sponsors[Math.floor(Math.random() * sponsors.length)];
+    document.getElementById('sponsor-pop-img').style.backgroundImage = `url('${s.img}')`;
+    document.getElementById('sponsor-pop-name').textContent = s.name;
+    document.getElementById('sponsor-pop-tagline').textContent = s.tagline;
+    document.getElementById('sponsor-pop-rating').textContent = s.rating;
+    document.getElementById('sponsor-pop-area').textContent = s.area;
+    const cta = document.getElementById('sponsor-pop-cta');
+    cta.onclick = () => {
+        closeSponsor();
+        if (typeof openVenue === 'function') openVenue(s.partyId);
+    };
+    pop.classList.add('show');
+    pop.setAttribute('aria-hidden', 'false');
+}
+
+function closeSponsor() {
+    const pop = document.getElementById('sponsor-pop');
+    if (!pop) return;
+    pop.classList.remove('show');
+    pop.setAttribute('aria-hidden', 'true');
+    sessionStorage.setItem('sponsorDismissed', '1');
+}
+
+function openSponsorAbout() {
+    closeSponsor();
+    toast('Sponsorship info coming soon — email hello@kickoff.app');
+}
 async function unlockBoroughs() {
     if (!isSignedIn()) { closePaywall(); openSignIn(); return; }
     try {
@@ -5632,6 +5841,7 @@ async function bootstrap() {
     renderBoroughBanner();
     applyFilters();
     initRouting();
+    initSponsorPopup();
 
     // Live scores (real data)
     renderScoresTabs();
