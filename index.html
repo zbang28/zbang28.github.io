@@ -2367,12 +2367,51 @@
         filter: invert(0.92) hue-rotate(180deg) brightness(1.05) saturate(0.85);
     }
 
+    /* ===== Listing tiers — gold (featured), silver (standard), basic (name only) ===== */
+    /* GOLD — paid premium placement: larger, bordered, FEATURED badge */
+    .mini-card.tier-gold {
+        grid-template-columns: 200px 1fr;
+        box-shadow: 0 8px 22px rgba(232,185,35,0.22), 0 0 0 1.5px #e8b923;
+    }
+    .mini-card.tier-gold .mini-card-img { min-height: 200px; }
+    .mini-card.tier-gold .mini-card-match { font-size: 17px; }
+    .mini-card.tier-gold .mini-card-venue { font-size: 16px; }
+    .mini-card.tier-gold .mini-card-featured-badge {
+        position: absolute; top: 10px; right: 10px;
+        background: linear-gradient(135deg, #f9d423, #e8b923);
+        color: #1a1408;
+        font-size: 9px; font-weight: 900;
+        padding: 4px 9px; border-radius: 4px;
+        letter-spacing: 0.12em;
+        box-shadow: 0 2px 6px rgba(232,185,35,0.4);
+        z-index: 3;
+    }
+    /* BASIC — name-only directory row */
+    .mini-basic {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 14px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        cursor: pointer;
+        transition: border-color .15s, background .15s, transform .15s;
+    }
+    .mini-basic:hover { border-color: var(--text); background: var(--surface-2); transform: translateY(-1px); }
+    .mini-basic-name { font-size: 14px; font-weight: 800; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mini-basic-meta { font-size: 11px; color: var(--text-mute); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mini-basic-stars { font-size: 11px; color: #e8b923; letter-spacing: 1px; white-space: nowrap; }
+    .mini-basic-rating { font-size: 11px; font-weight: 800; color: var(--text-dim); margin-left: 4px; }
+    body.worldcup-mode .mini-basic { background: var(--surface); }
+
     /* ===== Mini cards (compact list items) ===== */
-    .mini-list { display: flex; flex-direction: column; gap: 12px; }
+    .mini-list { display: flex; flex-direction: column; gap: 10px; }
     .mini-card {
         display: grid;
-        grid-template-columns: 120px 1fr;
-        gap: 14px;
+        grid-template-columns: 156px 1fr;
+        gap: 16px;
         background: rgba(255,255,255,0.10);
         backdrop-filter: blur(14px);
         color: var(--text);
@@ -2472,7 +2511,7 @@
     }
 
     .mini-card-img {
-        position: relative; height: 100%; min-height: 120px;
+        position: relative; height: 100%; min-height: 156px;
         background: var(--surface-2);
         overflow: hidden;
     }
@@ -2515,13 +2554,13 @@
     .mini-card-pill.free { background: var(--green); color: white; }
     .mini-card-pill.lock { background: var(--amber); color: #1a1408; }
     .mini-card-body {
-        padding: 10px 12px 10px 0;
-        display: flex; flex-direction: column; gap: 3px;
+        padding: 14px 14px 14px 0;
+        display: flex; flex-direction: column; gap: 5px;
         min-width: 0;
     }
     .mini-card-match {
         font-family: 'Inter', sans-serif;
-        font-weight: 900; font-size: 14px;
+        font-weight: 900; font-size: 15px;
         letter-spacing: -0.02em;
         line-height: 1.1;
         text-transform: uppercase;
@@ -2529,8 +2568,35 @@
         white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .mini-card-venue {
-        font-size: 13px; font-weight: 700; color: var(--text);
+        font-size: 14px; font-weight: 700; color: var(--text);
         white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    /* Google reviews row */
+    .mini-card-reviews {
+        display: inline-flex; align-items: center; gap: 6px;
+        font-size: 12px; color: var(--text-dim);
+        white-space: nowrap;
+    }
+    .mini-card-stars {
+        color: #e8b923;
+        font-size: 13px;
+        letter-spacing: 1px;
+        line-height: 1;
+    }
+    .mini-card-rating { font-weight: 800; color: var(--text); }
+    .mini-card-count { color: var(--text-mute); }
+    .mini-card-google {
+        display: inline-flex; align-items: center; gap: 4px;
+        font-size: 10px; font-weight: 700; color: var(--text-mute);
+        letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .mini-card-google::before {
+        content: 'G'; width: 13px; height: 13px;
+        background: linear-gradient(135deg,#4285F4 0%,#34A853 33%,#FBBC05 66%,#EA4335 100%);
+        color: #fff; border-radius: 50%;
+        display: inline-grid; place-items: center;
+        font-family: 'Inter', sans-serif;
+        font-weight: 900; font-size: 9px;
     }
     .mini-card-venue.locked-name {
         color: var(--amber);
@@ -4318,6 +4384,166 @@ let parties = [
     { id:33, sport:'Soccer', country:'US', match:'Sunday Pickup · World Cup Edition', venue:'Randall\'s Island Field 65', vtype:'Park', neighborhood:'Randall\'s Island', borough:'Manhattan', distance:7.4, time:'Sun · 11:00 AM', perks:['Free','Real Pitch'], live:false, when:'This weekend', lat:40.7896, lng:-73.9213, eventType:'pickup', price:'Free' },
 ];
 
+// ===== Top 100 NYC venues from worldcup.nyc/venues =====
+// Format: [name, vtype, neighborhood, borough, countryCode, lat, lng, theme]
+// theme = country name ("England", "Argentina", etc.) or "Neutral"
+// Country code follows the venue's fan-base; theme drives the match filter.
+const topVenues100 = [
+    // ---- Manhattan / Hell's Kitchen, Midtown, Theater District ----
+    ['Football Factory at Legends', 'Sports Bar', 'Midtown', 'Manhattan', 'US', 40.7530, -73.9870, 'Neutral'],
+    ['Smithfield Hall', 'Sports Bar', 'Chelsea', 'Manhattan', 'EN', 40.7465, -74.0014, 'England'],
+    ['Smithfield Hall NYC', 'Sports Bar', 'Hudson Yards', 'Manhattan', 'EN', 40.7540, -74.0008, 'England'],
+    ["Jack Doyle's", 'Pub', 'Midtown', 'Manhattan', 'IE', 40.7570, -73.9849, 'Ireland'],
+    ['Pioneers Bar', 'Sports Bar', 'Midtown', 'Manhattan', 'US', 40.7561, -73.9888, 'Neutral'],
+    ["Carragher's", 'Sports Bar', 'Midtown', 'Manhattan', 'EN', 40.7563, -73.9874, 'England'],
+    ['The Churchill Tavern', 'Pub', 'Chelsea', 'Manhattan', 'EN', 40.7449, -73.9841, 'England'],
+    ['Nevada Smiths', 'Sports Bar', 'East Village', 'Manhattan', 'EN', 40.7265, -73.9815, 'England'],
+    ["Mustang Harry's", 'Sports Bar', 'NoMad', 'Manhattan', 'IE', 40.7448, -73.9876, 'Ireland'],
+    ['The Mean Fiddler', 'Pub', 'Theater District', 'Manhattan', 'IE', 40.7590, -73.9845, 'Ireland'],
+    ['Bierhaus NYC', 'Beer Hall', 'Midtown', 'Manhattan', 'DE', 40.7547, -73.9737, 'Germany'],
+    ["Rudy's Bar & Grill", 'Dive Bar', "Hell's Kitchen", 'Manhattan', 'US', 40.7610, -73.9907, 'Neutral'],
+    ['The Landmark Tavern', 'Pub', "Hell's Kitchen", 'Manhattan', 'IE', 40.7638, -73.9918, 'Ireland'],
+    ['The Pony Bar', 'Sports Bar', "Hell's Kitchen", 'Manhattan', 'US', 40.7648, -73.9909, 'Neutral'],
+    ['Mercury Bar', 'Sports Bar', "Hell's Kitchen", 'Manhattan', 'US', 40.7575, -73.9892, 'Neutral'],
+    ['Connolly\'s Pub Penn Station', 'Pub', 'Penn Station', 'Manhattan', 'IE', 40.7506, -73.9939, 'Ireland'],
+    ['The Perfect Pint', 'Pub', 'Midtown', 'Manhattan', 'IE', 40.7574, -73.9858, 'Ireland'],
+    ['Stout NYC', 'Sports Bar', 'Penn Station', 'Manhattan', 'IE', 40.7504, -73.9925, 'Ireland'],
+    ["McSorley's Old Ale House", 'Pub', 'East Village', 'Manhattan', 'IE', 40.7286, -73.9893, 'Ireland'],
+    ['Beer Authority', 'Beer Hall', 'Theater District', 'Manhattan', 'US', 40.7548, -73.9904, 'Neutral'],
+    ["Slattery's Midtown Pub", 'Pub', 'Midtown', 'Manhattan', 'IE', 40.7550, -73.9774, 'Ireland'],
+    ['Heartland Brewery', 'Brewery', 'Midtown', 'Manhattan', 'US', 40.7560, -73.9851, 'Neutral'],
+    ['Yard House', 'Sports Bar', 'Midtown', 'Manhattan', 'US', 40.7592, -73.9892, 'Neutral'],
+    ['Bravest', 'Sports Bar', 'Midtown', 'Manhattan', 'US', 40.7521, -73.9824, 'Neutral'],
+    ['The Pony Bar UES', 'Sports Bar', 'Upper East Side', 'Manhattan', 'US', 40.7723, -73.9572, 'Neutral'],
+
+    // ---- Manhattan / Downtown ----
+    ['Buenos Aires Restaurant', 'Restaurant', 'East Village', 'Manhattan', 'AR', 40.7244, -73.9809, 'Argentina'],
+    ['Zum Schneider', 'Beer Garden', 'East Village', 'Manhattan', 'DE', 40.7248, -73.9789, 'Germany'],
+    ['Boqueria Soho', 'Tapas', 'SoHo', 'Manhattan', 'ES', 40.7235, -74.0007, 'Spain'],
+    ['Religion of Sports House of Futbol', 'Sports Bar', 'NoLita', 'Manhattan', 'US', 40.7227, -73.9952, 'Neutral'],
+    ['Red Lion NYC', 'Pub', 'Greenwich Village', 'Manhattan', 'EN', 40.7295, -74.0017, 'England'],
+    ['White Horse Tavern', 'Pub', 'West Village', 'Manhattan', 'US', 40.7361, -74.0048, 'Neutral'],
+    ['Kettle of Fish', 'Pub', 'West Village', 'Manhattan', 'US', 40.7320, -74.0037, 'Neutral'],
+    ['Peculier Pub', 'Pub', 'West Village', 'Manhattan', 'US', 40.7290, -73.9985, 'Neutral'],
+    ['Blind Tiger Ale House', 'Pub', 'West Village', 'Manhattan', 'US', 40.7330, -74.0037, 'Neutral'],
+    ['The Ear Inn', 'Pub', 'SoHo', 'Manhattan', 'US', 40.7256, -74.0091, 'Neutral'],
+    ['Fanelli Cafe', 'Restaurant', 'SoHo', 'Manhattan', 'IT', 40.7235, -73.9985, 'Italy'],
+    ['Mulberry Street Bar', 'Bar', 'Little Italy', 'Manhattan', 'IT', 40.7193, -73.9968, 'Italy'],
+    ['Caffe Napoli', 'Restaurant', 'Little Italy', 'Manhattan', 'IT', 40.7204, -73.9967, 'Italy'],
+    ['Apotheke', 'Cocktail Bar', 'Chinatown', 'Manhattan', 'US', 40.7148, -73.9969, 'Neutral'],
+    ['Dante West Village', 'Cocktail Bar', 'West Village', 'Manhattan', 'IT', 40.7321, -74.0033, 'Italy'],
+    ['The Dead Rabbit', 'Pub', 'Financial District', 'Manhattan', 'IE', 40.7034, -74.0117, 'Ireland'],
+    ['Stone Street Tavern', 'Pub', 'Financial District', 'Manhattan', 'US', 40.7048, -74.0114, 'Neutral'],
+    ['The Dubliner', 'Pub', 'Financial District', 'Manhattan', 'IE', 40.7088, -74.0103, 'Ireland'],
+    ['Fraunces Tavern', 'Tavern', 'Financial District', 'Manhattan', 'US', 40.7038, -74.0117, 'Neutral'],
+    ["Becketts Bar and Grill", 'Pub', 'Financial District', 'Manhattan', 'IE', 40.7062, -74.0090, 'Ireland'],
+
+    // ---- Manhattan / Uptown ----
+    ['Tír na nÓg', 'Pub', 'Murray Hill', 'Manhattan', 'IE', 40.7493, -73.9924, 'Ireland'],
+    ['Amsterdam Ale House', 'Sports Bar', 'Upper West Side', 'Manhattan', 'US', 40.7846, -73.9785, 'Neutral'],
+    ['The Dead Poet', 'Pub', 'Upper West Side', 'Manhattan', 'IE', 40.7866, -73.9758, 'Ireland'],
+    ['Dublin House', 'Pub', 'Upper West Side', 'Manhattan', 'IE', 40.7807, -73.9778, 'Ireland'],
+    ['The Gin Mill', 'Sports Bar', 'Upper West Side', 'Manhattan', 'US', 40.7866, -73.9764, 'Neutral'],
+    ['Blondies Sports Bar', 'Sports Bar', 'Upper West Side', 'Manhattan', 'US', 40.7842, -73.9776, 'Neutral'],
+    ["Dorrian's Red Hand", 'Bar', 'Upper East Side', 'Manhattan', 'US', 40.7736, -73.9566, 'Neutral'],
+    ["Pete's Tavern", 'Restaurant', 'Gramercy', 'Manhattan', 'US', 40.7368, -73.9854, 'Neutral'],
+    ['Hudson Yards Tavern', 'Pub', 'Hudson Yards', 'Manhattan', 'US', 40.7540, -74.0008, 'Neutral'],
+    ['The Ginger Man', 'Beer Bar', 'Grand Central', 'Manhattan', 'US', 40.7494, -73.9817, 'Neutral'],
+    ['Barn Joo', 'Korean Pub', 'Koreatown', 'Manhattan', 'KR', 40.7468, -73.9851, 'Korea Republic'],
+    ['Pocha 32', 'Pocha', 'Koreatown', 'Manhattan', 'KR', 40.7474, -73.9866, 'Korea Republic'],
+    ['Tomiño Taberna Gallega', 'Tapas', 'Little Italy', 'Manhattan', 'ES', 40.7185, -73.9978, 'Spain'],
+    ['Treadwell Park', 'Bar', 'Battery Park City', 'Manhattan', 'US', 40.7140, -74.0156, 'Neutral'],
+    ['Legends FC', 'Sports Bar', 'Battery Park City', 'Manhattan', 'EN', 40.7122, -74.0151, 'England'],
+    ["Iggy's Keltic Lounge", 'Pub', 'East Village', 'Manhattan', 'IE', 40.7273, -73.9776, 'Ireland'],
+
+    // ---- Brooklyn / Williamsburg + Greenpoint ----
+    ['Brooklyn Brewery', 'Brewery', 'Williamsburg', 'Brooklyn', 'US', 40.7218, -73.9573, 'Neutral'],
+    ['Berry Park', 'Beer Garden', 'Williamsburg', 'Brooklyn', 'DE', 40.7196, -73.9554, 'Germany'],
+    ['Banter Bar', 'Sports Bar', 'Williamsburg', 'Brooklyn', 'US', 40.7152, -73.9596, 'Neutral'],
+    ['Radegast Hall & Biergarten', 'Beer Hall', 'Williamsburg', 'Brooklyn', 'DE', 40.7159, -73.9605, 'Germany'],
+    ['Roebling Sporting Club', 'Sports Bar', 'Williamsburg', 'Brooklyn', 'US', 40.7165, -73.9608, 'Neutral'],
+    ['Kent Ale House', 'Pub', 'Williamsburg', 'Brooklyn', 'EN', 40.7220, -73.9588, 'England'],
+    ['Spike Hill', 'Pub', 'Williamsburg', 'Brooklyn', 'IE', 40.7144, -73.9612, 'Ireland'],
+    ['Mugs Ale House', 'Pub', 'Williamsburg', 'Brooklyn', 'US', 40.7138, -73.9572, 'Neutral'],
+    ['Brooklyn Bowl', 'Sports Bar', 'Williamsburg', 'Brooklyn', 'US', 40.7220, -73.9580, 'Neutral'],
+    ['The Levee', 'Bar', 'Williamsburg', 'Brooklyn', 'US', 40.7176, -73.9576, 'Neutral'],
+    ['The Commodore', 'Bar', 'Williamsburg', 'Brooklyn', 'US', 40.7104, -73.9530, 'Neutral'],
+    ['TailGate Brooklyn', 'Sports Bar', 'Williamsburg', 'Brooklyn', 'US', 40.7128, -73.9560, 'Neutral'],
+    ['Iona Bar', 'Pub', 'Williamsburg', 'Brooklyn', 'IE', 40.7177, -73.9573, 'Ireland'],
+    ['Spritzenhaus33', 'Beer Hall', 'Greenpoint', 'Brooklyn', 'DE', 40.7222, -73.9523, 'Germany'],
+    ['Keg & Lantern', 'Pub', 'Greenpoint', 'Brooklyn', 'US', 40.7273, -73.9508, 'Neutral'],
+    ['Pencil Factory Bar', 'Bar', 'Greenpoint', 'Brooklyn', 'US', 40.7314, -73.9559, 'Neutral'],
+    ['Black Rabbit', 'Pub', 'Greenpoint', 'Brooklyn', 'US', 40.7263, -73.9532, 'Neutral'],
+    ['Brouwerij Lane', 'Beer Bar', 'Greenpoint', 'Brooklyn', 'US', 40.7311, -73.9540, 'Neutral'],
+    ["P.J. Leahy's", 'Pub', 'Greenpoint', 'Brooklyn', 'IE', 40.7311, -73.9544, 'Ireland'],
+
+    // ---- Brooklyn / Park Slope, Fort Greene, Carroll Gardens, Crown Heights ----
+    ['Threes Brewing', 'Brewery', 'Park Slope', 'Brooklyn', 'US', 40.6809, -73.9819, 'Neutral'],
+    ['Park Slope Ale House', 'Pub', 'Park Slope', 'Brooklyn', 'US', 40.6730, -73.9794, 'Neutral'],
+    ['The Owl Farm', 'Bar', 'Park Slope', 'Brooklyn', 'US', 40.6766, -73.9807, 'Neutral'],
+    ['Union Hall', 'Bar', 'Park Slope', 'Brooklyn', 'US', 40.6792, -73.9803, 'Neutral'],
+    ['The Monro Pub', 'Pub', 'Park Slope', 'Brooklyn', 'EN', 40.6712, -73.9837, 'England'],
+    ['Black Forest Brooklyn', 'Beer Hall', 'Fort Greene', 'Brooklyn', 'DE', 40.6892, -73.9740, 'Germany'],
+    ['Barcade', 'Arcade Bar', 'Fort Greene', 'Brooklyn', 'US', 40.6878, -73.9758, 'Neutral'],
+    ['The Brazen Head', 'Pub', 'Boerum Hill', 'Brooklyn', 'IE', 40.6873, -73.9879, 'Ireland'],
+    ['Clover Club', 'Cocktail Bar', 'Carroll Gardens', 'Brooklyn', 'US', 40.6837, -73.9966, 'Neutral'],
+    ['Brooklyn Inn', 'Pub', 'Boerum Hill', 'Brooklyn', 'US', 40.6849, -73.9866, 'Neutral'],
+    ['Henry Public', 'Pub', 'Cobble Hill', 'Brooklyn', 'US', 40.6852, -73.9999, 'Neutral'],
+    ['The Vanderbilt', 'Restaurant', 'Prospect Heights', 'Brooklyn', 'US', 40.6786, -73.9696, 'Neutral'],
+    ['Franklin Park', 'Beer Garden', 'Crown Heights', 'Brooklyn', 'US', 40.6717, -73.9555, 'Neutral'],
+    ["Roberta's Bar", 'Bar', 'Bushwick', 'Brooklyn', 'US', 40.7053, -73.9335, 'Neutral'],
+    ['The Diamond', 'Bar', 'Greenpoint', 'Brooklyn', 'US', 40.7261, -73.9512, 'Neutral'],
+    ['Soccer Tavern', 'Sports Bar', 'Bay Ridge', 'Brooklyn', 'EN', 40.6233, -74.0292, 'England'],
+    ['Salty Dog', 'Sports Bar', 'Bay Ridge', 'Brooklyn', 'US', 40.6256, -74.0285, 'Neutral'],
+
+    // ---- Williamsburg country-themed (existing data references) ----
+    ['Miss Favela', 'Restaurant', 'Williamsburg', 'Brooklyn', 'BR', 40.7126, -73.9637, 'Brazil'],
+    ['La Boqueria', 'Restaurant', 'Williamsburg', 'Brooklyn', 'AR', 40.7115, -73.9569, 'Argentina'],
+    ["Frankie's Bar", 'Sports Bar', 'Bensonhurst', 'Brooklyn', 'IT', 40.6055, -73.9966, 'Italy'],
+    ['Westlight Rooftop', 'Rooftop', 'Williamsburg', 'Brooklyn', 'US', 40.7220, -73.9580, 'Neutral'],
+];
+
+// Expand topVenues100 into the parties array (Soccer · watch-party events).
+(function expandTopVenues() {
+    const perksCycle = [
+        ['Big Screens','Wings'],
+        ['Pints','Soccer Crowd'],
+        ['Sound On','Booths'],
+        ['Outdoor','Beer Garden'],
+        ['Big Screens'],
+        ['Multiple TVs','Specials'],
+    ];
+    const startId = 1000;
+    topVenues100.forEach((v, i) => {
+        const [name, vtype, neighborhood, borough, country, lat, lng, theme] = v;
+        const id = startId + i;
+        const match = theme === 'Neutral'
+            ? 'World Cup 2026 · Every match'
+            : `${theme} · World Cup HQ`;
+        // Listing tier — drives card size. Simulates how much the venue paid.
+        //   gold   = featured (big tile)     ~10%
+        //   silver = standard tile           ~25%
+        //   basic  = name-only listing       ~65%
+        let tier;
+        if (i % 11 === 0) tier = 'gold';
+        else if (i % 4 === 0) tier = 'silver';
+        else tier = 'basic';
+        parties.push({
+            id, sport:'Soccer', country, match, venue:name, vtype, neighborhood, borough,
+            distance: Math.round(((id * 7) % 78 + 2) / 10 * 10) / 10,
+            time: 'Every match day',
+            perks: perksCycle[i % perksCycle.length],
+            live: false,
+            when: 'This weekend',
+            lat, lng,
+            eventType: 'watch-party',
+            price: 'No cover',
+            neutral: theme === 'Neutral',
+            tier,
+        });
+    });
+})();
+
 let polls = [
     { id:101, country:'AR', borough:'Brooklyn', question:"Best Argentina watch spot in Brooklyn?", sub:'Brooklyn · Saturday match', options:[
         { name:'La Boqueria', votes:284 },
@@ -4802,11 +5028,13 @@ function matchesFilters(p) {
     if (when && p.when !== when) return false;
     if (activeCountry && p.country !== activeCountry.code) return false;
     if (activeWcMatch) {
-        const m = p.match.toLowerCase();
-        const a = activeWcMatch.a.toLowerCase();
-        const b = activeWcMatch.b.toLowerCase();
-        // include if the party's match string references either team
-        if (!m.includes(a) && !m.includes(b)) return false;
+        // Neutral venues show every match.
+        if (!p.neutral) {
+            const m = p.match.toLowerCase();
+            const a = activeWcMatch.a.toLowerCase();
+            const b = activeWcMatch.b.toLowerCase();
+            if (!m.includes(a) && !m.includes(b)) return false;
+        }
     }
     if (q && !`${p.match} ${p.venue} ${p.neighborhood}`.toLowerCase().includes(q)) return false;
     for (const f of activeQuickFilters) {
@@ -4906,6 +5134,7 @@ function clearWcMatch() {
 
 function isWorldCupEvent(p) {
     if (p.sport !== 'Soccer') return false;
+    if (p.neutral || p.match.includes('World Cup')) return true;
     const nations = countries.map(c => c.name);
     return nations.some(n => p.match.includes(n));
 }
@@ -4947,8 +5176,30 @@ function renderMiniList(filtered) {
     }
 
     filtered.forEach(p => {
+        // BASIC tier → name-only row (no image, no big card)
+        if (p.tier === 'basic' && !isLocked(p)) {
+            const row = document.createElement('div');
+            row.className = 'mini-basic';
+            row.dataset.id = p.id;
+            const g = googleReviewFor(p);
+            row.innerHTML = `
+                <div style="min-width:0">
+                    <div class="mini-basic-name">${p.venue}</div>
+                    <div class="mini-basic-meta">${p.neighborhood} · ${p.borough} · ${p.vtype}</div>
+                </div>
+                <div style="text-align:right">
+                    <span class="mini-basic-stars">${starsHTML(g.rating)}</span>
+                    <span class="mini-basic-rating">${g.rating}</span>
+                </div>`;
+            row.addEventListener('click', () => { focusCard(p.id); openVenue(p.id); });
+            row.addEventListener('mouseenter', () => highlightPin(p.id, true));
+            row.addEventListener('mouseleave', () => highlightPin(p.id, false));
+            wrap.appendChild(row);
+            return;
+        }
         const card = document.createElement('div');
-        card.className = 'mini-card' + (isLocked(p) ? ' locked' : '') + (activeCardId === p.id ? ' active' : '');
+        const tierClass = p.tier === 'gold' ? ' tier-gold' : '';
+        card.className = 'mini-card' + tierClass + (isLocked(p) ? ' locked' : '') + (activeCardId === p.id ? ' active' : '');
         card.dataset.id = p.id;
         const co = countries.find(c => c.code === p.country);
         const isFree = p.perks.some(pk => pk.toLowerCase() === 'free');
@@ -4959,6 +5210,7 @@ function renderMiniList(filtered) {
         card.style.setProperty('--card-tint', `linear-gradient(135deg, ${accentA}99, ${accentB}55)`);
         card.style.setProperty('--card-accent', accentA);
         card.innerHTML = `
+            ${p.tier === 'gold' ? '<span class="mini-card-featured-badge">FEATURED</span>' : ''}
             <div class="mini-card-img">
                 ${cardArtHTML(p)}
                 ${p.live ? '<span class="mini-card-pill live"><span class="dot"></span>LIVE</span>'
@@ -4973,6 +5225,16 @@ function renderMiniList(filtered) {
                         Exclusive · sign in to reveal
                        </div>`
                     : `<div class="mini-card-venue">${p.venue}</div>`}
+                ${(() => {
+                    if (isLocked(p)) return '';
+                    const g = googleReviewFor(p);
+                    return `<div class="mini-card-reviews">
+                        <span class="mini-card-stars">${starsHTML(g.rating)}</span>
+                        <span class="mini-card-rating">${g.rating}</span>
+                        <span class="mini-card-count">(${g.count})</span>
+                        <span class="mini-card-google">Google</span>
+                    </div>`;
+                })()}
                 <div class="mini-card-meta">
                     <span>${p.neighborhood}</span><span class="sep">·</span>
                     <span>${p.distance} mi</span><span class="sep">·</span>
@@ -4989,10 +5251,43 @@ function renderMiniList(filtered) {
             focusCard(p.id);
             openVenue(p.id);
         });
-        card.addEventListener('mouseenter', () => highlightPin(p.id, true));
-        card.addEventListener('mouseleave', () => highlightPin(p.id, false));
+        let hoverTimer = null;
+        card.addEventListener('mouseenter', () => {
+            highlightPin(p.id, true);
+            if (isLocked(p)) return;
+            clearTimeout(hoverTimer);
+            // Small delay so casually moving past cards doesn't open the panel.
+            hoverTimer = setTimeout(() => {
+                focusCard(p.id);
+                openVenue(p.id);
+            }, 220);
+        });
+        card.addEventListener('mouseleave', () => {
+            highlightPin(p.id, false);
+            clearTimeout(hoverTimer);
+        });
         wrap.appendChild(card);
     });
+}
+
+// Deterministic mock Google review data per venue (stable across renders).
+function googleReviewFor(p) {
+    const seed = p.id;
+    const rating = (3.8 + ((seed * 13) % 13) / 10).toFixed(1); // 3.8 .. 5.0
+    const count = 80 + (seed * 41) % 920;
+    return { rating, count };
+}
+function starsHTML(rating) {
+    const r = parseFloat(rating);
+    const full = Math.floor(r);
+    const half = (r - full) >= 0.5;
+    let s = '';
+    for (let i = 0; i < 5; i++) {
+        if (i < full) s += '★';
+        else if (i === full && half) s += '★';
+        else s += '☆';
+    }
+    return s;
 }
 
 function focusCard(id) {
@@ -6066,9 +6361,14 @@ async function loadScores() {
     if (!rail) return;
     try {
         const data = await api('/scores?sport=' + encodeURIComponent(activeScoreSport));
-        const fixtures = data.fixtures || [];
+        // WC-only site: filter out club leagues (Premier League, La Liga, etc.).
+        // Keep only fixtures whose league mentions "World Cup" (incl. qualifiers).
+        const fixtures = (data.fixtures || []).filter(f => {
+            const lg = (f.league || '').toLowerCase();
+            return lg.includes('world cup') || lg.includes('fifa');
+        });
         if (!fixtures.length) {
-            rail.innerHTML = `<div class="scores-empty">No ${activeScoreSport} fixtures right now — check another sport.</div>`;
+            rail.innerHTML = `<div class="scores-empty">World Cup 2026 kicks off June 11 — check back for live scores.</div>`;
             return;
         }
         const showScore = (f) => f.live || f.completed;
