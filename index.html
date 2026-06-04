@@ -3913,7 +3913,7 @@
 <section class="page" data-page="fanhub">
     <div id="fanhub-locked" class="fanhub-lock">
         <div class="fanhub-lock-card">
-            <div class="fanhub-lock-badge">PRO · MEMBERS ONLY</div>
+            <div class="fanhub-lock-badge">FAN HUB</div>
             <h1 class="fanhub-lock-title">Fan <em>Hub</em></h1>
             <p class="fanhub-lock-sub">An exclusive lounge for verified supporters. Live country chat, the starting XI with reactions, and community polls — all behind one door.</p>
             <div class="fanhub-lock-features">
@@ -3941,10 +3941,10 @@
                 </div>
                 <div class="chat-body" id="chat-body"></div>
                 <div class="chat-premium-banner" id="chat-premium-banner">
-                    <strong>PRO</strong> · Texting in chat is for subscribers · $1.99 first month
+                    <strong>Sign in</strong> to chat with fellow supporters
                 </div>
                 <form class="chat-input" id="chat-input-form" onsubmit="sendChat(event)">
-                    <input id="chat-input" placeholder="Subscribe to chat with fellow supporters…">
+                    <input id="chat-input" placeholder="Sign in to chat with fellow supporters…">
                     <button type="submit">Send</button>
                 </form>
             </div>
@@ -4000,27 +4000,6 @@
         <div>© 2026 Kickoff. One Game. Every Crowd.</div>
     </div>
 </footer>
-
-<!-- Paywall -->
-<div class="modal-bg paywall" id="paywall" onclick="if(event.target===this)closePaywall()">
-    <div class="modal">
-        <div class="paywall-hero">
-            <h3>See every <strong>location</strong> across NYC</h3>
-            <p class="sub">Brooklyn is free, forever. Unlock the locations in Manhattan, Queens, the Bronx, and Staten Island — for life.</p>
-        </div>
-        <div class="paywall-features">
-            <div class="paywall-feature"><span class="check">✓</span><span><strong>Every watch-party location</strong> in all 5 boroughs</span></div>
-            <div class="paywall-feature"><span class="check">✓</span><span>Post-game parade routes & start points</span></div>
-            <div class="paywall-feature"><span class="check">✓</span><span>Pickup-game locations in every park</span></div>
-            <div class="paywall-feature"><span class="check">✓</span><span><strong>Community polls & chat</strong> in every borough</span></div>
-        </div>
-        <div class="paywall-price">$5<span class="small">ONE-TIME · UNLOCK ALL BOROUGHS FOR LIFE</span></div>
-        <div class="paywall-actions">
-            <button class="paywall-pay" onclick="unlockBoroughs()">Unlock all locations</button>
-            <button class="paywall-skip" onclick="closePaywall()">Maybe later</button>
-        </div>
-    </div>
-</div>
 
 <div class="toast" id="toast"></div>
 
@@ -4333,7 +4312,7 @@ let activeQuickFilters = new Set();
 let saved = new Set();
 let votedPolls = {};
 let reactions = {};
-let unlockedBoroughs = new Set(['Brooklyn']);
+let unlockedBoroughs = new Set(['Brooklyn','Manhattan','Queens','Bronx','Staten Island']);
 let currentView = 'list';
 let mapInstance = null;
 let mapMarkers = [];
@@ -4547,7 +4526,7 @@ function renderMiniList(filtered) {
                 ${isLocked(p)
                     ? `<div class="mini-card-venue locked-name">
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:5px"><rect x="4" y="11" width="16" height="11" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-                        Exclusive · subscribe to reveal
+                        Exclusive · sign in to reveal
                        </div>`
                     : `<div class="mini-card-venue">${p.venue}</div>`}
                 <div class="mini-card-meta">
@@ -5110,7 +5089,7 @@ async function api(path, { method = 'GET', body } = {}) {
 function isSignedIn() { return Boolean(currentUser); }
 
 function applyEntitlements(ent) {
-    unlockedBoroughs = new Set(ent?.boroughs?.length ? ent.boroughs : ['Brooklyn']);
+    unlockedBoroughs = new Set(['Brooklyn','Manhattan','Queens','Bronx','Staten Island']);
 }
 
 function applyAuthState() {
@@ -5177,7 +5156,7 @@ function signOut() {
     authToken = null; currentUser = null; signedInAs = null;
     localStorage.removeItem('lineup_token');
     saved = new Set();
-    unlockedBoroughs = new Set(['Brooklyn']);
+    unlockedBoroughs = new Set(['Brooklyn','Manhattan','Queens','Bronx','Staten Island']);
     applyAuthState();
     applyFilters();
     if (activeRoute === 'fanhub') renderFanHub();
@@ -5346,8 +5325,9 @@ function setVenueTab(tab) {
 }
 
 // ============ PAYWALL ============
-function openPaywall() { document.getElementById('paywall').classList.add('open'); }
-function closePaywall() { document.getElementById('paywall').classList.remove('open'); }
+// Paywall removed — any lingering callers route to sign-in
+function openPaywall() { openSignIn(); }
+function closePaywall() {}
 async function unlockBoroughs() {
     if (!isSignedIn()) { closePaywall(); openSignIn(); return; }
     try {
@@ -5419,6 +5399,7 @@ const sportTiles = [
 
 function buildSportGrid() {
     const grid = document.getElementById('sport-grid');
+    if (!grid) return;
     grid.innerHTML = sportTiles.map(s => {
         const count = parties.filter(p => p.sport === s.name).length;
         const live = parties.filter(p => p.sport === s.name && p.live).length;
