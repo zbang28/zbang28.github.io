@@ -5068,9 +5068,17 @@ function optionIndexFromId(poll, optionId) {
 }
 
 // ============ API CLIENT ============
-const API_BASE = (location.origin && location.origin.startsWith('http'))
-    ? location.origin + '/api'
-    : 'http://localhost:4000/api';
+// The backend runs on Vercel (serverless functions under /api). When this page
+// is served from the Vercel deployment itself, call same-origin. When it's
+// served from GitHub Pages (which can't run the backend) or opened as a local
+// file, point at the Vercel production deployment.
+const VERCEL_API_BASE = 'https://zbang28githubio.vercel.app/api';
+const API_BASE = (() => {
+    const host = location.hostname;
+    if (host === 'localhost' || host === '127.0.0.1') return location.origin + '/api';
+    if (host.endsWith('.vercel.app')) return location.origin + '/api';
+    return VERCEL_API_BASE;
+})();
 
 let authToken = localStorage.getItem('lineup_token') || null;
 let currentUser = null; // { id, email, displayName }
