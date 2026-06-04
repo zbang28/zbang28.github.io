@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lineup — Find watch parties, parades & pickup</title>
+<title>Kickoff — Find watch parties, parades & pickup</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -918,20 +918,26 @@
     /* ===== Discover Hero ===== */
     .hero {
         position: relative;
-        background-image:
+        background:
             linear-gradient(180deg, rgba(8,8,11,0.35) 0%, rgba(8,8,11,0.7) 100%),
-            url("https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=1800&q=85&auto=format&fit=crop");
-        background-size: cover;
-        background-position: center 35%;
+            #0a0a0c;
         color: white;
         padding: 56px 32px 60px;
         overflow: hidden;
     }
+    .hero-video {
+        position: absolute; inset: 0;
+        width: 100%; height: 100%;
+        object-fit: cover;
+        z-index: 0;
+        opacity: 0.78;
+    }
     .hero::before {
         content: ''; position: absolute; inset: 0;
         background:
-            radial-gradient(ellipse 70% 60% at 50% 50%, transparent 0%, rgba(8,8,11,0.45) 100%);
-        z-index: 0;
+            radial-gradient(ellipse 70% 60% at 50% 50%, transparent 0%, rgba(8,8,11,0.55) 100%),
+            linear-gradient(180deg, transparent 40%, rgba(8,8,11,0.45));
+        z-index: 1;
         pointer-events: none;
     }
     .hero-content {
@@ -3698,11 +3704,10 @@
     <div class="nav-inner">
         <a class="brand" href="#/discover">
             <div class="brand-mark">L</div>
-            <div class="brand-name">Lineup</div>
+            <div class="brand-name">Kickoff</div>
         </a>
         <div class="tabs" id="tabs">
             <button class="tab" data-route="home">Home</button>
-            <button class="tab" data-route="events">Events</button>
             <button class="tab highlight" data-route="worldcup">World Cup</button>
         </div>
         <div class="nav-right">
@@ -3714,11 +3719,17 @@
 <!-- ============ HOME PAGE ============ -->
 <section class="page" data-page="home">
     <div class="hero">
+        <video class="hero-video" autoplay muted loop playsinline
+            poster="https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=1800&q=85&auto=format&fit=crop"
+            onerror="this.style.display='none'">
+            <source src="https://videos.pexels.com/video-files/3209828/3209828-uhd_2560_1440_25fps.mp4" type="video/mp4">
+            <source src="https://videos.pexels.com/video-files/4761705/4761705-uhd_2560_1440_25fps.mp4" type="video/mp4">
+        </video>
         <div class="hero-content">
             <div class="hero-eyebrow"><span class="live-dot"></span><span id="hero-live-count">47 live · 12,840 fans tonight</span></div>
-            <h1>Pick a <span class="gradient">sport.</span><br>Find your <span class="gradient">crowd.</span></h1>
-            <button class="browse-map-btn" onclick="route('events')">
-                <span>Browse the map</span>
+            <h1>Pick a <span class="gradient">country.</span><br>Find your <span class="gradient">crowd.</span></h1>
+            <button class="browse-map-btn" onclick="route('worldcup')">
+                <span>Find a watch party</span>
                 <span class="browse-map-arrow">→</span>
             </button>
         </div>
@@ -3736,7 +3747,7 @@
 
     <div class="home-section">
         <div class="home-section-head">
-            <h2>Inside <em>Lineup</em></h2>
+            <h2>Inside <em>Kickoff</em></h2>
         </div>
         <div class="feature-grid">
 
@@ -3807,10 +3818,6 @@
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
             </button>
         </div>
-    </div>
-
-    <div class="sport-rail-wrap events-only">
-        <div class="sport-rail" id="sport-grid"></div>
     </div>
 
     <div class="filters">
@@ -3988,9 +3995,9 @@
     <div class="footer-inner">
         <div style="display:flex;align-items:center;gap:10px">
             <div class="brand-mark">L</div>
-            <div class="brand-name">Lineup</div>
+            <div class="brand-name">Kickoff</div>
         </div>
-        <div>© 2026 Lineup. One Game. Every Crowd.</div>
+        <div>© 2026 Kickoff. One Game. Every Crowd.</div>
     </div>
 </footer>
 
@@ -4333,6 +4340,8 @@ let mapMarkers = [];
 
 // ============ ROUTING ============
 function route(name) {
+    // Events tab retired — funnel any leftover events route to worldcup
+    if (name === 'events') name = 'worldcup';
     activeRoute = name;
     const pageKey = name === 'worldcup' ? 'events' : name;
     document.querySelectorAll('.page').forEach(p => p.classList.toggle('active', p.dataset.page === pageKey));
