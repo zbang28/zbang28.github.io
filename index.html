@@ -3832,11 +3832,13 @@
         <video class="hero-video" autoplay muted loop playsinline
             poster="https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=1800&q=85&auto=format&fit=crop"
             onerror="this.style.display='none'">
+            <!-- Bar crowd erupting after a goal -->
+            <source src="https://videos.pexels.com/video-files/8973290/8973290-uhd_2560_1440_30fps.mp4" type="video/mp4">
+            <source src="https://videos.pexels.com/video-files/7625859/7625859-uhd_2560_1440_25fps.mp4" type="video/mp4">
             <source src="https://videos.pexels.com/video-files/3209828/3209828-uhd_2560_1440_25fps.mp4" type="video/mp4">
-            <source src="https://videos.pexels.com/video-files/4761705/4761705-uhd_2560_1440_25fps.mp4" type="video/mp4">
         </video>
         <div class="hero-content">
-            <div class="hero-eyebrow"><span class="live-dot"></span><span id="hero-live-count">47 live · 12,840 fans tonight</span></div>
+            <div class="hero-eyebrow"><span class="live-dot"></span><span id="hero-live-count">FIFA 2026 · NYC · 47 watch parties live</span></div>
             <h1>Pick a <span class="gradient">country.</span><br>Find your <span class="gradient">crowd.</span></h1>
             <button class="browse-map-btn" onclick="route('worldcup')">
                 <span>Find a watch party</span>
@@ -4194,47 +4196,72 @@ const subtabs = [
 ];
 
 let parties = [
-    { id:1, sport:'Soccer', country:'AR', match:'Argentina vs. Brazil', venue:'La Boqueria', vtype:'Restaurant', neighborhood:'Williamsburg', borough:'Brooklyn', distance:0.4, time:'Sat · 4:00 PM', perks:['Tango','Empanadas'], live:true, when:'This weekend', lat:40.7115, lng:-73.9569, eventType:'watch-party', price:'No cover' },
-    { id:2, sport:'Soccer', country:'AR', match:'Argentina vs. Brazil', venue:'McCarren Park Lawn', vtype:'Park', neighborhood:'Greenpoint', borough:'Brooklyn', distance:0.8, time:'Sat · 4:00 PM', perks:['Outdoor','Free','Food Trucks'], live:true, when:'This weekend', lat:40.7205, lng:-73.9520, eventType:'watch-party', price:'Free' },
-    { id:3, sport:'Soccer', country:'BR', match:'Brazil vs. Argentina', venue:'Miss Favela', vtype:'Restaurant', neighborhood:'Williamsburg', borough:'Brooklyn', distance:0.6, time:'Sat · 4:00 PM', perks:['Caipirinhas','Samba'], live:false, when:'This weekend', lat:40.7126, lng:-73.9637, eventType:'watch-party', price:'No cover' },
-    { id:4, sport:'NHL', country:'US', match:'Rangers vs. Devils', venue:'Brooklyn Brewery', vtype:'Brewery', neighborhood:'Williamsburg', borough:'Brooklyn', distance:1.1, time:'Tonight · 7:00 PM', perks:['Craft Beer'], live:true, when:'Tonight', lat:40.7218, lng:-73.9573, eventType:'watch-party', price:'No cover' },
-    { id:5, sport:'MLB', country:'US', match:'Yankees vs. Red Sox', venue:'Domino Park', vtype:'Park', neighborhood:'Williamsburg', borough:'Brooklyn', distance:0.5, time:'Tomorrow · 1:05 PM', perks:['Outdoor','Family Friendly'], live:false, when:'Tomorrow', lat:40.7144, lng:-73.9676, eventType:'watch-party', price:'Free' },
-    { id:6, sport:'NFL', country:'US', match:'Bills vs. Chiefs', venue:'The Pourhouse', vtype:'Sports Bar', neighborhood:'Williamsburg', borough:'Brooklyn', distance:0.4, time:'Sun · 4:25 PM', perks:['Wings','Buckets'], live:false, when:'This weekend', lat:40.7115, lng:-73.9569, eventType:'watch-party', price:'No cover' },
+    // Argentina vs. Brazil — group stage
+    { id:1,  sport:'Soccer', country:'AR', match:'Argentina vs. Brazil', venue:'La Boqueria', vtype:'Restaurant', neighborhood:'Williamsburg', borough:'Brooklyn', distance:0.4, time:'Sat · 4:00 PM', perks:['Tango','Empanadas'], live:true, when:'This weekend', lat:40.7115, lng:-73.9569, eventType:'watch-party', price:'No cover' },
+    { id:2,  sport:'Soccer', country:'AR', match:'Argentina vs. Brazil', venue:'McCarren Park Lawn', vtype:'Park', neighborhood:'Greenpoint', borough:'Brooklyn', distance:0.8, time:'Sat · 4:00 PM', perks:['Outdoor','Free','Food Trucks'], live:true, when:'This weekend', lat:40.7205, lng:-73.9520, eventType:'watch-party', price:'Free' },
+    { id:3,  sport:'Soccer', country:'BR', match:'Brazil vs. Argentina', venue:'Miss Favela', vtype:'Restaurant', neighborhood:'Williamsburg', borough:'Brooklyn', distance:0.6, time:'Sat · 4:00 PM', perks:['Caipirinhas','Samba'], live:false, when:'This weekend', lat:40.7126, lng:-73.9637, eventType:'watch-party', price:'No cover' },
+    { id:7,  sport:'Soccer', country:'AR', match:'Argentina vs. Brazil', venue:'Boca Juniors NYC', vtype:'Restaurant', neighborhood:'Jackson Heights', borough:'Queens', distance:6.0, time:'Sat · 4:00 PM', perks:['Asado','Mate'], live:true, when:'This weekend', lat:40.7558, lng:-73.8831, eventType:'watch-party', price:'No cover' },
+
+    // USA vs. Mexico — North America group
+    { id:13, sport:'Soccer', country:'US', match:'USA vs. Mexico', venue:'Washington Square Park', vtype:'Park', neighborhood:'Greenwich Village', borough:'Manhattan', distance:5.2, time:'Tonight · 8:00 PM', perks:['Free','Big Crowd'], live:true, when:'Tonight', lat:40.7308, lng:-73.9973, eventType:'watch-party', price:'Free' },
+    { id:14, sport:'Soccer', country:'MX', match:'USA vs. Mexico', venue:'Tortilleria Nixtamal', vtype:'Restaurant', neighborhood:'Corona', borough:'Queens', distance:7.5, time:'Tonight · 8:00 PM', perks:['Tacos','Margaritas'], live:true, when:'Tonight', lat:40.7460, lng:-73.8580, eventType:'watch-party', price:'No cover' },
+    { id:50, sport:'Soccer', country:'US', match:'USA vs. Mexico', venue:'The Football Factory', vtype:'Sports Bar', neighborhood:'East Village', borough:'Manhattan', distance:4.1, time:'Tonight · 8:00 PM', perks:['Big Screens','Wings'], live:true, when:'Tonight', lat:40.7295, lng:-73.9870, eventType:'watch-party', price:'No cover' },
+
+    // England vs. France
+    { id:51, sport:'Soccer', country:'EN', match:'England vs. France', venue:"The Churchill Tavern", vtype:'Sports Bar', neighborhood:'Murray Hill', borough:'Manhattan', distance:5.6, time:'Sun · 12:00 PM', perks:['Pints','Sunday Roast'], live:false, when:'This weekend', lat:40.7449, lng:-73.9841, eventType:'watch-party', price:'No cover' },
+    { id:52, sport:'Soccer', country:'FR', match:'France vs. England', venue:"Le Bain Rooftop", vtype:'Rooftop', neighborhood:'Meatpacking', borough:'Manhattan', distance:5.0, time:'Sun · 12:00 PM', perks:['Skyline View','Champagne'], live:false, when:'This weekend', lat:40.7407, lng:-74.0085, eventType:'watch-party', price:'$15 min' },
+
+    // Spain vs. Germany
+    { id:53, sport:'Soccer', country:'ES', match:'Spain vs. Germany', venue:'Boqueria Soho', vtype:'Restaurant', neighborhood:'Soho', borough:'Manhattan', distance:4.6, time:'Sat · 11:00 AM', perks:['Tapas','Sangria'], live:false, when:'This weekend', lat:40.7235, lng:-74.0007, eventType:'watch-party', price:'No cover' },
+    { id:54, sport:'Soccer', country:'DE', match:'Germany vs. Spain', venue:'Loreley Beer Garden', vtype:'Brewery', neighborhood:'Lower East Side', borough:'Manhattan', distance:4.5, time:'Sat · 11:00 AM', perks:['Beer Garden','Pretzels'], live:false, when:'This weekend', lat:40.7196, lng:-73.9897, eventType:'watch-party', price:'No cover' },
+
+    // Portugal vs. Netherlands
+    { id:55, sport:'Soccer', country:'PT', match:'Portugal vs. Netherlands', venue:'Pao Restaurant', vtype:'Restaurant', neighborhood:'Soho', borough:'Manhattan', distance:4.7, time:'Wed · 2:00 PM', perks:['Bacalhau','Vinho Verde'], live:false, when:'This weekend', lat:40.7239, lng:-74.0023, eventType:'watch-party', price:'No cover' },
+
+    // Italy vs. Croatia
+    { id:56, sport:'Soccer', country:'IT', match:'Italy vs. Croatia', venue:"Frankie's Bar", vtype:'Sports Bar', neighborhood:'Bensonhurst', borough:'Brooklyn', distance:3.2, time:'Fri · 3:00 PM', perks:['Espresso','Cannoli'], live:false, when:'This weekend', lat:40.6055, lng:-73.9966, eventType:'watch-party', price:'No cover' },
+
+    // Group of 16 — knockouts
+    { id:57, sport:'Soccer', country:'US', match:'Round of 16: USA vs. Canada', venue:'Brooklyn Brewery', vtype:'Brewery', neighborhood:'Williamsburg', borough:'Brooklyn', distance:1.1, time:'Sun · 8:00 PM', perks:['Craft Beer','Big Screen'], live:false, when:'This weekend', lat:40.7218, lng:-73.9573, eventType:'watch-party', price:'No cover' },
+    { id:58, sport:'Soccer', country:'BR', match:'Round of 16: Brazil vs. Uruguay', venue:'Beco', vtype:'Restaurant', neighborhood:'Williamsburg', borough:'Brooklyn', distance:0.7, time:'Sat · 5:00 PM', perks:['Caipirinhas','Pao de Queijo'], live:false, when:'This weekend', lat:40.7134, lng:-73.9520, eventType:'watch-party', price:'No cover' },
+
+    // Final
+    { id:59, sport:'Soccer', country:'US', match:'World Cup Final', venue:'Westlight Rooftop', vtype:'Rooftop', neighborhood:'Williamsburg', borough:'Brooklyn', distance:1.1, time:'Sun · 3:00 PM', perks:['Skyline View','LED Wall','Heated'], live:false, when:'This weekend', lat:40.7220, lng:-73.9580, eventType:'watch-party', price:'$25 min' },
+    { id:60, sport:'Soccer', country:'US', match:'World Cup Final · Fan Festival', venue:'Times Square Fan Zone', vtype:'Plaza', neighborhood:'Midtown', borough:'Manhattan', distance:5.8, time:'Sun · 3:00 PM', perks:['Free','Mega Screen','30k Capacity'], live:false, when:'This weekend', lat:40.7580, lng:-73.9855, eventType:'watch-party', price:'Free' },
+
+    // Post-game parades / fan marches
     { id:20, sport:'Soccer', country:'AR', match:'Argentina Victory Parade', venue:'Bedford Ave → McCarren Park', vtype:'Plaza', neighborhood:'Williamsburg', borough:'Brooklyn', distance:0.5, time:'Sat · 6:30 PM', perks:['Free','March','Drums'], live:false, when:'This weekend', lat:40.7170, lng:-73.9560, eventType:'parade', price:'Free' },
     { id:21, sport:'Soccer', country:'BR', match:'Brazil Carnival March', venue:'Prospect Park West', vtype:'Park', neighborhood:'Park Slope', borough:'Brooklyn', distance:2.0, time:'Sun · 5:00 PM', perks:['Free','Samba','Floats'], live:false, when:'This weekend', lat:40.6694, lng:-73.9750, eventType:'parade', price:'Free' },
-    { id:30, sport:'Soccer', country:'US', match:'Pickup Soccer · 5v5', venue:'McCarren Park Pitch', vtype:'Park', neighborhood:'Greenpoint', borough:'Brooklyn', distance:0.8, time:'Sat · 10:00 AM', perks:['All Levels','Free'], live:false, when:'This weekend', lat:40.7205, lng:-73.9520, eventType:'pickup', price:'Free' },
-    { id:31, sport:'NBA', country:'US', match:'Pickup Basketball · Open Run', venue:'McCarren Park Courts', vtype:'Park', neighborhood:'Greenpoint', borough:'Brooklyn', distance:0.8, time:'Sun · 11:00 AM', perks:['All Levels','Free'], live:false, when:'This weekend', lat:40.7205, lng:-73.9520, eventType:'pickup', price:'Free' },
-    { id:7, sport:'Soccer', country:'AR', match:'Argentina vs. Brazil', venue:'Boca Juniors NYC', vtype:'Restaurant', neighborhood:'Jackson Heights', borough:'Queens', distance:6.0, time:'Sat · 4:00 PM', perks:['Asado','Mate'], live:true, when:'This weekend', lat:40.7558, lng:-73.8831, eventType:'watch-party', price:'No cover' },
-    { id:8, sport:'NBA', country:'US', match:'Knicks vs. Celtics', venue:"Foley's Bar & Grill", vtype:'Sports Bar', neighborhood:'Midtown', borough:'Manhattan', distance:5.2, time:'Tonight · 7:30 PM', perks:['Happy Hour'], live:true, when:'Tonight', lat:40.7549, lng:-73.9840, eventType:'watch-party', price:'No cover' },
-    { id:9, sport:'NHL', country:'US', match:'Rangers vs. Devils', venue:'Westlight Rooftop', vtype:'Rooftop', neighborhood:'Williamsburg', borough:'Manhattan', distance:5.1, time:'Tonight · 7:00 PM', perks:['Skyline View'], live:true, when:'Tonight', lat:40.7220, lng:-73.9580, eventType:'watch-party', price:'$15 min' },
-    { id:10, sport:'UFC', country:'US', match:'UFC 312 Main Card', venue:'Iron Bar', vtype:'Sports Bar', neighborhood:'Midtown', borough:'Manhattan', distance:5.5, time:'Sat · 10:00 PM', perks:['PPV','Reserved'], live:false, when:'This weekend', lat:40.7549, lng:-73.9840, eventType:'watch-party', price:'$20 cover' },
-    { id:11, sport:'Soccer', country:'EN', match:'Arsenal vs. Liverpool', venue:'The Football Factory', vtype:'Sports Bar', neighborhood:'East Village', borough:'Manhattan', distance:4.1, time:'Sat · 9:00 AM', perks:['Pints'], live:false, when:'This weekend', lat:40.7295, lng:-73.9870, eventType:'watch-party', price:'No cover' },
-    { id:13, sport:'Soccer', country:'US', match:'USA vs. Mexico', venue:'Washington Square Park', vtype:'Park', neighborhood:'Greenwich Village', borough:'Manhattan', distance:5.2, time:'Tonight · 8:00 PM', perks:['Free','Big Crowd'], live:true, when:'Tonight', lat:40.7308, lng:-73.9973, eventType:'watch-party', price:'Free' },
-    { id:14, sport:'Soccer', country:'MX', match:'USA vs. Mexico', venue:'Tortilleria Nixtamal', vtype:'Restaurant', neighborhood:'Corona', borough:'Queens', distance:7.5, time:'Tonight · 8:00 PM', perks:['Tacos'], live:true, when:'Tonight', lat:40.7460, lng:-73.8580, eventType:'watch-party', price:'No cover' },
-    { id:22, sport:'NBA', country:'US', match:'Knicks Championship Parade', venue:'Canyon of Heroes', vtype:'Plaza', neighborhood:'Financial District', borough:'Manhattan', distance:6.0, time:'Mon · 11:00 AM', perks:['Free','Confetti'], live:false, when:'This weekend', lat:40.7074, lng:-74.0113, eventType:'parade', price:'Free' },
-    { id:32, sport:'Soccer', country:'US', match:'Pickup Soccer', venue:'Pier 40', vtype:'Park', neighborhood:'West Village', borough:'Manhattan', distance:5.5, time:'Sun · 9:00 AM', perks:['Free'], live:false, when:'This weekend', lat:40.7282, lng:-74.0107, eventType:'pickup', price:'Free' },
+    { id:23, sport:'Soccer', country:'MX', match:'Mexico Fan March', venue:'Roosevelt Ave', vtype:'Plaza', neighborhood:'Jackson Heights', borough:'Queens', distance:6.2, time:'Sun · 10:00 PM', perks:['Free','Mariachi'], live:false, when:'This weekend', lat:40.7463, lng:-73.8915, eventType:'parade', price:'Free' },
+    { id:24, sport:'Soccer', country:'US', match:'USA Fan Walk to Pier', venue:'Hudson River Greenway', vtype:'Plaza', neighborhood:'Hudson Yards', borough:'Manhattan', distance:5.3, time:'Tonight · 10:00 PM', perks:['Free','Stars & Stripes'], live:false, when:'Tonight', lat:40.7536, lng:-74.0040, eventType:'parade', price:'Free' },
+
+    // Pickup soccer — World Cup spirit
+    { id:30, sport:'Soccer', country:'US', match:'World Cup Spirit · 5v5 Pickup', venue:'McCarren Park Pitch', vtype:'Park', neighborhood:'Greenpoint', borough:'Brooklyn', distance:0.8, time:'Sat · 10:00 AM', perks:['All Levels','Free'], live:false, when:'This weekend', lat:40.7205, lng:-73.9520, eventType:'pickup', price:'Free' },
+    { id:32, sport:'Soccer', country:'US', match:'Open Pickup · Nations Cup', venue:'Pier 40', vtype:'Park', neighborhood:'West Village', borough:'Manhattan', distance:5.5, time:'Sun · 9:00 AM', perks:['Free','All Levels'], live:false, when:'This weekend', lat:40.7282, lng:-74.0107, eventType:'pickup', price:'Free' },
+    { id:33, sport:'Soccer', country:'US', match:'Sunday Pickup · World Cup Edition', venue:'Randall\'s Island Field 65', vtype:'Park', neighborhood:'Randall\'s Island', borough:'Manhattan', distance:7.4, time:'Sun · 11:00 AM', perks:['Free','Real Pitch'], live:false, when:'This weekend', lat:40.7896, lng:-73.9213, eventType:'pickup', price:'Free' },
 ];
 
 let polls = [
     { id:101, country:'AR', borough:'Brooklyn', question:"Best Argentina watch spot in Brooklyn?", sub:'Brooklyn · Saturday match', options:[
         { name:'La Boqueria', votes:284 },
         { name:'McCarren Park Lawn', votes:412 },
-        { name:'Bedford Brewery', votes:156 },
+        { name:'Boca Juniors NYC (Queens)', votes:156 },
     ], totalVotes:852, closes:'Closes in 3h' },
-    { id:102, country:'US', borough:'Brooklyn', question:"Where to host the Knicks Game 7 watch?", sub:'Brooklyn · Community vote', options:[
-        { name:'Brooklyn Brewery', votes:520 },
-        { name:'Prospect Park Bandshell', votes:840 },
-        { name:'Domino Park LED Wall', votes:391 },
-    ], totalVotes:1751, closes:'Closes Friday' },
+    { id:102, country:'US', borough:'Brooklyn', question:"Where to host the USA vs Mexico watch party?", sub:'NYC · Community vote', options:[
+        { name:'Washington Square Park', votes:1240 },
+        { name:'Times Square Fan Zone', votes:980 },
+        { name:'Brooklyn Brewery', votes:391 },
+    ], totalVotes:2611, closes:'Closes Friday' },
     { id:103, country:'BR', borough:'Brooklyn', question:"Best caipirinha spot for the Brazil match?", sub:'Brooklyn · Vote', options:[
         { name:'Miss Favela', votes:198 },
         { name:'Beco', votes:142 },
         { name:'Rio Market', votes:87 },
     ], totalVotes:427, closes:'Closes Sat' },
-    { id:104, country:'US', borough:'Manhattan', question:"Top Manhattan rooftop for Knicks playoffs?", sub:'Manhattan · Community vote', options:[
-        { name:'Westlight', votes:412 },
-        { name:'Magic Hour', votes:238 },
-    ], totalVotes:650, closes:'Closes Friday' },
+    { id:104, country:'US', borough:'Manhattan', question:"Best Manhattan rooftop for the Final?", sub:'Manhattan · Community vote', options:[
+        { name:'Westlight (BK)', votes:412 },
+        { name:'Le Bain (MNH)', votes:238 },
+        { name:'Times Square Fan Zone', votes:610 },
+    ], totalVotes:1260, closes:'Closes Friday' },
 ];
 
 let schedule = [
@@ -5470,19 +5497,19 @@ function closePaywall() {}
 const sponsors = [
     {
         name: 'Brooklyn Brewery',
-        tagline: 'Official Argentina watch-party partner. Free first beer with your match RSVP.',
+        tagline: 'USA vs. Canada knockout. Free first pint with your match RSVP.',
         rating: '★ 4.7',
-        area: 'Williamsburg, BK · 0.7 mi',
+        area: 'Williamsburg, BK · 1.1 mi',
         img: 'https://images.unsplash.com/photo-1559925393-8be0ec4767c8?w=400&q=80&auto=format&fit=crop',
-        partyId: 14,
+        partyId: 57,
     },
     {
         name: 'The Football Factory',
-        tagline: 'England vs. Spain on 24 screens. Reserve a table for your crew.',
+        tagline: 'USA vs. Mexico on 24 screens. Reserve a table for your crew.',
         rating: '★ 4.5',
         area: "East Village, MNH · 4.1 mi",
         img: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&q=80&auto=format&fit=crop',
-        partyId: 11,
+        partyId: 50,
     },
     {
         name: 'Miss Favela',
@@ -5494,11 +5521,11 @@ const sponsors = [
     },
     {
         name: 'Westlight Rooftop',
-        tagline: 'Skyline views + the final on the LED wall. $15 minimum at the bar.',
+        tagline: 'World Cup Final on the LED wall, skyline views. $25 minimum at the bar.',
         rating: '★ 4.6',
         area: 'Williamsburg · Heated rooftop',
         img: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=400&q=80&auto=format&fit=crop',
-        partyId: 4,
+        partyId: 59,
     },
 ];
 
