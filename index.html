@@ -5814,7 +5814,7 @@ function focusCard(id) {
     });
     // fly map
     if (mapInstance) {
-        mapInstance.flyTo({ center:[p.lng, p.lat], zoom: 14, duration: 700 });
+        mapInstance.flyTo([p.lat, p.lng], 14, { duration: 0.7 });
         const m = mapMarkers.find(mm => mm._partyId === id);
         if (m) m.openPopup();
     }
