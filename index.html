@@ -1468,12 +1468,60 @@
     /* Borough filter row above the map */
     .borough-filter {
         display: flex; flex-wrap: wrap; gap: 6px;
+        align-items: center;
         padding: 12px 16px;
         background: var(--bg);
         border-bottom: 1px solid var(--border);
         flex: 0 0 auto;
     }
     body.worldcup-mode .borough-filter { background: var(--bg); }
+    .city-toggle {
+        display: inline-flex; align-items: center;
+        background: var(--surface-2);
+        border-radius: 999px;
+        padding: 3px;
+        gap: 2px;
+        margin-right: 10px;
+        border: 1px solid var(--border);
+        overflow-x: auto;
+        max-width: 100%;
+        scrollbar-width: none;
+    }
+    .city-toggle::-webkit-scrollbar { display: none; }
+    .city-pill {
+        background: transparent;
+        border: none;
+        color: var(--text-dim);
+        font-family: 'Inter', sans-serif;
+        font-size: 12px;
+        font-weight: 900;
+        letter-spacing: -0.02em;
+        padding: 5px 12px;
+        border-radius: 999px;
+        cursor: pointer;
+        transition: all .15s;
+        white-space: nowrap;
+    }
+    .city-pill:hover { color: var(--text); }
+    .city-pill.active {
+        background: linear-gradient(135deg, #ff2e2e, #ffd400);
+        color: #fff;
+        box-shadow: 0 2px 6px rgba(255,46,46,0.3);
+    }
+    /* Smaller, muted pills for host cities without venue data yet */
+    .city-pill-soon {
+        font-size: 11px;
+        font-weight: 700;
+        padding: 4px 9px;
+        color: var(--text-mute);
+        opacity: 0.85;
+    }
+    .city-pill-soon:hover { opacity: 1; }
+    .city-pill-soon.active {
+        background: var(--text);
+        color: var(--bg);
+        box-shadow: none;
+    }
     .borough-pill {
         background: transparent;
         border: 1px solid transparent;
@@ -4625,6 +4673,159 @@ const topVenues100 = [
             neutral: theme === 'Neutral',
             theme,
             tier,
+            city: 'NYC',
+        });
+    });
+})();
+
+// ===== Top 100 SF Bay Area venues =====
+// Format: [name, vtype, neighborhood, district, countryCode, lat, lng, theme]
+const sfVenues100 = [
+    // ---- Lower / Upper Haight ----
+    ['Mad Dog in the Fog', 'Pub', 'Lower Haight', 'Haight', 'IE', 37.7720, -122.4310, 'Ireland'],
+    ['Kezar Pub', 'Pub', 'Upper Haight', 'Haight', 'IE', 37.7670, -122.4520, 'Ireland'],
+    ["Danny Coyle's", 'Pub', 'Lower Haight', 'Haight', 'IE', 37.7720, -122.4310, 'Ireland'],
+    ['Toronado', 'Beer Bar', 'Lower Haight', 'Haight', 'US', 37.7716, -122.4307, 'Neutral'],
+    ['The Page', 'Bar', 'Lower Haight', 'Haight', 'US', 37.7723, -122.4314, 'Neutral'],
+    ['Noc Noc', 'Bar', 'Lower Haight', 'Haight', 'US', 37.7717, -122.4297, 'Neutral'],
+    ["Molotov's", 'Bar', 'Lower Haight', 'Haight', 'US', 37.7718, -122.4316, 'Neutral'],
+    ["Martin Mack's", 'Pub', 'Upper Haight', 'Haight', 'IE', 37.7700, -122.4480, 'Ireland'],
+    ["Murio's Trophy Room", 'Dive Bar', 'Upper Haight', 'Haight', 'US', 37.7700, -122.4480, 'Neutral'],
+    ['Club Deluxe', 'Cocktail Bar', 'Upper Haight', 'Haight', 'US', 37.7698, -122.4490, 'Neutral'],
+    ['Milk Bar', 'Bar', 'Upper Haight', 'Haight', 'US', 37.7700, -122.4470, 'Neutral'],
+    ["Hobson's Choice", 'Bar', 'Upper Haight', 'Haight', 'US', 37.7702, -122.4485, 'Neutral'],
+
+    // ---- Mission ----
+    ['El Farolito Bar', 'Restaurant', 'Mission', 'Mission', 'MX', 37.7530, -122.4180, 'Mexico'],
+    ['Phoenix Bar', 'Bar', 'Mission', 'Mission', 'US', 37.7595, -122.4185, 'Neutral'],
+    ['Dovre Club', 'Pub', 'Mission', 'Mission', 'IE', 37.7610, -122.4180, 'Ireland'],
+    ['Napper Tandy', 'Pub', 'Mission', 'Mission', 'IE', 37.7595, -122.4198, 'Ireland'],
+    ['Phone Booth', 'Dive Bar', 'Mission', 'Mission', 'US', 37.7600, -122.4185, 'Neutral'],
+    ['Zeitgeist', 'Beer Garden', 'Mission', 'Mission', 'US', 37.7700, -122.4225, 'Neutral'],
+    ['El Rio', 'Bar', 'Mission', 'Mission', 'US', 37.7480, -122.4220, 'Neutral'],
+    ['Casanova Lounge', 'Bar', 'Mission', 'Mission', 'US', 37.7670, -122.4220, 'Neutral'],
+    ["Doc's Clock", 'Bar', 'Mission', 'Mission', 'US', 37.7545, -122.4185, 'Neutral'],
+    ['Make-Out Room', 'Bar', 'Mission', 'Mission', 'US', 37.7560, -122.4195, 'Neutral'],
+    ['The Phoenix', 'Bar', 'Mission', 'Mission', 'US', 37.7600, -122.4180, 'Neutral'],
+    ["Pop's Bar", 'Dive Bar', 'Mission', 'Mission', 'US', 37.7560, -122.4135, 'Neutral'],
+    ['Wild Side West', 'Bar', 'Bernal Heights', 'Mission', 'US', 37.7415, -122.4150, 'Neutral'],
+    ['500 Club', 'Dive Bar', 'Mission', 'Mission', 'US', 37.7660, -122.4220, 'Neutral'],
+    ['The Royal Cuckoo', 'Cocktail Bar', 'Mission', 'Mission', 'US', 37.7565, -122.4205, 'Neutral'],
+    ['Bottom of the Hill', 'Bar', 'Potrero', 'Mission', 'US', 37.7610, -122.4000, 'Neutral'],
+    ['Knockout', 'Bar', 'Mission', 'Mission', 'US', 37.7540, -122.4220, 'Neutral'],
+    ['Latin American Club', 'Bar', 'Mission', 'Mission', 'US', 37.7600, -122.4220, 'Neutral'],
+
+    // ---- North Beach / Telegraph Hill ----
+    ["Maggie McGarry's", 'Pub', 'North Beach', 'North Beach', 'EN', 37.7990, -122.4080, 'England'],
+    ['The Boardroom', 'Sports Bar', 'North Beach', 'North Beach', 'US', 37.7980, -122.4080, 'Neutral'],
+    ["Kennedy's Irish Pub", 'Pub', 'North Beach', 'North Beach', 'IE', 37.8000, -122.4090, 'Ireland'],
+    ['Sip Bar & Lounge', 'Cocktail Bar', 'North Beach', 'North Beach', 'US', 37.7975, -122.4070, 'Neutral'],
+    ['Comstock Saloon', 'Cocktail Bar', 'North Beach', 'North Beach', 'US', 37.7975, -122.4060, 'Neutral'],
+    ['The Saloon', 'Dive Bar', 'North Beach', 'North Beach', 'US', 37.7985, -122.4080, 'Neutral'],
+    ["Tony Nik's", 'Cocktail Bar', 'North Beach', 'North Beach', 'IT', 37.7990, -122.4070, 'Italy'],
+    ["Specs'", 'Bar', 'North Beach', 'North Beach', 'US', 37.7975, -122.4045, 'Neutral'],
+    ['Vesuvio', 'Bar', 'North Beach', 'North Beach', 'IT', 37.7977, -122.4063, 'Italy'],
+    ['15 Romolo', 'Cocktail Bar', 'North Beach', 'North Beach', 'IT', 37.7967, -122.4076, 'Italy'],
+    ["La Rocca's Corner", 'Bar', 'North Beach', 'North Beach', 'IT', 37.7990, -122.4082, 'Italy'],
+    ['Gino & Carlo', 'Bar', 'North Beach', 'North Beach', 'IT', 37.7995, -122.4080, 'Italy'],
+
+    // ---- Marina / Cow Hollow ----
+    ['The Final Final', 'Sports Bar', 'Marina', 'Marina', 'US', 37.8005, -122.4385, 'Neutral'],
+    ['Bus Stop', 'Sports Bar', 'Cow Hollow', 'Marina', 'US', 37.7975, -122.4358, 'Neutral'],
+    ["Monaghan's Bar", 'Pub', 'Marina', 'Marina', 'IE', 37.8010, -122.4380, 'Ireland'],
+    ['Union Street Ale House', 'Pub', 'Cow Hollow', 'Marina', 'US', 37.7975, -122.4395, 'Neutral'],
+    ['Campus', 'Bar', 'Cow Hollow', 'Marina', 'US', 37.7980, -122.4380, 'Neutral'],
+    ['Silver Cloud', 'Bar', 'Marina', 'Marina', 'US', 37.8010, -122.4385, 'Neutral'],
+    ['Black Horse London Pub', 'Pub', 'Cow Hollow', 'Marina', 'EN', 37.7975, -122.4350, 'England'],
+    ['West Coast Wine & Cheese', 'Wine Bar', 'Marina', 'Marina', 'US', 37.8005, -122.4380, 'Neutral'],
+    ['The Brick Yard', 'Sports Bar', 'Cow Hollow', 'Marina', 'US', 37.7975, -122.4400, 'Neutral'],
+    ['Mauna Loa Club', 'Bar', 'Marina', 'Marina', 'US', 37.8000, -122.4360, 'Neutral'],
+    ['Bar None', 'Bar', 'Marina', 'Marina', 'US', 37.8000, -122.4385, 'Neutral'],
+    ['City Tavern', 'Pub', 'Cow Hollow', 'Marina', 'US', 37.7975, -122.4385, 'Neutral'],
+
+    // ---- SoMa / South Beach / Mission Bay ----
+    ['Underdogs Cantina', 'Sports Bar', 'SoMa', 'SoMa', 'ES', 37.7790, -122.4080, 'Spain'],
+    ['Underdogs Too', 'Sports Bar', 'Inner Sunset', 'SoMa', 'ES', 37.7635, -122.4660, 'Spain'],
+    ['The Lark Bar', 'Sports Bar', 'SoMa', 'SoMa', 'US', 37.7800, -122.4000, 'Neutral'],
+    ['The Chieftain Irish Pub', 'Pub', 'SoMa', 'SoMa', 'IE', 37.7790, -122.4070, 'Ireland'],
+    ["Pedro's Cantina", 'Restaurant', 'South Beach', 'SoMa', 'MX', 37.7780, -122.3892, 'Mexico'],
+    ["MoMo's", 'Restaurant', 'South Beach', 'SoMa', 'US', 37.7780, -122.3890, 'Neutral'],
+    ['The Public Izakaya', 'Restaurant', 'SoMa', 'SoMa', 'US', 37.7820, -122.4000, 'Neutral'],
+    ['Hi Dive', 'Bar', 'South Beach', 'SoMa', 'US', 37.7900, -122.3870, 'Neutral'],
+    ['Steuart Street Tavern', 'Pub', 'Embarcadero', 'SoMa', 'US', 37.7950, -122.3940, 'Neutral'],
+    ["Harry Denton's Starlight Room", 'Rooftop', 'Union Square', 'Downtown', 'US', 37.7880, -122.4090, 'Neutral'],
+    ['21st Amendment Brewery', 'Brewery', 'South Beach', 'SoMa', 'US', 37.7820, -122.3920, 'Neutral'],
+    ['Local Brewing Co.', 'Brewery', 'SoMa', 'SoMa', 'US', 37.7820, -122.4000, 'Neutral'],
+    ['Cooperage', 'Pub', 'SoMa', 'SoMa', 'IE', 37.7800, -122.4040, 'Ireland'],
+    ['Splash at Thrive City', 'Sports Bar', 'Mission Bay', 'SoMa', 'US', 37.7680, -122.3870, 'Neutral'],
+
+    // ---- Polk / Russian Hill / Nob Hill ----
+    ["McTeague's Saloon", 'Pub', 'Polk Gulch', 'Polk/Nob', 'IE', 37.7895, -122.4220, 'Ireland'],
+    ['Tonic', 'Bar', 'Polk Gulch', 'Polk/Nob', 'US', 37.7920, -122.4220, 'Neutral'],
+    ["Shanghai Kelly's", 'Bar', 'Polk Gulch', 'Polk/Nob', 'US', 37.7960, -122.4225, 'Neutral'],
+    ["Soda Popinski's", 'Bar', 'Polk Gulch', 'Polk/Nob', 'US', 37.7900, -122.4220, 'Neutral'],
+    ['Bullitt', 'Bar', 'Polk Gulch', 'Polk/Nob', 'US', 37.7910, -122.4220, 'Neutral'],
+    ['Amélie', 'Wine Bar', 'Russian Hill', 'Polk/Nob', 'FR', 37.7980, -122.4220, 'France'],
+    ['Royal Oak', 'Bar', 'Russian Hill', 'Polk/Nob', 'US', 37.7975, -122.4220, 'Neutral'],
+    ['Tonga Room', 'Cocktail Bar', 'Nob Hill', 'Polk/Nob', 'US', 37.7920, -122.4115, 'Neutral'],
+    ['Top of the Mark', 'Rooftop', 'Nob Hill', 'Polk/Nob', 'US', 37.7930, -122.4108, 'Neutral'],
+
+    // ---- Castro ----
+    ['Hi Tops Sports Bar', 'Sports Bar', 'Castro', 'Castro', 'US', 37.7615, -122.4340, 'Neutral'],
+    ['Beaux', 'Sports Bar', 'Castro', 'Castro', 'US', 37.7615, -122.4348, 'Neutral'],
+    ['Toad Hall', 'Bar', 'Castro', 'Castro', 'US', 37.7620, -122.4350, 'Neutral'],
+    ['The Mix', 'Bar', 'Castro', 'Castro', 'US', 37.7625, -122.4345, 'Neutral'],
+    ['Midnight Sun', 'Bar', 'Castro', 'Castro', 'US', 37.7615, -122.4355, 'Neutral'],
+    ['Twin Peaks Tavern', 'Bar', 'Castro', 'Castro', 'US', 37.7625, -122.4360, 'Neutral'],
+    ['440 Castro', 'Bar', 'Castro', 'Castro', 'US', 37.7615, -122.4350, 'Neutral'],
+    ['Last Call Bar', 'Bar', 'Castro', 'Castro', 'US', 37.7610, -122.4348, 'Neutral'],
+
+    // ---- Richmond / Sunset ----
+    ["Fiddler's Green", 'Pub', 'Inner Richmond', 'Richmond/Sunset', 'IE', 37.7800, -122.4660, 'Ireland'],
+    ['The Riptide', 'Bar', 'Outer Sunset', 'Richmond/Sunset', 'US', 37.7500, -122.4940, 'Neutral'],
+    ["Pittsburgh's Pub", 'Pub', 'Inner Richmond', 'Richmond/Sunset', 'US', 37.7800, -122.4670, 'Neutral'],
+    ['Hockey Haven', 'Bar', 'Outer Richmond', 'Richmond/Sunset', 'US', 37.7770, -122.4920, 'Neutral'],
+    ['The Plough and Stars', 'Pub', 'Inner Richmond', 'Richmond/Sunset', 'IE', 37.7800, -122.4680, 'Ireland'],
+    ["Trad'r Sam", 'Bar', 'Outer Richmond', 'Richmond/Sunset', 'US', 37.7780, -122.4920, 'Neutral'],
+    ['540 Club', 'Bar', 'Inner Richmond', 'Richmond/Sunset', 'US', 37.7800, -122.4665, 'Neutral'],
+    ['Nickies', 'Bar', 'Inner Sunset', 'Richmond/Sunset', 'US', 37.7635, -122.4670, 'Neutral'],
+
+    // ---- Financial District / Downtown / Tenderloin ----
+    ['The Chieftain FiDi', 'Pub', 'Financial District', 'Downtown', 'IE', 37.7860, -122.4000, 'Ireland'],
+    ['The Irish Bank', 'Pub', 'Financial District', 'Downtown', 'IE', 37.7910, -122.4040, 'Ireland'],
+    ['Royal Exchange', 'Pub', 'Financial District', 'Downtown', 'US', 37.7930, -122.4000, 'Neutral'],
+    ["Schroeder's", 'Beer Hall', 'Financial District', 'Downtown', 'DE', 37.7950, -122.4020, 'Germany'],
+    ['House of Shields', 'Bar', 'SoMa', 'Downtown', 'US', 37.7870, -122.4035, 'Neutral'],
+    ['Bartlett Hall', 'Brewery', 'Union Square', 'Downtown', 'US', 37.7860, -122.4090, 'Neutral'],
+];
+
+(function expandSfVenues() {
+    const perksCycle = [
+        ['Big Screens','Wings'], ['Pints','Soccer Crowd'], ['Sound On','Booths'],
+        ['Outdoor','Beer Garden'], ['Big Screens'], ['Multiple TVs','Specials'],
+    ];
+    const startId = 2000;
+    sfVenues100.forEach((v, i) => {
+        const [name, vtype, neighborhood, district, country, lat, lng, theme] = v;
+        const id = startId + i;
+        const match = theme === 'Neutral' ? 'Every Nation Welcome' : `${theme} Takeover`;
+        let tier;
+        if (i % 11 === 0) tier = 'gold';
+        else if (i % 4 === 0) tier = 'silver';
+        else tier = 'basic';
+        parties.push({
+            id, sport:'Soccer', country, match, venue:name, vtype, neighborhood,
+            borough: district,
+            distance: Math.round(((id * 7) % 78 + 2) / 10 * 10) / 10,
+            time: 'Every match day',
+            perks: perksCycle[i % perksCycle.length],
+            live: false, when: 'This weekend',
+            lat, lng,
+            eventType: 'watch-party',
+            price: 'No cover',
+            neutral: theme === 'Neutral',
+            theme, tier,
+            city: 'SF',
         });
     });
 })();
@@ -5024,6 +5225,7 @@ let activeRoute = 'home';
 let activeSport = null;
 let activeSubtab = 'watch-party';
 let activeCountry = null;
+let activeCity = 'NYC';    // 'NYC' | 'SF'
 let activeBorough = null;  // null = all
 let activeWcDate = null;   // 'YYYY-MM-DD' or null
 let activeWcMatch = null;  // { date, idx, a, b } or null
@@ -5166,6 +5368,8 @@ function matchesFilters(p) {
     if (sport && p.sport !== sport) return false;
     if (when && p.when !== when) return false;
     if (activeCountry && p.country !== activeCountry.code) return false;
+    // City filter — old hardcoded parties without `city` are NYC by default.
+    if (((p.city) || 'NYC') !== activeCity) return false;
     if (activeBorough && p.borough !== activeBorough) return false;
     if (activeWcMatch) {
         // Neutral venues show every match.
@@ -5186,25 +5390,67 @@ function matchesFilters(p) {
     return true;
 }
 
-function isLocked(p) { return !unlockedBoroughs.has(p.borough); }
+// Sign-in removed → no locked venues anywhere.
+function isLocked(p) { return false; }
 
-const BOROUGHS = ['Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island'];
+const BOROUGHS_BY_CITY = {
+    'NYC': ['Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island'],
+    'SF':  ['Haight', 'Mission', 'North Beach', 'Marina', 'SoMa', 'Polk/Nob', 'Castro', 'Richmond/Sunset', 'Downtown'],
+};
+const CITY_CENTER = {
+    'NYC':     { lat: 40.7128, lng:  -73.97,    zoom: 12 },
+    'SF':      { lat: 37.7800, lng: -122.4300, zoom: 12.5 },
+    'LA':      { lat: 34.0522, lng: -118.2437, zoom: 11 },
+    'Boston':  { lat: 42.3601, lng:  -71.0589, zoom: 12 },
+    'Dallas':  { lat: 32.7767, lng:  -96.7970, zoom: 11 },
+    'Atlanta': { lat: 33.7490, lng:  -84.3880, zoom: 12 },
+    'Miami':   { lat: 25.7617, lng:  -80.1918, zoom: 12 },
+    'Seattle': { lat: 47.6062, lng: -122.3321, zoom: 12 },
+    'Philly':  { lat: 39.9526, lng:  -75.1652, zoom: 12 },
+    'Houston': { lat: 29.7604, lng:  -95.3698, zoom: 11 },
+    'KC':      { lat: 39.0997, lng:  -94.5786, zoom: 11 },
+};
+// Cities with real venue data; others show a 'coming soon' empty state.
+const CITIES_WITH_VENUES = new Set(['NYC', 'SF']);
+const OTHER_CITIES = ['LA', 'Miami'];
+
 function renderBoroughFilter() {
     const wrap = document.getElementById('borough-filter');
     if (!wrap) return;
-    const items = [{ label:'All boroughs', value:null }].concat(
-        BOROUGHS.map(b => ({ label: b, value: b }))
+    const primary = (c) =>
+        `<button class="city-pill ${activeCity === c ? 'active' : ''}" onclick="pickCity('${c}')">${c === 'SF' ? 'SF Bay' : c}</button>`;
+    const otherPills = OTHER_CITIES.map(c =>
+        `<button class="city-pill city-pill-soon ${activeCity === c ? 'active' : ''}" onclick="pickCity('${c}')">${c}</button>`
+    ).join('');
+    const cityToggleHtml = `<div class="city-toggle">
+        ${primary('NYC')}${primary('SF')}${otherPills}
+    </div>`;
+    const items = [{ label:'All', value:null }].concat(
+        (BOROUGHS_BY_CITY[activeCity] || []).map(b => ({ label: b, value: b }))
     );
-    wrap.innerHTML = items.map(it => {
+    const pillsHtml = items.map(it => {
         const isActive = (it.value === activeBorough);
-        const safe = it.value == null ? 'null' : `'${it.value.replace("'", "\\'")}'`;
+        const safe = it.value == null ? 'null' : `'${it.value.replace(/'/g, "\\'")}'`;
         return `<button class="borough-pill ${isActive ? 'active' : ''}" onclick="pickBorough(${safe})">${it.label}</button>`;
     }).join('');
+    wrap.innerHTML = cityToggleHtml + pillsHtml;
 }
 function pickBorough(b) {
     activeBorough = b;
     renderBoroughFilter();
     applyFilters();
+}
+function pickCity(c) {
+    if (activeCity === c) return;
+    activeCity = c;
+    activeBorough = null;
+    renderBoroughFilter();
+    applyFilters();
+    // Recenter the map
+    const center = CITY_CENTER[c];
+    if (mapInstance && center) {
+        mapInstance.flyTo([center.lat, center.lng], center.zoom, { duration: 0.8 });
+    }
 }
 
 let activeCardId = null;
@@ -5329,7 +5575,11 @@ function renderMiniList(filtered) {
     if (filtered.length === 0) {
         const empty = document.createElement('div');
         empty.className = 'empty';
-        empty.innerHTML = `<h3>No events match</h3><p>Try clearing a filter or picking a different country.</p>`;
+        if (!CITIES_WITH_VENUES.has(activeCity)) {
+            empty.innerHTML = `<h3>${activeCity} — coming soon</h3><p>We're lining up venues in this host city. Try NYC or SF Bay for now.</p>`;
+        } else {
+            empty.innerHTML = `<h3>No events match</h3><p>Try clearing a filter or picking a different country.</p>`;
+        }
         wrap.appendChild(empty);
         return;
     }
