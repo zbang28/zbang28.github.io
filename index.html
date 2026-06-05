@@ -5352,6 +5352,7 @@ function initRouting() {
 // ============ COUNTRIES ============
 function buildCountries() {
     const c = document.getElementById('countries');
+    if (!c) return; // country bar markup was removed
     countries.forEach(co => {
         const el = document.createElement('button');
         el.className = 'country';
