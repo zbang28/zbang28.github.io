@@ -4249,27 +4249,6 @@
                 </div>
             </article>
 
-            <article class="feature-card" onclick="route('fanhub')">
-                <div class="feature-art">
-                    <img src="https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=900&q=80&auto=format&fit=crop" alt="" loading="lazy">
-                </div>
-                <div class="feature-body">
-                    <div class="feature-kicker" style="color:#ff3eb5">FAN HUB</div>
-                    <h3>Lineups, chat, and polls</h3>
-                    <p>Talk with fellow supporters, react to the starting XI, and vote on the best watch spots.</p>
-                </div>
-            </article>
-
-            <article class="feature-card" onclick="route('fanhub')">
-                <div class="feature-art">
-                    <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=900&q=80&auto=format&fit=crop" alt="" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=900&q=80&auto=format&fit=crop'">
-                </div>
-                <div class="feature-body">
-                    <div class="feature-kicker" style="color:#a855f7">COMMUNITY</div>
-                    <h3>Live chat with fellow fans</h3>
-                    <p>Join the conversation by country, react to the starting XI, and vote on the best watch spots.</p>
-                </div>
-            </article>
 
         </div>
     </div>
@@ -4287,10 +4266,6 @@
             <div class="worldcup-eyebrow">FIFA · 2026 · NORTH AMERICA</div>
             <h1 class="worldcup-title">World <em>Cup</em><br>2026.</h1>
             <p class="worldcup-sub">Every match. Every country. Find the watch party where your flag flies highest.</p>
-            <button class="wc-fanhub-cta" onclick="route('fanhub')">
-                <span>Join the Fan Hub</span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-            </button>
         </div>
     </div>
 
@@ -5308,8 +5283,8 @@ let mapMarkers = [];
 
 // ============ ROUTING ============
 function route(name) {
-    // Events tab retired — funnel any leftover events route to worldcup
-    if (name === 'events') name = 'worldcup';
+    // Events tab + Fan Hub retired — funnel any leftover routes to worldcup
+    if (name === 'events' || name === 'fanhub') name = 'worldcup';
     activeRoute = name;
     const pageKey = name === 'worldcup' ? 'events' : name;
     document.querySelectorAll('.page').forEach(p => p.classList.toggle('active', p.dataset.page === pageKey));
@@ -5346,7 +5321,9 @@ function initRouting() {
         t.addEventListener('click', () => route(t.dataset.route));
     });
     const hash = location.hash.replace('#/', '');
-    route(['home','events','fanhub','worldcup'].includes(hash) ? hash : 'home');
+    // fanhub retired → fall back to worldcup
+    if (hash === 'fanhub') { route('worldcup'); return; }
+    route(['home','events','worldcup'].includes(hash) ? hash : 'home');
 }
 
 // ============ COUNTRIES ============
