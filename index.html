@@ -1631,18 +1631,20 @@
     }
     .venue-close {
         position: absolute;
-        top: 12px; right: 12px;
-        z-index: 2;
-        width: 32px; height: 32px;
-        background: rgba(255,255,255,0.92);
-        backdrop-filter: blur(6px);
-        border: 1px solid rgba(14,15,17,0.12);
+        top: 14px; right: 14px;
+        z-index: 10;
+        width: 44px; height: 44px;
+        background: #0e0f11;
+        border: 2px solid #fff;
         border-radius: 50%;
-        color: #0e0f11;
+        color: #fff;
         display: grid; place-items: center;
         cursor: pointer;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+        transition: transform .15s, background .15s;
     }
-    .venue-close:hover { background: white; }
+    .venue-close svg { width: 22px; height: 22px; stroke-width: 2.8; }
+    .venue-close:hover { background: #ff2d3a; transform: scale(1.08); }
     .venue-photo-wrap {
         position: relative;
         display: grid;
@@ -5738,21 +5740,9 @@ function renderMiniList(filtered) {
             focusCard(p.id);
             openVenue(p.id);
         });
-        let hoverTimer = null;
-        card.addEventListener('mouseenter', () => {
-            highlightPin(p.id, true);
-            if (isLocked(p)) return;
-            clearTimeout(hoverTimer);
-            // Small delay so casually moving past cards doesn't open the panel.
-            hoverTimer = setTimeout(() => {
-                focusCard(p.id);
-                openVenue(p.id);
-            }, 220);
-        });
-        card.addEventListener('mouseleave', () => {
-            highlightPin(p.id, false);
-            clearTimeout(hoverTimer);
-        });
+        // Hover only highlights the matching pin — doesn't open the side panel.
+        card.addEventListener('mouseenter', () => highlightPin(p.id, true));
+        card.addEventListener('mouseleave', () => highlightPin(p.id, false));
         wrap.appendChild(card);
     });
 }
@@ -6546,6 +6536,18 @@ function closeVenue() {
     panel.classList.remove('open');
     panel.setAttribute('aria-hidden', 'true');
 }
+// Escape key closes the venue panel
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeVenue();
+});
+// Click anywhere outside the panel (on the map background) also closes it
+document.addEventListener('click', (e) => {
+    const panel = document.getElementById('venue-panel');
+    if (!panel || !panel.classList.contains('open')) return;
+    // Ignore clicks inside the panel, on cards, on pins, or on map controls
+    if (e.target.closest('#venue-panel, .mini-card, .mini-basic, .pin, .leaflet-marker-icon, .leaflet-control, .leaflet-popup')) return;
+    closeVenue();
+});
 
 function setVenueTab(tab) {
     document.querySelectorAll('.venue-tab').forEach(t => {
