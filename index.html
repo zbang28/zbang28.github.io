@@ -1451,13 +1451,58 @@
     body.worldcup-mode .events-only { display: none !important; }
 
     /* List-tab bar (Watch parties / Filters as tabs inside the list) */
+    /* Sticky header for split-list so list-tab-bar stays visible while scrolling */
+    .split-sticky {
+        position: sticky;
+        top: 0;
+        z-index: 6;
+        background: var(--bg);
+        padding: 20px 0 14px;
+        margin: 0 -24px 0 -24px;
+        padding-left: 24px; padding-right: 24px;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 14px;
+    }
+    body.worldcup-mode .split-sticky { background: var(--bg); }
+
+    /* Borough filter row above the map */
+    .borough-filter {
+        display: flex; flex-wrap: wrap; gap: 6px;
+        padding: 12px 16px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        flex: 0 0 auto;
+    }
+    body.worldcup-mode .borough-filter { background: var(--bg); }
+    .borough-pill {
+        background: transparent;
+        border: 1px solid transparent;
+        color: var(--text-dim);
+        font-family: 'Space Grotesk', 'Inter', sans-serif;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        padding: 7px 14px;
+        border-radius: 999px;
+        cursor: pointer;
+        transition: all .15s;
+        white-space: nowrap;
+    }
+    .borough-pill:hover { color: var(--text); background: rgba(0,0,0,0.04); }
+    .borough-pill.active {
+        background: #0e0f11;
+        color: #fff;
+        border-color: #0e0f11;
+    }
+    /* (split-map flex layout lives further down where height is set) */
+
     .list-tab-bar {
         display: flex; gap: 8px;
         padding: 6px;
         background: var(--surface-2);
         border: 1px solid var(--border);
         border-radius: 12px;
-        margin-bottom: 14px;
+        margin-bottom: 0;
     }
     .list-tab {
         flex: 1;
@@ -2312,7 +2357,7 @@
     }
     .split-list {
         overflow-y: auto;
-        padding: 20px 24px 80px;
+        padding: 0 24px 80px;
         background:
             radial-gradient(ellipse 80% 30% at 50% 0%, rgba(255,45,58,0.06), transparent 70%),
             var(--bg);
@@ -2354,9 +2399,11 @@
         height: calc(100vh - 64px);
         overflow: hidden;
         background: var(--surface-2);
+        display: flex;
+        flex-direction: column;
     }
     .split-map #events-map {
-        width: 100%; height: 100%;
+        width: 100%; flex: 1 1 auto; min-height: 0;
     }
     /* Slight desaturation on dark tiles */
     #events-map .leaflet-tile-pane {
@@ -2365,6 +2412,34 @@
     /* Invert dark CARTO tiles to a light map for World Cup mode */
     body.worldcup-mode #events-map .leaflet-tile-pane {
         filter: invert(0.92) hue-rotate(180deg) brightness(1.05) saturate(0.85);
+    }
+
+    /* ===== Nation takeover banner on each venue card ===== */
+    .nation-strip {
+        display: inline-flex; align-items: center; gap: 7px;
+        font-family: 'Anton','Inter',sans-serif;
+        font-weight: 400;
+        font-size: 13px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 4px 10px 4px 8px;
+        border-radius: 6px;
+        margin-bottom: 6px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        line-height: 1;
+    }
+    .nation-strip-flag { font-size: 18px; line-height: 1; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.3)); }
+    .nation-strip-text { letter-spacing: 0.12em; }
+    .mini-card-match {
+        /* fade old generic title now that nation strip is the headline */
+        display: none;
+    }
+    .mini-basic-name-flag {
+        font-size: 18px;
+        margin-right: 6px;
+        vertical-align: -3px;
+        line-height: 1;
+        filter: drop-shadow(0 1px 1px rgba(0,0,0,0.2));
     }
 
     /* ===== Listing tiers — gold (featured), silver (standard), basic (name only) ===== */
@@ -3998,7 +4073,6 @@
             <button class="tab highlight" data-route="worldcup">World Cup</button>
         </div>
         <div class="nav-right">
-            <button class="nav-btn" id="signin-btn" onclick="openSignIn()">Sign in</button>
         </div>
     </div>
 </nav>
@@ -4126,21 +4200,24 @@
 
     <div class="split">
         <div class="split-list" id="split-list-wrap">
-            <div class="split-list-head">
-                <h2 id="split-list-title">Events near you</h2>
-                <span class="count" id="split-count">0</span>
-            </div>
+            <div class="split-sticky">
+                <div class="split-list-head">
+                    <h2 id="split-list-title">Events near you</h2>
+                    <span class="count" id="split-count">0</span>
+                </div>
 
-            <div class="list-tab-bar">
-                <button class="list-seg" data-type="watch-party" onclick="pickEventType('watch-party')">Watch parties</button>
-                <button class="list-seg" data-type="parade" onclick="pickEventType('parade')">Parades</button>
-                <button class="list-seg" data-type="pickup" onclick="pickEventType('pickup')">Pickup</button>
+                <div class="list-tab-bar">
+                    <button class="list-seg" data-type="watch-party" onclick="pickEventType('watch-party')">Watch parties</button>
+                    <button class="list-seg" data-type="parade" onclick="pickEventType('parade')">Parades</button>
+                    <button class="list-seg" data-type="pickup" onclick="pickEventType('pickup')">Pickup</button>
+                </div>
             </div>
 
             <input id="search-input" type="hidden">
             <div class="mini-list" id="mini-list"></div>
         </div>
         <div class="split-map">
+            <div class="borough-filter" id="borough-filter"></div>
             <div id="events-map"></div>
             <!-- Google-style venue detail panel -->
             <aside class="venue-panel" id="venue-panel" aria-hidden="true">
@@ -4234,11 +4311,8 @@
                     <div class="online"><span class="dot"></span><span id="chat-online">2,341 online</span></div>
                 </div>
                 <div class="chat-body" id="chat-body"></div>
-                <div class="chat-premium-banner" id="chat-premium-banner">
-                    <strong>Sign in</strong> to chat with fellow supporters
-                </div>
                 <form class="chat-input" id="chat-input-form" onsubmit="sendChat(event)">
-                    <input id="chat-input" placeholder="Sign in to chat with fellow supporters…">
+                    <input id="chat-input" placeholder="Say something…">
                     <button type="submit">Send</button>
                 </form>
             </div>
@@ -4253,37 +4327,8 @@
 </section>
 
 <!-- ============ MATCHDAY PAGE ============ -->
-<!-- Sign in modal -->
-<div class="modal-bg" id="signin-modal" onclick="if(event.target===this)closeSignIn()">
-    <div class="modal" style="max-width:420px">
-        <div class="modal-head">
-            <h3>Sign <em>in</em></h3>
-            <button class="modal-close" onclick="closeSignIn()">✕</button>
-        </div>
-        <div class="modal-body">
-            <form onsubmit="event.preventDefault();submitAuth()">
-                <div class="signin-field" id="signin-name-field" style="display:none">
-                    <label>Display name</label>
-                    <input id="signin-name" type="text" placeholder="Your name">
-                </div>
-                <div class="signin-field">
-                    <label>Email</label>
-                    <input id="signin-email" type="email" placeholder="you@example.com" required>
-                </div>
-                <div class="signin-field">
-                    <label>Password</label>
-                    <input id="signin-pass" type="password" placeholder="••••••••" minlength="6" required>
-                </div>
-                <div id="signin-error" style="display:none;color:#ff3a4e;font-size:13px;margin-top:10px"></div>
-                <button type="submit" class="ai-submit" id="signin-submit" style="margin-top:18px">Sign in</button>
-                <p class="signin-foot">
-                    <span id="signin-toggle-text">No account?</span>
-                    <a id="signin-toggle" onclick="toggleAuthMode()">Create one</a>
-                </p>
-            </form>
-        </div>
-    </div>
-</div>
+<!-- Sign in removed — site is open access -->
+
 
 <footer id="site-footer">
     <div class="footer-inner">
@@ -4557,8 +4602,8 @@ const topVenues100 = [
         const [name, vtype, neighborhood, borough, country, lat, lng, theme] = v;
         const id = startId + i;
         const match = theme === 'Neutral'
-            ? 'World Cup 2026 · Every match'
-            : `${theme} · World Cup HQ`;
+            ? 'Every Nation Welcome'
+            : `${theme} Takeover`;
         // Listing tier — drives card size. Simulates how much the venue paid.
         //   gold   = featured (big tile)     ~10%
         //   silver = standard tile           ~25%
@@ -4578,6 +4623,7 @@ const topVenues100 = [
             eventType: 'watch-party',
             price: 'No cover',
             neutral: theme === 'Neutral',
+            theme,
             tier,
         });
     });
@@ -4679,6 +4725,31 @@ const matchPhotos = {
     'USA vs. Mexico':               'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=800&q=80&auto=format&fit=crop',
     'Argentina Victory Parade':     'https://images.unsplash.com/photo-1577223625816-7546f13df25d?w=800&q=80&auto=format&fit=crop',
     'Brazil Carnival March':        'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=80&auto=format&fit=crop',
+};
+
+// Per-nation theming for the 100 venue listings.
+// Drives the colored "Nation Takeover" banner on each card.
+const themeMeta = {
+    'Argentina':       { flag:'🇦🇷', color:'#75AADB', text:'#0a2540' },
+    'Brazil':          { flag:'🇧🇷', color:'#009C3B', text:'#FFDF00' },
+    'England':         { flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', color:'#FFFFFF', text:'#CE1124' },
+    'Spain':           { flag:'🇪🇸', color:'#AA151B', text:'#F1BF00' },
+    'Germany':         { flag:'🇩🇪', color:'#1a1a1a', text:'#FFCE00' },
+    'Italy':           { flag:'🇮🇹', color:'#008C45', text:'#FFFFFF' },
+    'Portugal':        { flag:'🇵🇹', color:'#046A38', text:'#FFC400' },
+    'Netherlands':     { flag:'🇳🇱', color:'#FF6F00', text:'#FFFFFF' },
+    'Mexico':          { flag:'🇲🇽', color:'#006847', text:'#FFFFFF' },
+    'France':          { flag:'🇫🇷', color:'#0055A4', text:'#FFFFFF' },
+    'USA':             { flag:'🇺🇸', color:'#3C3B6E', text:'#FFFFFF' },
+    'Ireland':         { flag:'🇮🇪', color:'#169B62', text:'#FFFFFF' },
+    'Korea Republic':  { flag:'🇰🇷', color:'#0047A0', text:'#FFFFFF' },
+    'Uruguay':         { flag:'🇺🇾', color:'#0038A8', text:'#FFFFFF' },
+    'Croatia':         { flag:'🇭🇷', color:'#FF0000', text:'#FFFFFF' },
+    'Canada':          { flag:'🇨🇦', color:'#FF0000', text:'#FFFFFF' },
+    'Norway':          { flag:'🇳🇴', color:'#BA0C2F', text:'#FFFFFF' },
+    'Ecuador':         { flag:'🇪🇨', color:'#FFD100', text:'#003893' },
+    'Egypt':           { flag:'🇪🇬', color:'#CE1126', text:'#FFFFFF' },
+    'Neutral':         { flag:'🌍', color:'#1a1a1a', text:'#ffd400' },
 };
 
 // Bar/venue interior photos by type — used for the 100 NYC venue listings
@@ -4953,6 +5024,7 @@ let activeRoute = 'home';
 let activeSport = null;
 let activeSubtab = 'watch-party';
 let activeCountry = null;
+let activeBorough = null;  // null = all
 let activeWcDate = null;   // 'YYYY-MM-DD' or null
 let activeWcMatch = null;  // { date, idx, a, b } or null
 let activeQuickFilters = new Set();
@@ -4988,6 +5060,7 @@ function route(name) {
     if (name === 'fanhub') renderFanHub();
     if (name === 'events' || name === 'worldcup') {
         renderSportChip();
+        renderBoroughFilter();
         if (name === 'worldcup') renderWcSchedule();
         applyFilters();
         setTimeout(() => mapInstance?.invalidateSize(), 50);
@@ -5093,6 +5166,7 @@ function matchesFilters(p) {
     if (sport && p.sport !== sport) return false;
     if (when && p.when !== when) return false;
     if (activeCountry && p.country !== activeCountry.code) return false;
+    if (activeBorough && p.borough !== activeBorough) return false;
     if (activeWcMatch) {
         // Neutral venues show every match.
         if (!p.neutral) {
@@ -5113,6 +5187,25 @@ function matchesFilters(p) {
 }
 
 function isLocked(p) { return !unlockedBoroughs.has(p.borough); }
+
+const BOROUGHS = ['Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island'];
+function renderBoroughFilter() {
+    const wrap = document.getElementById('borough-filter');
+    if (!wrap) return;
+    const items = [{ label:'All boroughs', value:null }].concat(
+        BOROUGHS.map(b => ({ label: b, value: b }))
+    );
+    wrap.innerHTML = items.map(it => {
+        const isActive = (it.value === activeBorough);
+        const safe = it.value == null ? 'null' : `'${it.value.replace("'", "\\'")}'`;
+        return `<button class="borough-pill ${isActive ? 'active' : ''}" onclick="pickBorough(${safe})">${it.label}</button>`;
+    }).join('');
+}
+function pickBorough(b) {
+    activeBorough = b;
+    renderBoroughFilter();
+    applyFilters();
+}
 
 let activeCardId = null;
 let lastFiltered = [];
@@ -5249,11 +5342,21 @@ function renderMiniList(filtered) {
             row.dataset.id = p.id;
             const g = googleReviewFor(p);
             const perks = (p.perks || []).slice(0, 3).map(x => `<span>${x}</span>`).join('');
+            const tm = p.theme && themeMeta[p.theme];
+            const flagPrefix = tm ? `<span class="mini-basic-name-flag">${tm.flag}</span>` : '';
+            const nationLine = tm
+                ? (p.theme === 'Neutral' ? 'Every nation welcome' : `${p.theme} fans HQ`)
+                : '';
+            const nationBanner = tm
+                ? `<div class="nation-strip" style="background:${tm.color};color:${tm.text};margin:0 0 6px">
+                       <span class="nation-strip-flag">${tm.flag}</span>
+                       <span class="nation-strip-text">${p.theme === 'Neutral' ? 'Every Nation Welcome' : p.theme + ' Takeover'}</span>
+                   </div>` : '';
             row.innerHTML = `
                 <div class="mini-basic-row">
                     <div style="min-width:0">
-                        <div class="mini-basic-name">${p.venue}</div>
-                        <div class="mini-basic-meta">${p.neighborhood} · ${p.borough} · ${p.vtype}</div>
+                        <div class="mini-basic-name">${flagPrefix}${p.venue}</div>
+                        <div class="mini-basic-meta">${nationLine ? nationLine + ' · ' : ''}${p.neighborhood} · ${p.vtype}</div>
                     </div>
                     <div style="text-align:right">
                         <span class="mini-basic-stars">${starsHTML(g.rating)}</span>
@@ -5263,6 +5366,7 @@ function renderMiniList(filtered) {
                 <div class="mini-basic-expand">
                     <div class="mini-basic-expand-img"><img src="${photoFor(p)}" alt="${p.venue}" loading="lazy"></div>
                     <div class="mini-basic-expand-body">
+                        ${nationBanner}
                         <strong>${p.venue}</strong>
                         <div>${p.distance} mi · ${p.time} · ${p.price}</div>
                         <div>★ ${g.rating} (${g.count} Google reviews)</div>
@@ -5296,6 +5400,15 @@ function renderMiniList(filtered) {
                   : `<span class="mini-card-pill" style="background:rgba(255,255,255,0.95);color:var(--text)">${p.sport}</span>`}
             </div>
             <div class="mini-card-body">
+                ${(() => {
+                    const tm = p.theme && themeMeta[p.theme];
+                    if (!tm) return '';
+                    const label = p.theme === 'Neutral' ? 'Every Nation Welcome' : `${p.theme} Takeover`;
+                    return `<div class="nation-strip" style="background:${tm.color};color:${tm.text}">
+                        <span class="nation-strip-flag">${tm.flag}</span>
+                        <span class="nation-strip-text">${label}</span>
+                    </div>`;
+                })()}
                 <div class="mini-card-match">${p.match}</div>
                 ${isLocked(p)
                     ? `<div class="mini-card-venue locked-name">
@@ -5911,7 +6024,8 @@ async function api(path, { method = 'GET', body } = {}) {
     return data;
 }
 
-function isSignedIn() { return Boolean(currentUser); }
+// Sign-in removed — treat everyone as signed in so gated features work.
+function isSignedIn() { return true; }
 
 function applyEntitlements(ent) {
     unlockedBoroughs = new Set(['Brooklyn','Manhattan','Queens','Bronx','Staten Island']);
@@ -5928,23 +6042,10 @@ function applyAuthState() {
 // ============ AUTH ============
 let authMode = 'login'; // 'login' | 'register'
 
-function openSignIn() {
-    document.getElementById('signin-modal').classList.add('open');
-}
-function closeSignIn() {
-    document.getElementById('signin-modal').classList.remove('open');
-    const err = document.getElementById('signin-error');
-    if (err) err.style.display = 'none';
-}
-function toggleAuthMode() {
-    authMode = authMode === 'login' ? 'register' : 'login';
-    const isReg = authMode === 'register';
-    document.getElementById('signin-name-field').style.display = isReg ? '' : 'none';
-    document.getElementById('signin-submit').textContent = isReg ? 'Create account' : 'Sign in';
-    document.getElementById('signin-toggle-text').textContent = isReg ? 'Have an account?' : 'No account?';
-    document.getElementById('signin-toggle').textContent = isReg ? 'Sign in' : 'Create one';
-    document.querySelector('#signin-modal .modal-head h3').innerHTML = isReg ? 'Create <em>account</em>' : 'Sign <em>in</em>';
-}
+// Sign-in removed — these are no-ops so any leftover callers don't break.
+function openSignIn() { /* removed */ }
+function closeSignIn() { /* removed */ }
+function toggleAuthMode() { /* removed */ }
 
 async function submitAuth() {
     const email = document.getElementById('signin-email').value.trim();
