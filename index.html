@@ -1915,11 +1915,22 @@
     }
     /* ===== WC Schedule strip ===== */
     .wc-schedule { display:none; }
-    .wc-schedule.worldcup-on { display:block; padding: 20px 24px 8px; }
-    .wc-schedule-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
-    .wc-schedule-title { font-size:13px; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color: var(--text); }
-    .wc-schedule-clear { background:none; border:1px solid var(--border-2); color:var(--text); font-size:12px; font-weight:700; padding:6px 12px; border-radius:999px; cursor:pointer; }
+    .wc-schedule.worldcup-on {
+        display: block;
+        position: relative;
+        padding: 28px 24px 14px;
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.78) 60%, rgba(255,255,255,0.95) 100%),
+            url('assets/wc-stars.jpg') center 30%/cover no-repeat;
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+    }
+    .wc-schedule-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; position:relative; z-index:1; }
+    .wc-schedule-title { font-size:14px; font-weight:900; letter-spacing:0.14em; text-transform:uppercase; color: var(--text); }
+    .wc-schedule-clear { background:rgba(255,255,255,0.9); border:1px solid var(--border-2); color:var(--text); font-size:12px; font-weight:700; padding:6px 12px; border-radius:999px; cursor:pointer; backdrop-filter: blur(8px); }
     .wc-schedule-clear:hover { background: var(--surface-2); }
+    .wc-schedule .wc-date-strip,
+    .wc-schedule .wc-match-row { position: relative; z-index: 1; }
     .wc-date-strip {
         display:flex; gap:10px;
         overflow-x:auto; overflow-y:hidden;
@@ -2101,29 +2112,17 @@
         color: #0e0f11;
         padding: 36px 32px 44px;
     }
-    /* Crossfading photo backgrounds — stars collage <-> team photo */
+    /* Team photo behind the WC header tile */
     .worldcup-bg {
         position: absolute; inset: 0;
         overflow: hidden;
         z-index: 0;
         pointer-events: none;
+        background: url('assets/wc-team.jpg') center 22%/cover no-repeat;
     }
     .worldcup-bg::after {
         content: ''; position: absolute; inset: 0;
-        background: linear-gradient(135deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.55) 45%, rgba(255,255,255,0.25) 100%);
-    }
-    .worldcup-bg-img {
-        position: absolute; inset: 0;
-        background-size: cover;
-        background-position: center;
-        animation: wcBgFade 14s infinite ease-in-out;
-    }
-    .worldcup-bg-img-1 { background-image: url('assets/wc-stars.jpg'); }
-    .worldcup-bg-img-2 { background-image: url('assets/wc-team.jpg'); animation-delay: 7s; opacity: 0; }
-    @keyframes wcBgFade {
-        0%, 45% { opacity: 1; }
-        55%, 95% { opacity: 0; }
-        100% { opacity: 1; }
+        background: linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.55) 45%, rgba(255,255,255,0.22) 100%);
     }
     .worldcup-hero::before {
         content: ''; position: absolute; inset: 0;
@@ -4280,35 +4279,18 @@
 <!-- ============ EVENTS PAGE ============ -->
 <section class="page" data-page="events">
 
-    <div class="country-bar worldcup-only">
-        <div class="countries countries-flagrow" id="countries"></div>
-    </div>
 
     <div class="worldcup-hero worldcup-only">
         <div class="worldcup-stripes"></div>
-        <div class="worldcup-bg" aria-hidden="true">
-            <div class="worldcup-bg-img worldcup-bg-img-1"></div>
-            <div class="worldcup-bg-img worldcup-bg-img-2"></div>
-        </div>
-        <div class="worldcup-hero-inner worldcup-hero-split">
-            <div class="worldcup-hero-text">
-                <div class="worldcup-eyebrow">FIFA · 2026 · NORTH AMERICA</div>
-                <h1 class="worldcup-title">World <em>Cup</em><br>2026.</h1>
-                <p class="worldcup-sub">Every match. Every country. Find the watch party where your flag flies highest.</p>
-                <button class="wc-fanhub-cta" onclick="route('fanhub')">
-                    <span>Join the Fan Hub</span>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                </button>
-            </div>
-            <div class="worldcup-hero-video">
-                <iframe
-                    src="https://www.youtube-nocookie.com/embed/IGjE_zgs2Hw?autoplay=1&mute=1&controls=0&loop=1&playlist=IGjE_zgs2Hw&modestbranding=1&playsinline=1&rel=0"
-                    title="World Cup 2026 promo"
-                    frameborder="0"
-                    allow="autoplay; encrypted-media; picture-in-picture"
-                    allowfullscreen
-                    loading="lazy"></iframe>
-            </div>
+        <div class="worldcup-bg" aria-hidden="true"></div>
+        <div class="worldcup-hero-inner">
+            <div class="worldcup-eyebrow">FIFA · 2026 · NORTH AMERICA</div>
+            <h1 class="worldcup-title">World <em>Cup</em><br>2026.</h1>
+            <p class="worldcup-sub">Every match. Every country. Find the watch party where your flag flies highest.</p>
+            <button class="wc-fanhub-cta" onclick="route('fanhub')">
+                <span>Join the Fan Hub</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </button>
         </div>
     </div>
 
