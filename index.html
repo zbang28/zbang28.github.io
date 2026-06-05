@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kickoff — Find watch parties, parades & pickup</title>
+<title>HomeCrowd — Where your people watch · 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bevan&family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
@@ -80,9 +80,9 @@
         transform: rotate(-6deg);
     }
     .brand-name {
-        font-family: 'Inter', sans-serif;
-        font-weight: 800;
-        font-size: 20px; letter-spacing: -0.02em;
+        font-family: 'Bevan', 'Inter', serif;
+        font-weight: 400;
+        font-size: 22px; letter-spacing: 0;
     }
 
     .tabs { display: flex; gap: 4px; align-items: center; flex: 1; overflow-x: auto; scrollbar-width: none; }
@@ -970,6 +970,20 @@
         font-size: clamp(40px, 6vw, 72px);
         line-height: 0.98; letter-spacing: -0.04em;
         margin-bottom: 18px;
+    }
+    .hero h1 .gradient {
+        font-family: 'Bevan', 'Inter', serif;
+        font-weight: 400;
+        letter-spacing: 0;
+    }
+    .hero-sub {
+        font-family: 'Space Grotesk', 'Inter', sans-serif;
+        font-size: clamp(16px, 1.8vw, 20px);
+        font-weight: 400;
+        color: rgba(255,255,255,0.85);
+        max-width: 520px;
+        margin: 0 auto 22px;
+        line-height: 1.4;
     }
     .hero h1 .gradient {
         background: linear-gradient(135deg, #ffb800 0%, #ff7a1a 50%, #ff3eb5 100%);
@@ -2083,10 +2097,33 @@
             radial-gradient(ellipse 38% 75% at 0% 30%, rgba(255,46,46,0.6), transparent 60%),
             radial-gradient(ellipse 38% 75% at 95% 90%, rgba(37,99,235,0.5), transparent 60%),
             radial-gradient(ellipse 38% 75% at 0% 90%, rgba(255,212,0,0.5), transparent 60%),
-            radial-gradient(ellipse 40% 60% at 50% 50%, rgba(255,107,26,0.25), transparent 60%),
             #ffffff;
         color: #0e0f11;
         padding: 36px 32px 44px;
+    }
+    /* Crossfading photo backgrounds — stars collage <-> team photo */
+    .worldcup-bg {
+        position: absolute; inset: 0;
+        overflow: hidden;
+        z-index: 0;
+        pointer-events: none;
+    }
+    .worldcup-bg::after {
+        content: ''; position: absolute; inset: 0;
+        background: linear-gradient(135deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.55) 45%, rgba(255,255,255,0.25) 100%);
+    }
+    .worldcup-bg-img {
+        position: absolute; inset: 0;
+        background-size: cover;
+        background-position: center;
+        animation: wcBgFade 14s infinite ease-in-out;
+    }
+    .worldcup-bg-img-1 { background-image: url('assets/wc-stars.jpg'); }
+    .worldcup-bg-img-2 { background-image: url('assets/wc-team.jpg'); animation-delay: 7s; opacity: 0; }
+    @keyframes wcBgFade {
+        0%, 45% { opacity: 1; }
+        55%, 95% { opacity: 0; }
+        100% { opacity: 1; }
     }
     .worldcup-hero::before {
         content: ''; position: absolute; inset: 0;
@@ -2112,6 +2149,33 @@
     .worldcup-hero-inner {
         position: relative; z-index: 1;
         max-width: 1280px; margin: 0 auto;
+    }
+    /* Split layout: text on left, embedded video on right */
+    .worldcup-hero-split {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 32px;
+        align-items: center;
+    }
+    @media (max-width: 880px) {
+        .worldcup-hero-split { grid-template-columns: 1fr; }
+    }
+    .worldcup-hero-text { min-width: 0; }
+    .worldcup-hero-video {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 14px 40px rgba(0,0,0,0.18);
+        background: #000;
+    }
+    .worldcup-hero-video iframe {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
     }
     .worldcup-eyebrow {
         display: inline-block;
@@ -2815,6 +2879,12 @@
         transition: transform 0.18s ease;
         cursor: pointer;
     }
+    .pin.pin-basic {
+        width: 20px; height: 20px;
+        border-width: 2px;
+        box-shadow: 0 2px 6px rgba(13,74,43,0.35);
+    }
+    .pin.pin-basic:hover { transform: scale(1.4); }
     .pin::after {
         content: ''; position: absolute; inset: -6px;
         border-radius: 50%; border: 2px solid currentColor;
@@ -4113,8 +4183,8 @@
 <nav>
     <div class="nav-inner">
         <a class="brand" href="#/discover">
-            <div class="brand-mark">L</div>
-            <div class="brand-name">Kickoff</div>
+            <div class="brand-mark">H</div>
+            <div class="brand-name">HomeCrowd</div>
         </a>
         <div class="tabs" id="tabs">
             <button class="tab" data-route="home">Home</button>
@@ -4133,8 +4203,9 @@
             <source src="assets/england-scenes-web.mp4" type="video/mp4">
         </video>
         <div class="hero-content">
-            <div class="hero-eyebrow"><span class="live-dot"></span><span id="hero-live-count">FIFA 2026 · NYC · 47 watch parties live</span></div>
-            <h1>Find your <span class="gradient">HomeTurf.</span></h1>
+            <div class="hero-eyebrow"><span class="live-dot"></span><span id="hero-live-count">FIFA 2026 · Where your people watch</span></div>
+            <h1>Find your <span class="gradient">HomeCrowd.</span></h1>
+            <p class="hero-sub">Find the best venue to watch every match. See who's going.</p>
             <button class="browse-map-btn" onclick="route('worldcup')">
                 <span>Find a watch party</span>
                 <span class="browse-map-arrow">→</span>
@@ -4153,7 +4224,7 @@
 
     <div class="home-section">
         <div class="home-section-head">
-            <h2>Inside <em>Kickoff</em></h2>
+            <h2>Inside <em>HomeCrowd</em></h2>
         </div>
         <div class="feature-grid">
 
@@ -4215,14 +4286,29 @@
 
     <div class="worldcup-hero worldcup-only">
         <div class="worldcup-stripes"></div>
-        <div class="worldcup-hero-inner">
-            <div class="worldcup-eyebrow">FIFA · 2026 · NORTH AMERICA</div>
-            <h1 class="worldcup-title">World <em>Cup</em><br>2026.</h1>
-            <p class="worldcup-sub">Every match. Every country. Find the watch party where your flag flies highest.</p>
-            <button class="wc-fanhub-cta" onclick="route('fanhub')">
-                <span>Join the Fan Hub</span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-            </button>
+        <div class="worldcup-bg" aria-hidden="true">
+            <div class="worldcup-bg-img worldcup-bg-img-1"></div>
+            <div class="worldcup-bg-img worldcup-bg-img-2"></div>
+        </div>
+        <div class="worldcup-hero-inner worldcup-hero-split">
+            <div class="worldcup-hero-text">
+                <div class="worldcup-eyebrow">FIFA · 2026 · NORTH AMERICA</div>
+                <h1 class="worldcup-title">World <em>Cup</em><br>2026.</h1>
+                <p class="worldcup-sub">Every match. Every country. Find the watch party where your flag flies highest.</p>
+                <button class="wc-fanhub-cta" onclick="route('fanhub')">
+                    <span>Join the Fan Hub</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </button>
+            </div>
+            <div class="worldcup-hero-video">
+                <iframe
+                    src="https://www.youtube-nocookie.com/embed/IGjE_zgs2Hw?autoplay=1&mute=1&controls=0&loop=1&playlist=IGjE_zgs2Hw&modestbranding=1&playsinline=1&rel=0"
+                    title="World Cup 2026 promo"
+                    frameborder="0"
+                    allow="autoplay; encrypted-media; picture-in-picture"
+                    allowfullscreen
+                    loading="lazy"></iframe>
+            </div>
         </div>
     </div>
 
@@ -4381,10 +4467,10 @@
 <footer id="site-footer">
     <div class="footer-inner">
         <div style="display:flex;align-items:center;gap:10px">
-            <div class="brand-mark">L</div>
-            <div class="brand-name">Kickoff</div>
+            <div class="brand-mark">H</div>
+            <div class="brand-name">HomeCrowd</div>
         </div>
-        <div>© 2026 Kickoff. One Game. Every Crowd.</div>
+        <div>© 2026 HomeCrowd. Where your people watch.</div>
     </div>
 </footer>
 
@@ -5217,7 +5303,7 @@ function cardArtHTML(p) {
     // Fallback for sport-only events (Pickup Soccer, UFC main card, etc.)
     return `<img src="${photoFor(p)}" alt="" loading="lazy">`;
 }
-const sportColor = { NFL:'#013369', NBA:'#c8102e', MLB:'#002d72', NHL:'#1f2937', Soccer:'#00853f', UFC:'#9b1c1c', F1:'#b91c1c' };
+const sportColor = { NFL:'#013369', NBA:'#c8102e', MLB:'#002d72', NHL:'#1f2937', Soccer:'#0d4a2b', UFC:'#9b1c1c', F1:'#b91c1c' };
 const reactionEmojis = [];
 
 // ============ STATE ============
@@ -5866,11 +5952,21 @@ function renderMap(filtered) {
     if (!filtered || !filtered.length) return;
     filtered.forEach(p => {
         const locked = isLocked(p);
-        const color = locked ? '#8a8d94' : (sportColor[p.sport] || '#ff2d3a');
+        // Tiered: featured/standard = green pin, basic = small black dot
+        const isBasic = p.tier === 'basic';
+        const color = locked ? '#8a8d94'
+            : isBasic ? '#0d4a2b'
+            : (p.tier ? '#ff2d3a' : (sportColor[p.sport] || '#ff2d3a'));
         const isActive = activeCardId === p.id;
+        const size = isBasic ? 20 : 36;
+        const half = size / 2;
+        const inner = locked
+            ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="11" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>`
+            : isBasic ? '' : p.sport[0];
+        const cls = isBasic ? 'pin pin-basic' : 'pin';
         const icon = L.divIcon({
-            className:'pin-wrap', iconSize:[36,36], iconAnchor:[18,18],
-            html:`<div class="pin ${p.live ? 'live' : ''} ${isActive ? 'active' : ''}" data-id="${p.id}" style="background:${color};color:${color}">${locked ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="11" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>` : p.sport[0]}</div>`
+            className:'pin-wrap', iconSize:[size,size], iconAnchor:[half,half],
+            html:`<div class="${cls} ${p.live ? 'live' : ''} ${isActive ? 'active' : ''}" data-id="${p.id}" style="background:${color};color:${color}">${inner}</div>`
         });
         const marker = L.marker([p.lat, p.lng], { icon }).addTo(mapInstance);
         marker._partyId = p.id;
