@@ -4181,13 +4181,14 @@
     /* ==================== MOBILE ==================== */
     /* Single-column phone layout. Targets ≤ 760px. */
     @media (max-width: 760px) {
-        /* Nav: compact mark, tabs scroll horizontally */
-        nav { padding: 10px 14px; }
-        .nav-inner { gap: 10px; }
-        .brand-mark { width: 32px; height: 32px; font-size: 16px; }
-        .brand-name { font-size: 19px; }
-        .tabs { gap: 4px; }
-        .tab { padding: 8px 14px !important; font-size: 13px !important; min-height: 40px; }
+        /* Nav: compact brand, tabs always visible (no horizontal clip) */
+        nav { padding: 8px 12px; }
+        .nav-inner { gap: 8px; flex-wrap: nowrap; }
+        .brand { flex: 0 0 auto; }
+        .brand-name { font-size: 17px; }
+        .tabs { gap: 4px; flex: 1 1 auto; justify-content: flex-end; overflow: visible; }
+        .tab { padding: 8px 12px !important; font-size: 13px !important; min-height: 40px; white-space: nowrap; }
+        .nav-right { display: none; }
 
         /* Home hero */
         .hero { padding: 36px 18px 42px; }
@@ -4217,37 +4218,50 @@
         .wc-match-time { font-size: 10px; }
         .wc-match-meta { font-size: 10px; }
 
-        /* Split: stack list above map, map gets ~55vh */
+        /* Split: map first, then list (single column, map comes BEFORE list) */
         .split {
             grid-template-columns: 1fr !important;
             height: auto !important;
+            display: flex !important;
+            flex-direction: column !important;
+        }
+        .split-map {
+            order: 1;
+            position: relative !important;
+            top: 0 !important;
+            height: 50vh !important;
+            min-height: 320px;
         }
         .split-list {
-            padding: 0 16px 24px;
+            order: 2;
+            padding: 0 16px 18px;
             border-right: none;
-            border-bottom: 1px solid var(--border);
             overflow-y: visible;
             max-height: none;
         }
         .split-sticky {
-            margin: 0 -16px 12px -16px;
+            margin: 0 -16px 10px -16px;
             padding-left: 16px; padding-right: 16px;
-            padding-top: 14px; padding-bottom: 10px;
+            padding-top: 12px; padding-bottom: 10px;
         }
-        .split-list-head { padding-bottom: 12px; margin-bottom: 0; }
-        .split-list-head h2 { font-size: 22px; }
+        .split-list-head { padding-bottom: 10px; margin-bottom: 0; }
+        .split-list-head h2 { font-size: 20px; }
         .split-list-head .count { padding: 4px 10px; font-size: 11px; }
 
         .list-tab-bar { gap: 4px; padding: 4px; }
         .list-seg { padding: 10px 8px; font-size: 13px; min-height: 44px; }
 
-        /* Map column: not sticky on mobile, takes a chunk of viewport, then list keeps going */
-        .split-map {
-            position: relative !important;
-            top: 0 !important;
-            height: 60vh !important;
-            min-height: 380px;
+        /* Cap the list to ~3 cards tall; user scrolls inside it for more */
+        .mini-list {
+            max-height: calc(3 * 138px);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            scroll-snap-type: y proximity;
+            padding-right: 2px;
         }
+        .mini-list > * { scroll-snap-align: start; }
+        .mini-list::-webkit-scrollbar { width: 4px; }
+        .mini-list::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 2px; }
         .borough-filter { padding: 10px 12px; gap: 5px; }
         .city-toggle { margin-right: 6px; padding: 2px; gap: 1px; }
         .city-pill { padding: 5px 10px; font-size: 11px; min-height: 32px; }
@@ -4326,7 +4340,6 @@
 <nav>
     <div class="nav-inner">
         <a class="brand" href="#/discover">
-            <div class="brand-mark">H</div>
             <div class="brand-name">HomeCrowd</div>
         </a>
         <div class="tabs" id="tabs">
@@ -4365,37 +4378,6 @@
         </div>
     </div>
 
-    <div class="home-section">
-        <div class="home-section-head">
-            <h2>Inside <em>HomeCrowd</em></h2>
-        </div>
-        <div class="feature-grid">
-
-            <article class="feature-card" onclick="openMapView()">
-                <div class="feature-art">
-                    <img src="https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=900&q=80&auto=format&fit=crop" alt="" loading="lazy">
-                </div>
-                <div class="feature-body">
-                    <div class="feature-kicker">DISCOVER</div>
-                    <h3>An interactive map of every event</h3>
-                    <p>Watch parties, parades, and pickup games, plotted on a live map. Click a pin to RSVP.</p>
-                </div>
-            </article>
-
-            <article class="feature-card" onclick="route('worldcup')">
-                <div class="feature-art">
-                    <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=900&q=80&auto=format&fit=crop" alt="" loading="lazy">
-                </div>
-                <div class="feature-body">
-                    <div class="feature-kicker" style="color:#ffb800">WORLD CUP</div>
-                    <h3>Find your flag's crowd</h3>
-                    <p>Pick the country you're supporting and we'll show every watch spot, parade, and pickup match.</p>
-                </div>
-            </article>
-
-
-        </div>
-    </div>
 
 </section>
 
@@ -4567,10 +4549,7 @@
 
 <footer id="site-footer">
     <div class="footer-inner">
-        <div style="display:flex;align-items:center;gap:10px">
-            <div class="brand-mark">H</div>
-            <div class="brand-name">HomeCrowd</div>
-        </div>
+        <div class="brand-name">HomeCrowd</div>
         <div>© 2026 HomeCrowd. Where your people watch.</div>
     </div>
 </footer>
