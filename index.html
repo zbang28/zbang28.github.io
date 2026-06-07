@@ -5022,6 +5022,176 @@ const sfVenues100 = [
     });
 })();
 
+// ===== Round 2: more NYC venues (denser map coverage across all 5 boroughs) =====
+const extraNycVenues = [
+    // ---- Manhattan: Hell's Kitchen / Theater District / Midtown overflow ----
+    ['Bourbon Street', 'Sports Bar', 'Hell\'s Kitchen', 'Manhattan', 'US', 40.7625, -73.9907, 'Neutral'],
+    ['The Long Acre Tavern', 'Pub', 'Theater District', 'Manhattan', 'IE', 40.7600, -73.9870, 'Ireland'],
+    ['Hurley\'s Saloon', 'Pub', 'Theater District', 'Manhattan', 'IE', 40.7593, -73.9858, 'Ireland'],
+    ['Rosie O\'Grady\'s', 'Pub', 'Theater District', 'Manhattan', 'IE', 40.7600, -73.9852, 'Ireland'],
+    ['Beer Authority', 'Beer Hall', 'Theater District', 'Manhattan', 'US', 40.7548, -73.9904, 'Neutral'],
+    ['Sean Kelly\'s', 'Pub', 'Midtown', 'Manhattan', 'IE', 40.7510, -73.9855, 'Ireland'],
+    ['Annie Moore\'s', 'Pub', 'Murray Hill', 'Manhattan', 'IE', 40.7530, -73.9755, 'Ireland'],
+    ['Failte Irish Whiskey Bar', 'Pub', 'Murray Hill', 'Manhattan', 'IE', 40.7479, -73.9759, 'Ireland'],
+    ['Park Avenue Tavern', 'Pub', 'Murray Hill', 'Manhattan', 'US', 40.7505, -73.9817, 'Neutral'],
+
+    // ---- Manhattan: East Village / LES / Alphabet City ----
+    ['Welcome to the Johnsons', 'Dive Bar', 'Lower East Side', 'Manhattan', 'US', 40.7203, -73.9890, 'Neutral'],
+    ['Niagara', 'Bar', 'East Village', 'Manhattan', 'US', 40.7260, -73.9836, 'Neutral'],
+    ['Sophie\'s', 'Bar', 'East Village', 'Manhattan', 'US', 40.7270, -73.9826, 'Neutral'],
+    ['Crocodile Lounge', 'Pizza Bar', 'East Village', 'Manhattan', 'IT', 40.7305, -73.9845, 'Italy'],
+    ['13th Step', 'Sports Bar', 'East Village', 'Manhattan', 'US', 40.7280, -73.9842, 'Neutral'],
+    ['Standings', 'Sports Bar', 'East Village', 'Manhattan', 'US', 40.7290, -73.9870, 'Neutral'],
+    ['Manitoba\'s', 'Bar', 'East Village', 'Manhattan', 'US', 40.7252, -73.9820, 'Neutral'],
+    ['Mona\'s', 'Bar', 'Alphabet City', 'Manhattan', 'IE', 40.7240, -73.9790, 'Ireland'],
+    ['Phebe\'s Tavern', 'Pub', 'NoHo', 'Manhattan', 'US', 40.7270, -73.9905, 'Neutral'],
+
+    // ---- Manhattan: UWS / UES overflow ----
+    ['Prohibition', 'Cocktail Bar', 'Upper West Side', 'Manhattan', 'US', 40.7798, -73.9787, 'Neutral'],
+    ['Jake\'s Dilemma', 'Sports Bar', 'Upper West Side', 'Manhattan', 'US', 40.7842, -73.9786, 'Neutral'],
+    ['Dive 75', 'Bar', 'Upper West Side', 'Manhattan', 'US', 40.7825, -73.9778, 'Neutral'],
+    ['Phil Hughes Bar', 'Sports Bar', 'Upper East Side', 'Manhattan', 'US', 40.7740, -73.9550, 'Neutral'],
+    ['Bondurants', 'Bar', 'Upper East Side', 'Manhattan', 'US', 40.7740, -73.9555, 'Neutral'],
+    ['Caledonia Bar', 'Pub', 'Upper East Side', 'Manhattan', 'EN', 40.7720, -73.9560, 'England'],
+    ['Jones Wood Foundry', 'Pub', 'Upper East Side', 'Manhattan', 'EN', 40.7672, -73.9560, 'England'],
+
+    // ---- Brooklyn: Bushwick / Bed-Stuy / Crown Heights ----
+    ['Bossa Nova Civic Club', 'Bar', 'Bushwick', 'Brooklyn', 'BR', 40.6975, -73.9220, 'Brazil'],
+    ['Heavy Woods', 'Bar', 'Bushwick', 'Brooklyn', 'US', 40.7044, -73.9325, 'Neutral'],
+    ['Carmelo\'s', 'Pizza Bar', 'Bushwick', 'Brooklyn', 'IT', 40.7000, -73.9250, 'Italy'],
+    ['Saraghina Bar', 'Italian', 'Bedford-Stuyvesant', 'Brooklyn', 'IT', 40.6800, -73.9335, 'Italy'],
+    ['Friends and Lovers', 'Bar', 'Crown Heights', 'Brooklyn', 'US', 40.6800, -73.9580, 'Neutral'],
+    ['Sea Witch', 'Bar', 'Park Slope', 'Brooklyn', 'US', 40.6680, -73.9820, 'Neutral'],
+    ['Buttermilk Bar', 'Bar', 'Gowanus', 'Brooklyn', 'US', 40.6720, -73.9870, 'Neutral'],
+    ['High Dive', 'Bar', 'Park Slope', 'Brooklyn', 'US', 40.6720, -73.9810, 'Neutral'],
+    ['Superfine', 'Bar', 'DUMBO', 'Brooklyn', 'US', 40.7033, -73.9893, 'Neutral'],
+    ['Atrium DUMBO', 'Restaurant', 'DUMBO', 'Brooklyn', 'FR', 40.7033, -73.9893, 'France'],
+    ['Bar Great Harry', 'Beer Bar', 'Carroll Gardens', 'Brooklyn', 'US', 40.6798, -73.9986, 'Neutral'],
+    ['Frankies 457', 'Restaurant', 'Carroll Gardens', 'Brooklyn', 'IT', 40.6795, -73.9984, 'Italy'],
+    ['The Levee', 'Bar', 'Williamsburg', 'Brooklyn', 'US', 40.7115, -73.9560, 'Neutral'],
+
+    // ---- Queens: Astoria / LIC / Sunnyside / Jackson Heights ----
+    ['PJ Horgan\'s', 'Pub', 'Astoria', 'Queens', 'IE', 40.7700, -73.9170, 'Ireland'],
+    ['Bohemian Hall & Beer Garden', 'Beer Hall', 'Astoria', 'Queens', 'CZ', 40.7635, -73.9215, 'Czechia'],
+    ['The Sparrow Tavern', 'Pub', 'Astoria', 'Queens', 'US', 40.7615, -73.9275, 'Neutral'],
+    ['Sunswick 35/35', 'Bar', 'Astoria', 'Queens', 'US', 40.7625, -73.9305, 'Neutral'],
+    ['Donovan\'s Pub', 'Pub', 'Woodside', 'Queens', 'IE', 40.7475, -73.9050, 'Ireland'],
+    ['Dog & Duck', 'Pub', 'Sunnyside', 'Queens', 'EN', 40.7430, -73.9215, 'England'],
+    ['The Hangar', 'Bar', 'Long Island City', 'Queens', 'US', 40.7475, -73.9530, 'Neutral'],
+    ['Anable Basin Sailing Bar', 'Beer Garden', 'Long Island City', 'Queens', 'US', 40.7475, -73.9580, 'Neutral'],
+    ['Terraza 7', 'Bar', 'Jackson Heights', 'Queens', 'CO', 40.7470, -73.8930, 'Neutral'],
+    ['Casa Pepe', 'Restaurant', 'Jackson Heights', 'Queens', 'MX', 40.7460, -73.8920, 'Mexico'],
+
+    // ---- Bronx ----
+    ['Bronx Brewery', 'Brewery', 'Mott Haven', 'Bronx', 'US', 40.8090, -73.9220, 'Neutral'],
+    ['Bruckner Bar & Grill', 'Pub', 'Mott Haven', 'Bronx', 'US', 40.8055, -73.9170, 'Neutral'],
+    ['Coogan\'s Bluff', 'Pub', 'Highbridge', 'Bronx', 'IE', 40.8330, -73.9270, 'Ireland'],
+    ['An Béal Bocht Café', 'Pub', 'Riverdale', 'Bronx', 'IE', 40.8800, -73.9080, 'Ireland'],
+
+    // ---- Staten Island ----
+    ['Flagship Brewery', 'Brewery', 'Tompkinsville', 'Staten Island', 'US', 40.6395, -74.0820, 'Neutral'],
+    ['Liedy\'s Shore Inn', 'Pub', 'New Brighton', 'Staten Island', 'US', 40.6430, -74.0850, 'Neutral'],
+    ['Jade Island', 'Restaurant', 'Travis', 'Staten Island', 'US', 40.5840, -74.1900, 'Neutral'],
+];
+
+(function expandExtraNyc() {
+    const perksCycle = [
+        ['Big Screens','Wings'], ['Pints','Soccer Crowd'], ['Sound On','Booths'],
+        ['Outdoor','Beer Garden'], ['Multiple TVs','Specials'], ['Big Screens'],
+    ];
+    const startId = 3000;
+    extraNycVenues.forEach((v, i) => {
+        const [name, vtype, neighborhood, borough, country, lat, lng, theme] = v;
+        const id = startId + i;
+        const match = theme === 'Neutral' ? 'Every Nation Welcome' : `${theme} Takeover`;
+        let tier;
+        if (i % 14 === 0) tier = 'gold';
+        else if (i % 5 === 0) tier = 'silver';
+        else tier = 'basic';
+        parties.push({
+            id, sport:'Soccer', country, match, venue:name, vtype, neighborhood, borough,
+            distance: Math.round(((id * 7) % 78 + 2) / 10 * 10) / 10,
+            time: 'Every match day',
+            perks: perksCycle[i % perksCycle.length],
+            live: false, when: 'This weekend',
+            lat, lng,
+            eventType: 'watch-party',
+            price: 'No cover',
+            neutral: theme === 'Neutral',
+            theme, tier,
+            city: 'NYC',
+        });
+    });
+})();
+
+// ===== Round 2: more SF venues =====
+const extraSfVenues = [
+    // More Mission
+    ['Beauty Bar SF', 'Bar', 'Mission', 'Mission', 'US', 37.7625, -122.4205, 'Neutral'],
+    ['Pop\'s Bar Mission', 'Dive Bar', 'Mission', 'Mission', 'US', 37.7555, -122.4135, 'Neutral'],
+    ['Royal Cuckoo Organ Lounge', 'Bar', 'Mission', 'Mission', 'US', 37.7440, -122.4220, 'Neutral'],
+    ['Latin American Club', 'Bar', 'Mission', 'Mission', 'US', 37.7600, -122.4220, 'Neutral'],
+    ['Doc\'s Clock', 'Bar', 'Mission', 'Mission', 'US', 37.7548, -122.4195, 'Neutral'],
+    // More SoMa
+    ['Trick Dog', 'Cocktail Bar', 'SoMa', 'SoMa', 'US', 37.7615, -122.4115, 'Neutral'],
+    ['Brick & Mortar Music Hall', 'Bar', 'SoMa', 'SoMa', 'US', 37.7745, -122.4220, 'Neutral'],
+    ['Bluxome Street Winery', 'Wine Bar', 'SoMa', 'SoMa', 'US', 37.7775, -122.3995, 'Neutral'],
+    ['House of Shields SF', 'Bar', 'SoMa', 'SoMa', 'US', 37.7870, -122.4045, 'Neutral'],
+    // More Marina
+    ['Balboa Cafe', 'Restaurant', 'Cow Hollow', 'Marina', 'US', 37.7973, -122.4365, 'Neutral'],
+    ['Comet Club', 'Bar', 'Marina', 'Marina', 'US', 37.8005, -122.4395, 'Neutral'],
+    ['Final Final Outer Richmond', 'Sports Bar', 'Outer Richmond', 'Richmond/Sunset', 'US', 37.7780, -122.4920, 'Neutral'],
+    // More Castro
+    ['Edge Bar', 'Bar', 'Castro', 'Castro', 'US', 37.7620, -122.4358, 'Neutral'],
+    ['QBar', 'Bar', 'Castro', 'Castro', 'US', 37.7615, -122.4340, 'Neutral'],
+    // More Polk / Nob Hill
+    ['Place Pigalle', 'Wine Bar', 'Russian Hill', 'Polk/Nob', 'FR', 37.7990, -122.4205, 'France'],
+    ['The Tonga Room & Hurricane Bar', 'Cocktail Bar', 'Nob Hill', 'Polk/Nob', 'US', 37.7920, -122.4115, 'Neutral'],
+    // More North Beach
+    ['Mr. Bing\'s', 'Dive Bar', 'Chinatown', 'North Beach', 'US', 37.7945, -122.4068, 'Neutral'],
+    ['Saloon Music Hall', 'Bar', 'North Beach', 'North Beach', 'US', 37.7985, -122.4080, 'Neutral'],
+    ['Gold Dust Lounge', 'Bar', 'North Beach', 'North Beach', 'US', 37.7960, -122.4090, 'Neutral'],
+    // More Haight
+    ['Aub Zam Zam', 'Cocktail Bar', 'Upper Haight', 'Haight', 'US', 37.7700, -122.4485, 'Neutral'],
+    ['The Alembic', 'Cocktail Bar', 'Upper Haight', 'Haight', 'US', 37.7700, -122.4490, 'Neutral'],
+    // More Downtown
+    ['Bartlett Hall', 'Brewery', 'Union Square', 'Downtown', 'US', 37.7860, -122.4090, 'Neutral'],
+    ['Local Edition', 'Cocktail Bar', 'Downtown', 'Downtown', 'US', 37.7855, -122.4060, 'Neutral'],
+    ['Rickhouse', 'Whiskey Bar', 'Financial District', 'Downtown', 'US', 37.7900, -122.4030, 'Neutral'],
+    ['The Treasury', 'Cocktail Bar', 'Financial District', 'Downtown', 'US', 37.7945, -122.4015, 'Neutral'],
+];
+
+(function expandExtraSf() {
+    const perksCycle = [
+        ['Big Screens','Wings'], ['Pints','Soccer Crowd'], ['Sound On','Booths'],
+        ['Outdoor','Beer Garden'], ['Multiple TVs','Specials'], ['Big Screens'],
+    ];
+    const startId = 3500;
+    extraSfVenues.forEach((v, i) => {
+        const [name, vtype, neighborhood, district, country, lat, lng, theme] = v;
+        const id = startId + i;
+        const match = theme === 'Neutral' ? 'Every Nation Welcome' : `${theme} Takeover`;
+        let tier;
+        if (i % 13 === 0) tier = 'gold';
+        else if (i % 5 === 0) tier = 'silver';
+        else tier = 'basic';
+        parties.push({
+            id, sport:'Soccer', country, match, venue:name, vtype, neighborhood,
+            borough: district,
+            distance: Math.round(((id * 7) % 78 + 2) / 10 * 10) / 10,
+            time: 'Every match day',
+            perks: perksCycle[i % perksCycle.length],
+            live: false, when: 'This weekend',
+            lat, lng,
+            eventType: 'watch-party',
+            price: 'No cover',
+            neutral: theme === 'Neutral',
+            theme, tier,
+            city: 'SF',
+        });
+    });
+})();
+
 let polls = [
     { id:101, country:'AR', borough:'Brooklyn', question:"Best Argentina watch spot in Brooklyn?", sub:'Brooklyn · Saturday match', options:[
         { name:'La Boqueria', votes:284 },
