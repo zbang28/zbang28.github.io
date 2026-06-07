@@ -4020,6 +4020,17 @@
         flex-wrap: wrap; gap: 16px;
         color: var(--text-mute); font-size: 13px;
     }
+    .footer-legal {
+        flex-basis: 100%;
+        font-size: 11px;
+        line-height: 1.5;
+        color: var(--text-mute);
+        max-width: 1280px;
+        opacity: 0.8;
+        margin-top: 6px;
+        border-top: 1px solid var(--border);
+        padding-top: 12px;
+    }
 
     /* Sponsored recommendation popup */
     .sponsor-pop {
@@ -4356,7 +4367,7 @@
         </a>
         <div class="tabs" id="tabs">
             <button class="tab" data-route="home">Home</button>
-            <button class="tab highlight" data-route="worldcup">World Cup</button>
+            <button class="tab highlight" data-route="worldcup">Matches</button>
         </div>
         <div class="nav-right">
         </div>
@@ -4371,7 +4382,7 @@
             <source src="assets/england-scenes-web.mp4" type="video/mp4">
         </video>
         <div class="hero-content">
-            <div class="hero-eyebrow"><span class="live-dot"></span><span id="hero-live-count">FIFA 2026 · Where your people watch</span></div>
+            <div class="hero-eyebrow"><span class="live-dot"></span><span id="hero-live-count">Summer 2026 · Where your people watch</span></div>
             <h1>Find your <span class="gradient">HomeCrowd.</span></h1>
             <p class="hero-sub">Find the best venue to watch every match. See who's going.</p>
             <button class="browse-map-btn" onclick="route('worldcup')">
@@ -4401,8 +4412,8 @@
         <div class="worldcup-stripes"></div>
         <div class="worldcup-bg" aria-hidden="true"></div>
         <div class="worldcup-hero-inner">
-            <div class="worldcup-eyebrow">FIFA · 2026 · NORTH AMERICA</div>
-            <h1 class="worldcup-title">World <em>Cup</em><br>2026.</h1>
+            <div class="worldcup-eyebrow">SUMMER 2026 · NORTH AMERICA</div>
+            <h1 class="worldcup-title">The <em>Tournament</em><br>2026.</h1>
             <p class="worldcup-sub">Every match. Every country. Find the watch party where your flag flies highest.</p>
         </div>
     </div>
@@ -4563,6 +4574,9 @@
     <div class="footer-inner">
         <div class="brand-name">HomeCrowd</div>
         <div>© 2026 HomeCrowd. Where your people watch.</div>
+        <div class="footer-legal">
+            HomeCrowd is an independent venue discovery site. We are not affiliated with, endorsed by, or sponsored by FIFA, any national football association, or any team or player shown. Venue names and addresses are sourced from public listings. Ratings and reviews shown are illustrative community estimates, not official figures. Photos are for editorial reference only — they do not imply endorsement by the depicted players, clubs, or federations. Map data © OpenStreetMap contributors · © CARTO.
+        </div>
     </div>
 </footer>
 
@@ -5800,7 +5814,7 @@ function renderMiniList(filtered) {
                         ${nationBanner}
                         <strong>${p.venue}</strong>
                         <div>${p.distance} mi · ${p.time} · ${p.price}</div>
-                        <div>★ ${g.rating} (${g.count} Google reviews)</div>
+                        <div>★ ${g.rating} community rating</div>
                         <div class="mini-basic-expand-perks">${perks}</div>
                     </div>
                 </div>`;
@@ -5853,8 +5867,7 @@ function renderMiniList(filtered) {
                     return `<div class="mini-card-reviews">
                         <span class="mini-card-stars">${starsHTML(g.rating)}</span>
                         <span class="mini-card-rating">${g.rating}</span>
-                        <span class="mini-card-count">(${g.count})</span>
-                        <span class="mini-card-google">Google</span>
+                        <span class="mini-card-mini-label">Community rating</span>
                     </div>`;
                 })()}
                 <div class="mini-card-meta">
@@ -5864,7 +5877,7 @@ function renderMiniList(filtered) {
                 </div>
                 <div class="mini-card-bottom">
                     <span class="mini-card-price">${p.price}</span>
-                    <span class="mini-card-going">${attendees} going</span>
+                    <span class="mini-card-going">RSVP</span>
                 </div>
             </div>
         `;
@@ -6022,7 +6035,9 @@ function initMap() {
     mapInstance = L.map('events-map', { zoomControl: true, scrollWheelZoom: true })
         .setView([40.7128, -73.97], 12);
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution:'&copy; OpenStreetMap &copy; CARTO', subdomains:'abcd', maxZoom:19
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 19
     }).addTo(mapInstance);
     setTimeout(() => mapInstance.invalidateSize(), 100);
     setTimeout(() => mapInstance.invalidateSize(), 400);
