@@ -4177,6 +4177,148 @@
     .score-num { font-size: 18px; font-weight: 900; font-variant-numeric: tabular-nums; min-width: 26px; text-align: right; }
     .score-card-foot { font-size: 11px; color: var(--text-mute); border-top: 1px solid var(--border); padding-top: 8px; }
     .scores-empty { color: var(--text-mute); font-size: 14px; padding: 8px 2px; }
+
+    /* ==================== MOBILE ==================== */
+    /* Single-column phone layout. Targets ≤ 760px. */
+    @media (max-width: 760px) {
+        /* Nav: compact mark, tabs scroll horizontally */
+        nav { padding: 10px 14px; }
+        .nav-inner { gap: 10px; }
+        .brand-mark { width: 32px; height: 32px; font-size: 16px; }
+        .brand-name { font-size: 19px; }
+        .tabs { gap: 4px; }
+        .tab { padding: 8px 14px !important; font-size: 13px !important; min-height: 40px; }
+
+        /* Home hero */
+        .hero { padding: 36px 18px 42px; }
+        .hero h1 { font-size: clamp(32px, 9vw, 48px); margin-bottom: 12px; }
+        .hero-sub { font-size: 15px; margin-bottom: 18px; }
+        .hero-eyebrow { font-size: 10px; padding: 4px 10px; }
+        .browse-map-btn { padding: 12px 20px; font-size: 14px; min-height: 48px; }
+        .home-section { padding: 30px 16px; }
+        .home-section-head h2 { font-size: 26px; }
+        .feature-grid { grid-template-columns: 1fr; gap: 14px; }
+
+        /* WC banner */
+        .worldcup-hero { padding: 28px 18px 32px; }
+        .worldcup-title { font-size: clamp(36px, 9vw, 52px); margin-bottom: 8px; }
+        .worldcup-sub { font-size: 14px; margin-bottom: 0; }
+        .worldcup-eyebrow { font-size: 9px; letter-spacing: 1.8px; }
+
+        /* Schedule strip */
+        .wc-schedule.worldcup-on { padding: 18px 14px 12px; }
+        .wc-schedule-title { font-size: 12px; }
+        .wc-date-strip { gap: 8px; padding: 4px 2px 12px; }
+        .wc-date-pill { min-width: 64px; padding: 9px 12px; }
+        .wc-date-day { font-size: 18px; }
+        .wc-match-row { gap: 8px; padding: 10px 0 4px; }
+        .wc-match-card { min-width: 180px; max-width: 220px; padding: 11px 12px; }
+        .wc-match-teams { font-size: 13px; }
+        .wc-match-time { font-size: 10px; }
+        .wc-match-meta { font-size: 10px; }
+
+        /* Split: stack list above map, map gets ~55vh */
+        .split {
+            grid-template-columns: 1fr !important;
+            height: auto !important;
+        }
+        .split-list {
+            padding: 0 16px 24px;
+            border-right: none;
+            border-bottom: 1px solid var(--border);
+            overflow-y: visible;
+            max-height: none;
+        }
+        .split-sticky {
+            margin: 0 -16px 12px -16px;
+            padding-left: 16px; padding-right: 16px;
+            padding-top: 14px; padding-bottom: 10px;
+        }
+        .split-list-head { padding-bottom: 12px; margin-bottom: 0; }
+        .split-list-head h2 { font-size: 22px; }
+        .split-list-head .count { padding: 4px 10px; font-size: 11px; }
+
+        .list-tab-bar { gap: 4px; padding: 4px; }
+        .list-seg { padding: 10px 8px; font-size: 13px; min-height: 44px; }
+
+        /* Map column: not sticky on mobile, takes a chunk of viewport, then list keeps going */
+        .split-map {
+            position: relative !important;
+            top: 0 !important;
+            height: 60vh !important;
+            min-height: 380px;
+        }
+        .borough-filter { padding: 10px 12px; gap: 5px; }
+        .city-toggle { margin-right: 6px; padding: 2px; gap: 1px; }
+        .city-pill { padding: 5px 10px; font-size: 11px; min-height: 32px; }
+        .city-pill-soon { padding: 3px 7px; font-size: 10px; }
+        .borough-pill { padding: 6px 11px; font-size: 12px; min-height: 32px; }
+
+        /* Mini cards: smaller image, bigger touch zone */
+        .mini-list { gap: 10px; }
+        .mini-card { grid-template-columns: 110px 1fr; gap: 12px; }
+        .mini-card-img { min-height: 110px; }
+        .mini-card.tier-gold { grid-template-columns: 140px 1fr; }
+        .mini-card.tier-gold .mini-card-img { min-height: 140px; }
+        .mini-card.tier-gold .mini-card-match { font-size: 15px; }
+        .mini-card.tier-gold .mini-card-venue { font-size: 14px; }
+        .mini-card-body { padding: 10px 12px 10px 0; gap: 4px; }
+        .mini-card-match { font-size: 13px; }
+        .mini-card-venue { font-size: 13px; }
+        .mini-card-meta { font-size: 11px; gap: 4px; flex-wrap: wrap; }
+        .mini-card-price { font-size: 11px; padding: 2px 7px; }
+        .mini-card-going { font-size: 10px; }
+        .mini-card-reviews { font-size: 11px; gap: 4px; }
+        .mini-card-google { font-size: 9px; }
+        .nation-strip { font-size: 11px; padding: 3px 8px 3px 6px; }
+        .nation-strip-flag { font-size: 14px; }
+
+        /* Basic rows */
+        .mini-basic-row { padding: 12px 12px; min-height: 56px; }
+        .mini-basic-name { font-size: 14px; }
+        .mini-basic-meta { font-size: 11px; }
+        /* Mobile: don't auto-expand on hover (touch has no hover) */
+        .mini-basic:hover .mini-basic-expand { max-height: 0; opacity: 0; padding: 0 12px; }
+
+        /* Venue panel — full-width slide-up sheet on phones */
+        .venue-panel {
+            width: 100% !important;
+            max-width: 100% !important;
+            height: 80vh !important;
+            top: auto !important;
+            bottom: 0 !important;
+            right: 0 !important;
+            left: 0 !important;
+            border-radius: 18px 18px 0 0 !important;
+            transform: translateY(100%);
+        }
+        .venue-panel.open { transform: translateY(0); }
+        .venue-close { width: 40px; height: 40px; top: 12px; right: 12px; }
+        .venue-photo-wrap { grid-template-columns: 1fr !important; height: 180px; }
+        .venue-content { padding: 18px 16px 80px; }
+        .venue-head h2 { font-size: 22px; }
+
+        /* Sponsored / recommended pop */
+        .sponsor-pop {
+            left: 12px !important;
+            right: 12px !important;
+            bottom: 12px !important;
+            width: auto !important;
+            max-width: none !important;
+        }
+
+        /* Footer */
+        #site-footer .footer-inner { flex-direction: column; gap: 10px; text-align: center; font-size: 12px; padding: 18px 16px; }
+    }
+
+    /* Smaller phones */
+    @media (max-width: 380px) {
+        .hero h1 { font-size: 30px; }
+        .worldcup-title { font-size: 32px; }
+        .mini-card { grid-template-columns: 96px 1fr; }
+        .mini-card-img { min-height: 96px; }
+        .wc-match-card { min-width: 160px; }
+    }
 </style>
 </head>
 <body>
@@ -6539,6 +6681,13 @@ function closeVenue() {
 // Escape key closes the venue panel
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeVenue();
+});
+// Keep the map sized correctly on phone rotate / resize
+window.addEventListener('resize', () => {
+    if (mapInstance) {
+        clearTimeout(window._mapResizeTimer);
+        window._mapResizeTimer = setTimeout(() => mapInstance.invalidateSize(), 120);
+    }
 });
 // Click anywhere outside the panel (on the map background) also closes it
 document.addEventListener('click', (e) => {
