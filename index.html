@@ -4253,15 +4253,27 @@
 
         /* Cap the list to ~3 cards tall; user scrolls inside it for more */
         .mini-list {
-            max-height: calc(3 * 138px);
+            max-height: 360px;          /* ~3 mini-cards (110px image + 10px gap) */
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             scroll-snap-type: y proximity;
-            padding-right: 2px;
+            padding-right: 4px;
+            overscroll-behavior: contain;
         }
-        .mini-list > * { scroll-snap-align: start; }
-        .mini-list::-webkit-scrollbar { width: 4px; }
-        .mini-list::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 2px; }
+        .mini-list > * { scroll-snap-align: start; flex: 0 0 auto; }
+        .mini-list::-webkit-scrollbar { width: 5px; }
+        .mini-list::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 3px; }
+        /* Subtle fade at the bottom so the user knows there's more */
+        .split-list { position: relative; }
+        .split-list::after {
+            content: '';
+            position: sticky; bottom: 0;
+            display: block;
+            height: 28px;
+            margin-top: -28px;
+            pointer-events: none;
+            background: linear-gradient(180deg, transparent, var(--bg));
+        }
         .borough-filter { padding: 10px 12px; gap: 5px; }
         .city-toggle { margin-right: 6px; padding: 2px; gap: 1px; }
         .city-pill { padding: 5px 10px; font-size: 11px; min-height: 32px; }
