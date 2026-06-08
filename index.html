@@ -2870,39 +2870,24 @@
 
     /* Pulse marker */
     .pin {
+        /* Red gold/silver pin — uniform 22px */
         position: relative;
-        width: 36px; height: 36px;
+        width: 22px; height: 22px;
         border-radius: 50%;
-        border: 3px solid white;
+        border: 2px solid white;
         display: grid; place-items: center;
-        color: white; font-size: 14px; font-weight: 800;
-        box-shadow: 0 4px 14px rgba(0,0,0,0.3);
-        transition: transform 0.18s ease;
+        color: white; font-size: 10px; font-weight: 800;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.25);
         cursor: pointer;
     }
     .pin.pin-basic {
-        width: 20px; height: 20px;
-        border-width: 2px;
-        box-shadow: 0 2px 6px rgba(13,74,43,0.35);
+        /* Green basic dot — uniform 10px */
+        width: 10px; height: 10px;
+        border-width: 1.5px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.25);
+        font-size: 0;
     }
-    .pin.pin-basic:hover { transform: scale(1.4); }
-    .pin::after {
-        content: ''; position: absolute; inset: -6px;
-        border-radius: 50%; border: 2px solid currentColor;
-        opacity: 0; transition: all 0.2s;
-    }
-    .pin.live::before {
-        content: ''; position: absolute; inset: -3px;
-        border-radius: 50%;
-        background: inherit; opacity: 0.4;
-        animation: pinPulse 1.6s infinite;
-        z-index: -1;
-    }
-    .pin.active, .pin:hover {
-        transform: scale(1.25);
-        z-index: 999 !important;
-    }
-    .pin.active::after { opacity: 1; }
+    /* All pins are uniform — no halos, no pulse, no scale-on-hover */
     @keyframes pinPulse {
         0% { transform: scale(0.95); opacity: 0.5; }
         100% { transform: scale(1.8); opacity: 0; }
@@ -4367,7 +4352,7 @@
         </a>
         <div class="tabs" id="tabs">
             <button class="tab" data-route="home">Home</button>
-            <button class="tab highlight" data-route="worldcup">Matches</button>
+            <button class="tab highlight" data-route="worldcup">World Cup</button>
         </div>
         <div class="nav-right">
         </div>
@@ -4413,7 +4398,7 @@
         <div class="worldcup-bg" aria-hidden="true"></div>
         <div class="worldcup-hero-inner">
             <div class="worldcup-eyebrow">SUMMER 2026 · NORTH AMERICA</div>
-            <h1 class="worldcup-title">The <em>Tournament</em><br>2026.</h1>
+            <h1 class="worldcup-title">World <em>Cup</em><br>2026.</h1>
             <p class="worldcup-sub">Every match. Every country. Find the watch party where your flag flies highest.</p>
         </div>
     </div>
@@ -5082,16 +5067,10 @@ const extraNycVenues = [
     ['Terraza 7', 'Bar', 'Jackson Heights', 'Queens', 'CO', 40.7470, -73.8930, 'Neutral'],
     ['Casa Pepe', 'Restaurant', 'Jackson Heights', 'Queens', 'MX', 40.7460, -73.8920, 'Mexico'],
 
-    // ---- Bronx ----
+    // ---- Bronx (Mott Haven + Highbridge — kept core, dropped Riverdale outlier) ----
     ['Bronx Brewery', 'Brewery', 'Mott Haven', 'Bronx', 'US', 40.8090, -73.9220, 'Neutral'],
     ['Bruckner Bar & Grill', 'Pub', 'Mott Haven', 'Bronx', 'US', 40.8055, -73.9170, 'Neutral'],
     ['Coogan\'s Bluff', 'Pub', 'Highbridge', 'Bronx', 'IE', 40.8330, -73.9270, 'Ireland'],
-    ['An Béal Bocht Café', 'Pub', 'Riverdale', 'Bronx', 'IE', 40.8800, -73.9080, 'Ireland'],
-
-    // ---- Staten Island ----
-    ['Flagship Brewery', 'Brewery', 'Tompkinsville', 'Staten Island', 'US', 40.6395, -74.0820, 'Neutral'],
-    ['Liedy\'s Shore Inn', 'Pub', 'New Brighton', 'Staten Island', 'US', 40.6430, -74.0850, 'Neutral'],
-    ['Jade Island', 'Restaurant', 'Travis', 'Staten Island', 'US', 40.5840, -74.1900, 'Neutral'],
 ];
 
 (function expandExtraNyc() {
@@ -5777,7 +5756,7 @@ const CITY_CENTER = {
 };
 // Cities with real venue data; others show a 'coming soon' empty state.
 const CITIES_WITH_VENUES = new Set(['NYC', 'SF']);
-const OTHER_CITIES = ['LA', 'Miami'];
+const OTHER_CITIES = ['LA'];
 
 function renderBoroughFilter() {
     const wrap = document.getElementById('borough-filter');
@@ -6222,11 +6201,14 @@ function renderMap(filtered) {
         const locked = isLocked(p);
         // Tiered: featured/standard = green pin, basic = small black dot
         const isBasic = p.tier === 'basic';
+        // Red for all big pins (tiered gold/silver + untiered legacy parties),
+        // green only for small basic dots
         const color = locked ? '#8a8d94'
             : isBasic ? '#0d4a2b'
-            : (p.tier ? '#ff2d3a' : (sportColor[p.sport] || '#ff2d3a'));
+            : '#ff2d3a';
         const isActive = activeCardId === p.id;
-        const size = isBasic ? 20 : 36;
+        // Uniform sizes: green dots small (basic), red pins big (gold + silver)
+        const size = isBasic ? 13 : 34;
         const half = size / 2;
         const inner = locked
             ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="11" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>`
@@ -6236,7 +6218,12 @@ function renderMap(filtered) {
             className:'pin-wrap', iconSize:[size,size], iconAnchor:[half,half],
             html:`<div class="${cls} ${p.live ? 'live' : ''} ${isActive ? 'active' : ''}" data-id="${p.id}" style="background:${color};color:${color}">${inner}</div>`
         });
-        const marker = L.marker([p.lat, p.lng], { icon }).addTo(mapInstance);
+        // Deterministic ±100m jitter so multiple bars at the same neighborhood
+        // centroid coords spread out instead of stacking into one fat blob.
+        const jitter = (n) => (((p.id * n) % 200) - 100) / 100000; // ~±0.001°
+        const markerLat = p.lat + jitter(73);
+        const markerLng = p.lng + jitter(41);
+        const marker = L.marker([markerLat, markerLng], { icon }).addTo(mapInstance);
         marker._partyId = p.id;
         const co = countries.find(c => c.code === p.country);
         marker.bindPopup(`
