@@ -2757,6 +2757,27 @@
         background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.4));
         z-index: 1;
     }
+    /* ===== Static map thumbnail (real per-venue location, free OSM/CARTO tiles) ===== */
+    .static-map {
+        position: absolute; inset: 0; z-index: 0;
+        background: #e9edf2; overflow: hidden;
+    }
+    .static-map .sm-tile {
+        position: absolute; left: 50%; top: 50%;
+        width: 256px; height: 256px; max-width: none;
+        user-select: none; pointer-events: none;
+    }
+    .static-map-pin {
+        position: absolute; left: 50%; top: 50%; z-index: 2;
+        width: 15px; height: 15px; transform: translate(-50%, -50%);
+        background: #ff2d3a; border: 2.5px solid #fff; border-radius: 50%;
+        box-shadow: 0 1px 5px rgba(0,0,0,0.45);
+    }
+    /* A map fills the tile with real geography — drop the colored multiply tint
+       and the hover zoom that only make sense over a stock photo. */
+    .mini-card-img:has(.static-map)::before { display: none; }
+    .mini-basic-expand-img { position: relative; overflow: hidden; }
+
     .mini-card-flag {
         position: absolute; top: 6px; left: 6px;
         background: white; padding: 2px 6px;
@@ -5494,6 +5515,44 @@ function photoFor(p) {
     return matchPhotos[p.match] || photos[p.sport] || photos.Soccer;
 }
 
+// True when a party has a REAL geocoded location (not a centroid fallback).
+function hasRealGeo(p) {
+    return typeof p.lat === 'number' && typeof p.lng === 'number' && !!p._geocoded;
+}
+
+// Build a real static-map thumbnail centered on the venue, composed from the
+// same free CARTO/OSM tiles the live map uses — accurate, unique per venue,
+// zero cost, no API key. Renders a 3×3 tile block offset so the venue point
+// sits dead-center, with a pin marking the exact spot.
+function staticMapHTML(lat, lng, zoom) {
+    const z = zoom || 15;
+    const scale = 256 * Math.pow(2, z);
+    const wx = (lng + 180) / 360 * scale;
+    const s = Math.sin(lat * Math.PI / 180);
+    const wy = (0.5 - Math.log((1 + s) / (1 - s)) / (4 * Math.PI)) * scale;
+    const tx = Math.floor(wx / 256), ty = Math.floor(wy / 256);
+    const subs = ['a', 'b', 'c', 'd'];
+    let tiles = '';
+    for (let dx = -1; dx <= 1; dx++) {
+        for (let dy = -1; dy <= 1; dy++) {
+            const X = tx + dx, Y = ty + dy;
+            if (Y < 0 || Y >= Math.pow(2, z)) continue;
+            const sub = subs[Math.abs(X + Y) % 4];
+            const ox = Math.round(X * 256 - wx);
+            const oy = Math.round(Y * 256 - wy);
+            tiles += `<img class="sm-tile" loading="lazy" alt="" draggable="false" src="https://${sub}.basemaps.cartocdn.com/rastertiles/voyager/${z}/${X}/${Y}.png" style="transform:translate(${ox}px,${oy}px)">`;
+        }
+    }
+    return `<div class="static-map">${tiles}<span class="static-map-pin"></span></div>`;
+}
+
+// The tile artwork for a venue: a real map of its location when we have one,
+// otherwise the type-based stock photo fallback.
+function venueArtHTML(p) {
+    if (hasRealGeo(p)) return staticMapHTML(p.lat, p.lng);
+    return `<img src="${photoFor(p)}" alt="${escHtml(p.venue || '')}" loading="lazy">`;
+}
+
 // FIFA World Cup 2026 — full fixture list, by date.
 // Times are local to host city. Venue is host metro (stadium name in venueFull).
 // Source: fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026/scores-fixtures
@@ -5676,8 +5735,9 @@ const teamData = {
 };
 
 function cardArtHTML(p) {
-    // Tiered venue listings → show the bar interior photo, not flag art.
-    if (p.tier) return `<img src="${photoFor(p)}" alt="${p.venue}" loading="lazy">`;
+    // Tiered venue listings → real map of the venue's block when geocoded,
+    // else the type-based stock photo. (Not flag/match art.)
+    if (p.tier) return venueArtHTML(p);
     const parts = p.match.split(' vs. ');
     if (parts.length === 2) {
         const aKey = parts[0].trim();
@@ -5998,6 +6058,7 @@ async function loadVenues() {
         if (existingNames.has(key)) continue;
         existingNames.add(key);
         const [lat, lng] = coordsForVenue(v);
+        const geocoded = typeof v.lat === 'number' && typeof v.lng === 'number';
         const isSf = v.borough === 'SF Bay';
         parties.push({
             id: nextId++,
@@ -6014,6 +6075,7 @@ async function loadVenues() {
             live: false,
             when: 'This weekend',
             lat, lng,
+            _geocoded: geocoded,
             eventType: 'watch-party',
             price: 'No cover',
             neutral: true,
@@ -6491,7 +6553,7 @@ function renderMiniList(filtered) {
                     </div>
                 </div>
                 <div class="mini-basic-expand">
-                    <div class="mini-basic-expand-img"><img src="${photoFor(p)}" alt="${p.venue}" loading="lazy"></div>
+                    <div class="mini-basic-expand-img">${venueArtHTML(p)}</div>
                     <div class="mini-basic-expand-body">
                         ${nationBanner}
                         <strong>${p.venue}</strong>
@@ -6740,8 +6802,18 @@ function renderMap(filtered) {
             : isBasic ? '#0d4a2b'
             : '#ff2d3a';
         const isActive = activeCardId === p.id;
-        // Uniform sizes: green dots small (basic), red pins big (gold + silver)
-        const size = isBasic ? 13 : 34;
+        // Size each dot by how popular the venue is (community review volume,
+        // the same signal shown on the cards) so the map reads as a real
+        // distribution with a visual hierarchy — not a field of identical dots.
+        const g = googleReviewFor(p);
+        let size;
+        if (isBasic) {
+            const t = Math.max(0, Math.min(1, (g.count - 80) / 900)); // ~80–1000 reviews → 0..1
+            size = Math.round(10 + t * 12); // 10–22px
+        } else {
+            const t = Math.max(0, Math.min(1, (parseFloat(g.rating) - 3.8) / 1.2)); // 3.8–5.0 → 0..1
+            size = Math.round(30 + t * 14); // 30–44px
+        }
         const half = size / 2;
         const inner = locked
             ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="11" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>`
@@ -6751,13 +6823,18 @@ function renderMap(filtered) {
             className:'pin-wrap', iconSize:[size,size], iconAnchor:[half,half],
             html:`<div class="${cls} ${p.live ? 'live' : ''} ${isActive ? 'active' : ''}" data-id="${p.id}" style="background:${color};color:${color}">${inner}</div>`
         });
-        // Spread bars sharing a neighborhood-centroid coord out in a circular
-        // halo (≈200m–650m radius) so clumps look like a real distribution,
-        // not one fat blob. Deterministic per-id so pins don't move on re-render.
-        const angle  = (((p.id * 137) % 360) + (p.id % 7) * 11) * Math.PI / 180;
-        const radius = (((p.id * 71) % 80) + 25) / 18000; // ~0.0014°–0.0058° ≈ 150–650m
-        const markerLat = p.lat + Math.sin(angle) * radius;
-        const markerLng = p.lng + Math.cos(angle) * radius * 1.25; // longitude shrinks at NYC latitude
+        // Geocoded venues (and curated venues with hand-set coords) sit at
+        // their REAL location. Only directory venues that fell back to a
+        // neighborhood centroid get spread into a small deterministic halo so
+        // the clump reads as a distribution instead of one stacked blob.
+        const isCentroidFallback = p.id >= 10000 && !p._geocoded;
+        let markerLat = p.lat, markerLng = p.lng;
+        if (isCentroidFallback) {
+            const angle  = (((p.id * 137) % 360) + (p.id % 7) * 11) * Math.PI / 180;
+            const radius = (((p.id * 71) % 80) + 25) / 18000; // ~0.0014°–0.0058° ≈ 150–650m
+            markerLat = p.lat + Math.sin(angle) * radius;
+            markerLng = p.lng + Math.cos(angle) * radius * 1.25; // longitude shrinks at NYC latitude
+        }
         const marker = L.marker([markerLat, markerLng], { icon }).addTo(mapInstance);
         marker._partyId = p.id;
         const co = countries.find(c => c.code === p.country);

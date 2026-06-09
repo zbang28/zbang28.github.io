@@ -163,8 +163,13 @@ export async function migrate() {
       vtype        TEXT,
       tags         TEXT NOT NULL DEFAULT '[]',  -- JSON array string, like events.perks
       source_url   TEXT,
+      lat          DOUBLE PRECISION,
+      lng          DOUBLE PRECISION,
       created_at   TIMESTAMPTZ NOT NULL DEFAULT now()
     );
+    -- Backfill lat/lng for venues tables created before geocoding existed.
+    ALTER TABLE venues ADD COLUMN IF NOT EXISTS lat DOUBLE PRECISION;
+    ALTER TABLE venues ADD COLUMN IF NOT EXISTS lng DOUBLE PRECISION;
 
     CREATE INDEX IF NOT EXISTS idx_events_type ON events(event_type);
     CREATE INDEX IF NOT EXISTS idx_events_borough ON events(borough);

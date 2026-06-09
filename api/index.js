@@ -670,7 +670,9 @@ function serialize2(row) {
     phone: row.phone,
     vtype: row.vtype,
     tags: JSON.parse(row.tags || "[]"),
-    sourceUrl: row.source_url
+    sourceUrl: row.source_url,
+    lat: row.lat ?? null,
+    lng: row.lng ?? null
   };
 }
 router8.get("/", async (req, res) => {

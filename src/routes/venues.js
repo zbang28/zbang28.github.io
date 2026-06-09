@@ -18,6 +18,8 @@ function serialize(row) {
     vtype: row.vtype,
     tags: JSON.parse(row.tags || '[]'),
     sourceUrl: row.source_url,
+    lat: row.lat ?? null,
+    lng: row.lng ?? null,
   };
 }
 

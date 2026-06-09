@@ -21,8 +21,8 @@ async function main() {
   for (const v of venues) {
     await run(
       `INSERT INTO venues
-         (slug, name, neighborhood, borough, address, website, instagram, phone, vtype, tags, source_url)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+         (slug, name, neighborhood, borough, address, website, instagram, phone, vtype, tags, source_url, lat, lng)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
        ON CONFLICT (slug) DO UPDATE SET
          name         = EXCLUDED.name,
          neighborhood = EXCLUDED.neighborhood,
@@ -33,7 +33,9 @@ async function main() {
          phone        = EXCLUDED.phone,
          vtype        = EXCLUDED.vtype,
          tags         = EXCLUDED.tags,
-         source_url   = EXCLUDED.source_url`,
+         source_url   = EXCLUDED.source_url,
+         lat          = EXCLUDED.lat,
+         lng          = EXCLUDED.lng`,
       [
         v.slug,
         v.name,
@@ -46,6 +48,8 @@ async function main() {
         v.vtype ?? null,
         JSON.stringify(Array.isArray(v.tags) ? v.tags : []),
         v.source_url ?? null,
+        typeof v.lat === 'number' ? v.lat : null,
+        typeof v.lng === 'number' ? v.lng : null,
       ]
     );
     upserts++;

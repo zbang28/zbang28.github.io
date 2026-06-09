@@ -13,6 +13,7 @@
     "seed": "node src/seed.js",
     "reset": "node src/seed.js --reset",
     "scrape": "node scripts/scrape-venues.mjs",
+    "geocode": "node scripts/geocode-venues.mjs",
     "import-venues": "node scripts/import-venues.mjs",
     "bundle": "esbuild src/app.js --bundle --platform=node --target=node20 --format=esm --packages=external --outfile=api/index.js --banner:js=\"// AUTO-GENERATED from src/app.js by 'npm run bundle'. Do not edit by hand.\"",
     "deploy": "npm run bundle && vercel deploy --prod"
