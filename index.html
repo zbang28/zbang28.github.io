@@ -5839,10 +5839,7 @@ function renderVenues() {
     const html = [...groups.entries()].map(([name, items]) => {
         const boroLabel = items[0].borough ? `<span class="boro">${escHtml(items[0].borough)}</span>` : '';
         const shown = items.slice(0, PER_HOOD);
-        const overflow = items.length - shown.length;
-        const countLabel = overflow > 0
-            ? `${shown.length} of ${items.length}`
-            : `${items.length} spot${items.length === 1 ? '' : 's'}`;
+        const countLabel = `${shown.length} spot${shown.length === 1 ? '' : 's'}`;
         return `
         <div class="venues-group">
             <div class="venues-group-head">
