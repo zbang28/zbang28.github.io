@@ -6751,11 +6751,13 @@ function renderMap(filtered) {
             className:'pin-wrap', iconSize:[size,size], iconAnchor:[half,half],
             html:`<div class="${cls} ${p.live ? 'live' : ''} ${isActive ? 'active' : ''}" data-id="${p.id}" style="background:${color};color:${color}">${inner}</div>`
         });
-        // Deterministic ±100m jitter so multiple bars at the same neighborhood
-        // centroid coords spread out instead of stacking into one fat blob.
-        const jitter = (n) => (((p.id * n) % 200) - 100) / 100000; // ~±0.001°
-        const markerLat = p.lat + jitter(73);
-        const markerLng = p.lng + jitter(41);
+        // Spread bars sharing a neighborhood-centroid coord out in a circular
+        // halo (≈200m–650m radius) so clumps look like a real distribution,
+        // not one fat blob. Deterministic per-id so pins don't move on re-render.
+        const angle  = (((p.id * 137) % 360) + (p.id % 7) * 11) * Math.PI / 180;
+        const radius = (((p.id * 71) % 80) + 25) / 18000; // ~0.0014°–0.0058° ≈ 150–650m
+        const markerLat = p.lat + Math.sin(angle) * radius;
+        const markerLng = p.lng + Math.cos(angle) * radius * 1.25; // longitude shrinks at NYC latitude
         const marker = L.marker([markerLat, markerLng], { icon }).addTo(mapInstance);
         marker._partyId = p.id;
         const co = countries.find(c => c.code === p.country);
