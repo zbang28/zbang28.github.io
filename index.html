@@ -4443,6 +4443,29 @@
         .wc-match-card { min-width: 160px; }
     }
     /* ===== Where to Watch (venues) ===== */
+    .venues-city-tabs {
+        display: flex; gap: 8px; flex-wrap: wrap;
+        margin-bottom: 18px;
+    }
+    .venues-city-tab {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-dim);
+        font-family: 'Inter', sans-serif;
+        font-size: 13px; font-weight: 800;
+        letter-spacing: -0.01em;
+        padding: 9px 18px;
+        border-radius: 999px;
+        cursor: pointer;
+        transition: all .15s;
+    }
+    .venues-city-tab:hover { color: var(--text); border-color: var(--border-2); }
+    .venues-city-tab.active {
+        background: linear-gradient(135deg, #ffd400 0%, #ff7a1a 50%, #ff2d3a 100%);
+        color: #fff;
+        border-color: transparent;
+        box-shadow: 0 4px 14px rgba(255,46,46,0.25);
+    }
     .venues-filters {
         display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
         padding: 4px 0 24px;
@@ -4723,6 +4746,11 @@
         <p>Every World Cup watch-party bar in NYC — by neighborhood and borough.</p>
     </div>
     <div class="page-content">
+        <div class="venues-city-tabs">
+            <button class="venues-city-tab active" data-city="" onclick="pickVenuesCity('')">All</button>
+            <button class="venues-city-tab" data-city="NYC" onclick="pickVenuesCity('NYC')">NYC</button>
+            <button class="venues-city-tab" data-city="SF Bay" onclick="pickVenuesCity('SF Bay')">SF Bay</button>
+        </div>
         <div class="venues-filters">
             <input id="venues-search" class="venues-input" type="search" placeholder="Search bars, neighborhoods, streets…" oninput="onVenuesSearch()">
             <select id="venues-borough" class="venues-select" onchange="onVenuesFilter()">
@@ -5876,6 +5904,15 @@ function onVenuesSearch() {
 }
 function onVenuesFilter() { renderVenues(); }
 
+let venuesCity = ''; // '' (all), 'NYC', or 'SF Bay'
+function pickVenuesCity(city) {
+    venuesCity = city;
+    document.querySelectorAll('.venues-city-tab').forEach(b => {
+        b.classList.toggle('active', b.dataset.city === city);
+    });
+    renderVenues();
+}
+
 function renderVenues() {
     const groupsEl = document.getElementById('venues-groups');
     const countEl = document.getElementById('venues-count');
@@ -5884,6 +5921,9 @@ function renderVenues() {
     const nbhd = document.getElementById('venues-neighborhood').value;
 
     let list = venuesAll;
+    // City tab filter: 'SF Bay' selects only SF venues; 'NYC' selects everything that ISN'T SF.
+    if (venuesCity === 'SF Bay') list = list.filter(v => v.borough === 'SF Bay');
+    else if (venuesCity === 'NYC') list = list.filter(v => v.borough !== 'SF Bay');
     if (boro) list = list.filter(v => v.borough === boro);
     if (nbhd) list = list.filter(v => v.neighborhood === nbhd);
     if (q) list = list.filter(v =>
