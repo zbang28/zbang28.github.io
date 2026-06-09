@@ -2660,13 +2660,18 @@
     .mini-card .mini-card-going { color: var(--red) !important; font-weight: 800; }
     .mini-card .mini-card-going::before { background: var(--red) !important; box-shadow: 0 0 6px var(--red) !important; }
     /* In worldcup-mode (white page) — translucent dark glass */
-    /* Dark venue tiles on the World Cup page (match the Where to Watch dark cards) */
+    /* Dark gradient venue tiles on the World Cup page (copy of Where to Watch
+       card look) — page background stays light, only the tiles go dark. */
     body.worldcup-mode .mini-card {
-        background: #14151a;
+        background: linear-gradient(180deg, #1c1d22 0%, #131418 100%);
         border-color: rgba(255,255,255,0.10);
         color: #ffffff;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.18);
     }
-    body.worldcup-mode .mini-card:hover { background: #1a1c22; }
+    body.worldcup-mode .mini-card:hover {
+        background: linear-gradient(180deg, #23252b 0%, #181a1f 100%);
+        border-color: rgba(255,255,255,0.22);
+    }
     body.worldcup-mode .mini-card .mini-card-venue { color: #ffffff; }
     body.worldcup-mode .mini-card .mini-card-meta { color: rgba(255,255,255,0.65); }
     body.worldcup-mode .mini-card .mini-card-meta .sep { color: rgba(255,255,255,0.35); }
@@ -2674,22 +2679,23 @@
     body.worldcup-mode .mini-card .mini-card-stars { color: #f9d423; }
     body.worldcup-mode .mini-card .mini-card-rating { color: #ffffff; }
     body.worldcup-mode .mini-card .mini-card-mini-label { color: rgba(255,255,255,0.55); }
-    /* Same dark treatment for basic-tier rows */
+    /* Same dark gradient treatment for basic-tier rows */
     body.worldcup-mode .mini-basic {
-        background: #14151a;
+        background: linear-gradient(180deg, #1c1d22 0%, #131418 100%);
         border-color: rgba(255,255,255,0.10);
         color: #ffffff;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.18);
     }
-    body.worldcup-mode .mini-basic:hover { background: #1a1c22; border-color: rgba(255,255,255,0.25); }
+    body.worldcup-mode .mini-basic:hover {
+        background: linear-gradient(180deg, #23252b 0%, #181a1f 100%);
+        border-color: rgba(255,255,255,0.25);
+    }
     body.worldcup-mode .mini-basic .mini-basic-name { color: #ffffff; }
     body.worldcup-mode .mini-basic .mini-basic-meta { color: rgba(255,255,255,0.65); }
     body.worldcup-mode .mini-basic .mini-basic-rating { color: rgba(255,255,255,0.85); }
     body.worldcup-mode .mini-basic .mini-basic-expand-body { color: rgba(255,255,255,0.75); }
     body.worldcup-mode .mini-basic .mini-basic-expand-body strong { color: #ffffff; }
     body.worldcup-mode .mini-basic .mini-basic-expand-perks span { background: rgba(255,255,255,0.10); color: #ffffff; }
-    /* List background a touch darker so the cards pop */
-    body.worldcup-mode .split-list { background: #0c0d10; }
-    body.worldcup-mode .split-list-head h2 { color: #ffffff; }
     .mini-card::after {
         content: ''; position: absolute;
         left: 0; top: 0; bottom: 0;
@@ -4700,12 +4706,13 @@
         <div class="venues-filters">
             <input id="venues-search" class="venues-input" type="search" placeholder="Search bars, neighborhoods, streets…" oninput="onVenuesSearch()">
             <select id="venues-borough" class="venues-select" onchange="onVenuesFilter()">
-                <option value="">All boroughs</option>
+                <option value="">All regions</option>
                 <option>Manhattan</option>
                 <option>Brooklyn</option>
                 <option>Queens</option>
                 <option>Bronx</option>
                 <option>Staten Island</option>
+                <option>SF Bay</option>
             </select>
             <select id="venues-neighborhood" class="venues-select" onchange="onVenuesFilter()">
                 <option value="">All neighborhoods</option>
@@ -5809,19 +5816,38 @@ async function loadVenues() {
     try {
         const { venues } = await api('/venues');
         venuesAll = venues || [];
-        venuesLoaded = true;
-        // Populate the neighborhood dropdown from the data.
-        const sel = document.getElementById('venues-neighborhood');
-        const nbhds = [...new Set(venuesAll.map(v => v.neighborhood).filter(Boolean))].sort();
-        for (const n of nbhds) {
-            const opt = document.createElement('option');
-            opt.value = n; opt.textContent = n;
-            sel.appendChild(opt);
-        }
-        renderVenues();
     } catch (err) {
-        groups.innerHTML = `<div class="venues-empty">Couldn't load venues. ${escHtml(err.message)}</div>`;
+        // Backend down? Don't block — we still have SF + a basic NYC fallback.
+        venuesAll = [];
     }
+    // Merge in the SF Bay venues that live in the frontend data (sfVenues100
+    // and extraSfVenues arrays) so SF is browsable in Where to Watch.
+    try {
+        const sfMerged = (typeof sfVenues100 !== 'undefined' ? sfVenues100 : [])
+            .concat(typeof extraSfVenues !== 'undefined' ? extraSfVenues : []);
+        const sfDirectory = sfMerged.map(v => {
+            const [name, vtype, neighborhood, district, country, lat, lng, theme] = v;
+            const tags = ['soccer'];
+            if (theme && theme !== 'Neutral') tags.push(theme.toLowerCase());
+            if (vtype) tags.push(vtype.toLowerCase().replace(/\s+/g, '-'));
+            return {
+                name, vtype, neighborhood,
+                borough: 'SF Bay',
+                tags,
+            };
+        });
+        venuesAll = venuesAll.concat(sfDirectory);
+    } catch (e) { /* ignore */ }
+    venuesLoaded = true;
+    // Populate the neighborhood dropdown from the merged data.
+    const sel = document.getElementById('venues-neighborhood');
+    const nbhds = [...new Set(venuesAll.map(v => v.neighborhood).filter(Boolean))].sort();
+    for (const n of nbhds) {
+        const opt = document.createElement('option');
+        opt.value = n; opt.textContent = n;
+        sel.appendChild(opt);
+    }
+    renderVenues();
 }
 
 function onVenuesSearch() {
@@ -6043,7 +6069,7 @@ const CITY_CENTER = {
 };
 // Cities with real venue data; others show a 'coming soon' empty state.
 const CITIES_WITH_VENUES = new Set(['NYC', 'SF']);
-const OTHER_CITIES = ['LA'];
+const OTHER_CITIES = [];
 
 function renderBoroughFilter() {
     const wrap = document.getElementById('borough-filter');
