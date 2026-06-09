@@ -100,7 +100,7 @@
     .tab.highlight {
         color: white !important;
         font-weight: 800 !important;
-        background: linear-gradient(135deg, #ffd400 0%, #16a34a 33%, #2563eb 66%, #ff2d3a 100%) !important;
+        background: linear-gradient(135deg, #ffd400 0%, #ff7a1a 50%, #ff2d3a 100%) !important;
         padding: 8px 16px !important;
         border-radius: 10px !important;
         box-shadow: none !important;
@@ -4177,13 +4177,28 @@
     /* ==================== MOBILE ==================== */
     /* Single-column phone layout. Targets ≤ 760px. */
     @media (max-width: 760px) {
+        /* Lock the page so swiping tabs doesn't slide the whole page sideways */
+        html, body { overflow-x: hidden; max-width: 100vw; }
+        /* Kill the colorful body-glow background on phone (was showing green
+           through whenever the user swiped or rubber-banded sideways) */
+        body.worldcup-mode::before,
+        body.worldcup-mode::after { display: none !important; }
         /* Nav: compact brand, tabs always visible (no horizontal clip) */
         nav { padding: 8px 12px; }
         .nav-inner { gap: 8px; flex-wrap: nowrap; }
         .brand { flex: 0 0 auto; }
         .brand-name { font-size: 17px; }
-        .tabs { gap: 4px; flex: 1 1 auto; justify-content: flex-end; overflow: visible; }
-        .tab { padding: 8px 12px !important; font-size: 13px !important; min-height: 40px; white-space: nowrap; }
+        .tabs {
+            gap: 6px;
+            flex: 1 1 auto;
+            justify-content: flex-start;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+        }
+        .tabs::-webkit-scrollbar { display: none; }
+        .tab { padding: 8px 12px !important; font-size: 13px !important; min-height: 40px; white-space: nowrap; flex: 0 0 auto; }
         .nav-right { display: none; }
 
         /* Home hero */
@@ -4302,23 +4317,58 @@
         /* Mobile: don't auto-expand on hover (touch has no hover) */
         .mini-basic:hover .mini-basic-expand { max-height: 0; opacity: 0; padding: 0 12px; }
 
-        /* Venue panel — full-width slide-up sheet on phones */
+        /* Venue panel — centered modal card on phone */
         .venue-panel {
-            width: 100% !important;
-            max-width: 100% !important;
-            height: 80vh !important;
-            top: auto !important;
-            bottom: 0 !important;
-            right: 0 !important;
-            left: 0 !important;
-            border-radius: 18px 18px 0 0 !important;
-            transform: translateY(100%);
+            position: fixed !important;
+            width: calc(100vw - 28px) !important;
+            max-width: 440px !important;
+            height: 88vh !important;
+            max-height: 760px !important;
+            top: 50% !important;
+            left: 50% !important;
+            right: auto !important;
+            bottom: auto !important;
+            transform: translate(-50%, -50%) scale(0.96) !important;
+            opacity: 0;
+            visibility: hidden;
+            border-radius: 18px !important;
+            z-index: 1000 !important;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.45) !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            -webkit-overflow-scrolling: touch;
+            transition: opacity .2s, transform .2s, visibility .2s !important;
         }
-        .venue-panel.open { transform: translateY(0); }
-        .venue-close { width: 40px; height: 40px; top: 12px; right: 12px; }
-        .venue-photo-wrap { grid-template-columns: 1fr !important; height: 180px; }
-        .venue-content { padding: 18px 16px 80px; }
+        .venue-panel.open {
+            transform: translate(-50%, -50%) scale(1) !important;
+            opacity: 1;
+            visibility: visible;
+        }
+        /* Dimmer backdrop while open */
+        .venue-backdrop {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            backdrop-filter: blur(2px);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .2s, visibility .2s;
+        }
+        .venue-backdrop.open { opacity: 1; visibility: visible; }
+
+        .venue-close {
+            width: 38px; height: 38px;
+            top: 10px; right: 10px;
+        }
+        .venue-photo-wrap { grid-template-columns: 1fr !important; grid-template-rows: 1fr !important; height: 200px !important; }
+        .venue-photo-wrap img:nth-child(2) { display: none; }
+        .venue-content { padding: 16px 16px 24px !important; }
         .venue-head h2 { font-size: 22px; }
+        .venue-tabs { gap: 4px !important; overflow-x: auto; scrollbar-width: none; }
+        .venue-tabs::-webkit-scrollbar { display: none; }
+        .venue-tab { padding: 8px 12px !important; font-size: 13px !important; white-space: nowrap; }
+        .venue-actions { gap: 6px !important; flex-wrap: wrap; }
+        .venue-act { padding: 7px 10px !important; font-size: 12px !important; }
 
         /* Sponsored / recommended pop */
         .sponsor-pop {
@@ -4506,6 +4556,8 @@
         <div class="split-map">
             <div class="borough-filter" id="borough-filter"></div>
             <div id="events-map"></div>
+            <!-- Backdrop dimmer (visible only on mobile when panel is open) -->
+            <div class="venue-backdrop" id="venue-backdrop" onclick="closeVenue()"></div>
             <!-- Google-style venue detail panel -->
             <aside class="venue-panel" id="venue-panel" aria-hidden="true">
                 <button class="venue-close" onclick="closeVenue()" aria-label="Close">
@@ -5783,16 +5835,22 @@ function renderVenues() {
         groups.get(key).push(v);
     }
 
+    const PER_HOOD = 6;
     const html = [...groups.entries()].map(([name, items]) => {
         const boroLabel = items[0].borough ? `<span class="boro">${escHtml(items[0].borough)}</span>` : '';
+        const shown = items.slice(0, PER_HOOD);
+        const overflow = items.length - shown.length;
+        const countLabel = overflow > 0
+            ? `${shown.length} of ${items.length}`
+            : `${items.length} spot${items.length === 1 ? '' : 's'}`;
         return `
         <div class="venues-group">
             <div class="venues-group-head">
                 <h2>${escHtml(name)}</h2>${boroLabel}
-                <span class="n">${items.length} spot${items.length === 1 ? '' : 's'}</span>
+                <span class="n">${countLabel}</span>
             </div>
             <div class="venues-grid">
-                ${items.map(venueCardHTML).join('')}
+                ${shown.map(venueCardHTML).join('')}
             </div>
         </div>`;
     }).join('');
@@ -6094,11 +6152,29 @@ function isWorldCupEvent(p) {
 
 function applyFilters() {
     if (activeRoute !== 'events' && activeRoute !== 'worldcup') return;
-    const filtered = parties
+    const prelim = parties
         .filter(p => p.eventType === activeSubtab)
         .filter(p => activeRoute === 'worldcup' ? isWorldCupEvent(p) : !isWorldCupEvent(p))
         .filter(matchesFilters)
         .sort((a,b) => a.distance - b.distance);
+
+    // Cap at 6 venues per neighborhood (prioritize gold > silver > basic / closer)
+    const tierRank = { gold: 0, silver: 1, basic: 2 };
+    const ranked = prelim.slice().sort((a,b) => {
+        const ta = tierRank[a.tier] ?? 1.5;
+        const tb = tierRank[b.tier] ?? 1.5;
+        if (ta !== tb) return ta - tb;
+        return a.distance - b.distance;
+    });
+    const perHood = {};
+    const filtered = [];
+    for (const p of ranked) {
+        const key = (p.neighborhood || '') + '|' + (p.borough || '');
+        perHood[key] = (perHood[key] || 0) + 1;
+        if (perHood[key] <= 6) filtered.push(p);
+    }
+    // Restore distance-based order for the list display
+    filtered.sort((a,b) => a.distance - b.distance);
 
     lastFiltered = filtered;
     renderMiniList(filtered);
@@ -6987,6 +7063,7 @@ function openVenue(id) {
     panel.dataset.venueId = id;
     panel.classList.add('open');
     panel.setAttribute('aria-hidden', 'false');
+    document.getElementById('venue-backdrop')?.classList.add('open');
 
     document.getElementById('venue-name').textContent = p.venue;
     const rating = ratingFor(p);
@@ -7044,6 +7121,7 @@ function closeVenue() {
     const panel = document.getElementById('venue-panel');
     panel.classList.remove('open');
     panel.setAttribute('aria-hidden', 'true');
+    document.getElementById('venue-backdrop')?.classList.remove('open');
 }
 // Escape key closes the venue panel
 document.addEventListener('keydown', (e) => {
