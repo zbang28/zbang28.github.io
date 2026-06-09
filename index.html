@@ -1946,13 +1946,23 @@
     .wc-date-strip::-webkit-scrollbar-thumb { background: var(--border-2); border-radius:3px; }
     .wc-date-pill {
         flex: 0 0 auto; scroll-snap-align: start;
-        background: var(--surface); border:1px solid var(--border);
+        background: linear-gradient(180deg, #1c1d22 0%, #131418 100%);
+        border:1px solid rgba(255,255,255,0.10);
         border-radius: 14px; padding: 12px 18px; cursor: pointer;
         display:flex; flex-direction:column; align-items:center;
         min-width: 82px; gap: 4px;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+        color: #ffffff;
         transition: border-color .15s, transform .15s, background .15s;
     }
-    .wc-date-pill:hover { border-color: var(--text); transform: translateY(-1px); }
+    .wc-date-pill:hover {
+        background: linear-gradient(180deg, #23252b 0%, #181a1f 100%);
+        border-color: rgba(255,255,255,0.22);
+        transform: translateY(-1px);
+    }
+    .wc-date-pill .wc-date-dow { color: rgba(255,255,255,0.65); }
+    .wc-date-pill .wc-date-day { color: #ffffff; }
+    .wc-date-pill .wc-date-mo  { color: rgba(255,255,255,0.55); }
     .wc-date-pill.active {
         background: linear-gradient(135deg, #ff2e2e, #ffd400);
         border-color: transparent;
@@ -1972,11 +1982,21 @@
     .wc-match-row::-webkit-scrollbar { height:4px; }
     .wc-match-card {
         flex: 0 0 auto; min-width: 200px; max-width: 240px;
-        background: var(--surface); border:1px solid var(--border);
+        background: linear-gradient(180deg, #1c1d22 0%, #131418 100%);
+        border:1px solid rgba(255,255,255,0.10);
         border-radius: 14px; padding: 12px 14px; cursor:pointer;
+        color: #ffffff;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.18);
         transition: all .15s; position:relative;
     }
-    .wc-match-card:hover { border-color: var(--text); transform: translateY(-1px); }
+    .wc-match-card:hover {
+        background: linear-gradient(180deg, #23252b 0%, #181a1f 100%);
+        border-color: rgba(255,255,255,0.22);
+        transform: translateY(-1px);
+    }
+    .wc-match-card .wc-match-teams { color: #ffffff; }
+    .wc-match-card .wc-match-time { color: rgba(255,255,255,0.65); }
+    .wc-match-card .wc-match-meta { color: rgba(255,255,255,0.55); }
     .wc-match-card.active {
         border-color: transparent;
         background: linear-gradient(135deg, #ff2e2e, #ffd400);
