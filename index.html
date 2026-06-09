@@ -4696,8 +4696,7 @@
     </div>
     <div class="page-content">
         <div class="venues-city-tabs">
-            <button class="venues-city-tab active" data-city="" onclick="pickVenuesCity('')">All</button>
-            <button class="venues-city-tab" data-city="NYC" onclick="pickVenuesCity('NYC')">NYC</button>
+            <button class="venues-city-tab active" data-city="NYC" onclick="pickVenuesCity('NYC')">NYC</button>
             <button class="venues-city-tab" data-city="SF Bay" onclick="pickVenuesCity('SF Bay')">SF Bay</button>
         </div>
         <div class="venues-filters">
@@ -5853,7 +5852,7 @@ function onVenuesSearch() {
 }
 function onVenuesFilter() { renderVenues(); }
 
-let venuesCity = ''; // '' (all), 'NYC', or 'SF Bay'
+let venuesCity = 'NYC'; // 'NYC' or 'SF Bay'
 function pickVenuesCity(city) {
     venuesCity = city;
     document.querySelectorAll('.venues-city-tab').forEach(b => {
