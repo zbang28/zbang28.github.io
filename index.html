@@ -4341,6 +4341,67 @@
         .mini-card-img { min-height: 96px; }
         .wc-match-card { min-width: 160px; }
     }
+    /* ===== Where to Watch (venues) ===== */
+    .venues-filters {
+        display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+        padding: 4px 0 24px;
+    }
+    .venues-input, .venues-select {
+        background: var(--surface); color: var(--text);
+        border: 1px solid var(--border); border-radius: 12px;
+        padding: 11px 14px; font-size: 14px; font-family: inherit;
+        outline: none; transition: border-color 0.15s;
+    }
+    .venues-input { flex: 1; min-width: 220px; }
+    .venues-input:focus, .venues-select:focus { border-color: var(--border-2); }
+    .venues-select { cursor: pointer; }
+    .venues-count { color: var(--text-mute); font-size: 13px; margin-left: auto; white-space: nowrap; }
+
+    .venues-group { margin-bottom: 36px; }
+    .venues-group-head {
+        display: flex; align-items: baseline; gap: 10px;
+        margin-bottom: 14px; padding-bottom: 10px;
+        border-bottom: 1px solid var(--border);
+    }
+    .venues-group-head h2 {
+        font-size: 20px; font-weight: 800; letter-spacing: -0.02em;
+    }
+    .venues-group-head .boro { color: var(--text-mute); font-size: 13px; font-weight: 600; }
+    .venues-group-head .n { color: var(--text-mute); font-size: 13px; margin-left: auto; }
+
+    .venues-grid {
+        display: grid; gap: 14px;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+    .venue-card {
+        background: var(--surface); border: 1px solid var(--border);
+        border-radius: 16px; padding: 18px; display: flex; flex-direction: column;
+        gap: 10px; transition: border-color 0.15s, transform 0.15s;
+    }
+    .venue-card:hover { border-color: var(--border-2); transform: translateY(-2px); }
+    .venue-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+    .venue-name { font-size: 17px; font-weight: 800; letter-spacing: -0.01em; line-height: 1.25; }
+    .venue-vtype {
+        font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em;
+        color: var(--amber); border: 1px solid color-mix(in srgb, var(--amber) 40%, transparent);
+        border-radius: 999px; padding: 4px 9px; white-space: nowrap; flex-shrink: 0;
+    }
+    .venue-loc { color: var(--text-dim); font-size: 13px; }
+    .venue-loc .dot { color: var(--text-mute); margin: 0 6px; }
+    .venue-addr { color: var(--text-mute); font-size: 13px; }
+    .venue-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .venue-tag {
+        font-size: 11px; color: var(--text-dim); background: var(--surface-2);
+        border-radius: 999px; padding: 3px 9px;
+    }
+    .venue-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
+    .venue-link {
+        font-size: 12px; font-weight: 600; color: var(--text-dim);
+        text-decoration: none; border: 1px solid var(--border); border-radius: 9px;
+        padding: 6px 11px; transition: color 0.15s, border-color 0.15s;
+    }
+    .venue-link:hover { color: var(--text); border-color: var(--border-2); }
+    .venues-empty { color: var(--text-mute); font-size: 15px; padding: 40px 4px; text-align: center; }
 </style>
 </head>
 <body>
@@ -4353,6 +4414,7 @@
         <div class="tabs" id="tabs">
             <button class="tab" data-route="home">Home</button>
             <button class="tab highlight" data-route="worldcup">World Cup</button>
+            <button class="tab" data-route="venues">Where to Watch</button>
         </div>
         <div class="nav-right">
         </div>
@@ -4550,6 +4612,35 @@
         <div class="polls-grid" id="polls-grid"></div>
     </div>
 </section>
+
+<!-- ============ WHERE TO WATCH (VENUES) PAGE ============ -->
+<section class="page" data-page="venues">
+    <div class="page-head">
+        <h1>Where to <em>Watch</em></h1>
+        <p>Every World Cup watch-party bar in NYC — by neighborhood and borough.</p>
+    </div>
+    <div class="page-content">
+        <div class="venues-filters">
+            <input id="venues-search" class="venues-input" type="search" placeholder="Search bars, neighborhoods, streets…" oninput="onVenuesSearch()">
+            <select id="venues-borough" class="venues-select" onchange="onVenuesFilter()">
+                <option value="">All boroughs</option>
+                <option>Manhattan</option>
+                <option>Brooklyn</option>
+                <option>Queens</option>
+                <option>Bronx</option>
+                <option>Staten Island</option>
+            </select>
+            <select id="venues-neighborhood" class="venues-select" onchange="onVenuesFilter()">
+                <option value="">All neighborhoods</option>
+            </select>
+            <span class="venues-count" id="venues-count"></span>
+        </div>
+        <div class="venues-groups" id="venues-groups">
+            <div class="venues-empty">Loading watch parties…</div>
+        </div>
+    </div>
+</section>
+
 
 <!-- ============ MATCHDAY PAGE ============ -->
 <!-- Sign in removed — site is open access -->
@@ -5601,6 +5692,7 @@ function route(name) {
     if (location.hash !== '#/' + name) history.replaceState(null, '', '#/' + name);
     window.scrollTo(0, 0);
     if (name === 'fanhub') renderFanHub();
+    if (name === 'venues') loadVenues();
     if (name === 'events' || name === 'worldcup') {
         renderSportChip();
         renderBoroughFilter();
@@ -5621,8 +5713,120 @@ function initRouting() {
     const hash = location.hash.replace('#/', '');
     // fanhub retired → fall back to worldcup
     if (hash === 'fanhub') { route('worldcup'); return; }
-    route(['home','events','worldcup'].includes(hash) ? hash : 'home');
+    route(['home','events','worldcup','venues'].includes(hash) ? hash : 'home');
 }
+
+// ============ WHERE TO WATCH (VENUES) ============
+let venuesAll = [];      // full dataset, fetched once
+let venuesLoaded = false;
+let venuesSearchTimer = null;
+
+function escHtml(s) {
+    return String(s ?? '').replace(/[&<>"']/g, (c) =>
+        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+async function loadVenues() {
+    if (venuesLoaded) { renderVenues(); return; }
+    const groups = document.getElementById('venues-groups');
+    try {
+        const { venues } = await api('/venues');
+        venuesAll = venues || [];
+        venuesLoaded = true;
+        // Populate the neighborhood dropdown from the data.
+        const sel = document.getElementById('venues-neighborhood');
+        const nbhds = [...new Set(venuesAll.map(v => v.neighborhood).filter(Boolean))].sort();
+        for (const n of nbhds) {
+            const opt = document.createElement('option');
+            opt.value = n; opt.textContent = n;
+            sel.appendChild(opt);
+        }
+        renderVenues();
+    } catch (err) {
+        groups.innerHTML = `<div class="venues-empty">Couldn't load venues. ${escHtml(err.message)}</div>`;
+    }
+}
+
+function onVenuesSearch() {
+    clearTimeout(venuesSearchTimer);
+    venuesSearchTimer = setTimeout(renderVenues, 120);
+}
+function onVenuesFilter() { renderVenues(); }
+
+function renderVenues() {
+    const groupsEl = document.getElementById('venues-groups');
+    const countEl = document.getElementById('venues-count');
+    const q = document.getElementById('venues-search').value.trim().toLowerCase();
+    const boro = document.getElementById('venues-borough').value;
+    const nbhd = document.getElementById('venues-neighborhood').value;
+
+    let list = venuesAll;
+    if (boro) list = list.filter(v => v.borough === boro);
+    if (nbhd) list = list.filter(v => v.neighborhood === nbhd);
+    if (q) list = list.filter(v =>
+        (v.name && v.name.toLowerCase().includes(q)) ||
+        (v.neighborhood && v.neighborhood.toLowerCase().includes(q)) ||
+        (v.address && v.address.toLowerCase().includes(q)));
+
+    countEl.textContent = `${list.length} venue${list.length === 1 ? '' : 's'}`;
+
+    if (!list.length) {
+        groupsEl.innerHTML = `<div class="venues-empty">No venues match. Try clearing a filter.</div>`;
+        return;
+    }
+
+    // Group by neighborhood (already sorted by neighborhood, name from the API).
+    const groups = new Map();
+    for (const v of list) {
+        const key = v.neighborhood || 'Other';
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key).push(v);
+    }
+
+    const html = [...groups.entries()].map(([name, items]) => {
+        const boroLabel = items[0].borough ? `<span class="boro">${escHtml(items[0].borough)}</span>` : '';
+        return `
+        <div class="venues-group">
+            <div class="venues-group-head">
+                <h2>${escHtml(name)}</h2>${boroLabel}
+                <span class="n">${items.length} spot${items.length === 1 ? '' : 's'}</span>
+            </div>
+            <div class="venues-grid">
+                ${items.map(venueCardHTML).join('')}
+            </div>
+        </div>`;
+    }).join('');
+    groupsEl.innerHTML = html;
+}
+
+function venueCardHTML(v) {
+    const tags = (v.tags || []).slice(0, 4).map(t => `<span class="venue-tag">${escHtml(t)}</span>`).join('');
+    const links = [];
+    if (v.website) {
+        links.push(`<a class="venue-link" href="${escHtml(v.website)}" target="_blank" rel="noopener">Website ↗</a>`);
+    }
+    if (v.instagram) {
+        const handle = v.instagram.replace(/^@/, '');
+        links.push(`<a class="venue-link" href="https://instagram.com/${escHtml(handle)}" target="_blank" rel="noopener">${escHtml(v.instagram)}</a>`);
+    }
+    if (v.phone) {
+        const tel = v.phone.replace(/[^\d+]/g, '');
+        links.push(`<a class="venue-link" href="tel:${escHtml(tel)}">${escHtml(v.phone)}</a>`);
+    }
+    const loc = [v.neighborhood, v.borough].filter(Boolean).map(escHtml).join('<span class="dot">·</span>');
+    return `
+        <article class="venue-card">
+            <div class="venue-card-top">
+                <div class="venue-name">${escHtml(v.name)}</div>
+                ${v.vtype ? `<span class="venue-vtype">${escHtml(v.vtype)}</span>` : ''}
+            </div>
+            ${loc ? `<div class="venue-loc">${loc}</div>` : ''}
+            ${v.address ? `<div class="venue-addr">${escHtml(v.address)}</div>` : ''}
+            ${tags ? `<div class="venue-tags">${tags}</div>` : ''}
+            ${links.length ? `<div class="venue-links">${links.join('')}</div>` : ''}
+        </article>`;
+}
+
 
 // ============ COUNTRIES ============
 function buildCountries() {
@@ -7268,7 +7472,7 @@ bootstrap();
 
 window.addEventListener('hashchange', () => {
     const hash = location.hash.replace('#/', '');
-    if (['home','events','fanhub','worldcup'].includes(hash)) route(hash);
+    if (['home','events','fanhub','worldcup','venues'].includes(hash)) route(hash);
 });
 </script>
 
