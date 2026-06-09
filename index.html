@@ -100,7 +100,7 @@
     .tab.highlight {
         color: white !important;
         font-weight: 800 !important;
-        background: linear-gradient(135deg, #ffd400 0%, #ff7a1a 50%, #ff2d3a 100%) !important;
+        background: linear-gradient(135deg, #ffd400 0%, #ff7a1a 25%, #ff2d3a 50%, #ff3eb5 75%, #2563eb 100%) !important;
         padding: 8px 16px !important;
         border-radius: 10px !important;
         box-shadow: none !important;
@@ -2660,11 +2660,36 @@
     .mini-card .mini-card-going { color: var(--red) !important; font-weight: 800; }
     .mini-card .mini-card-going::before { background: var(--red) !important; box-shadow: 0 0 6px var(--red) !important; }
     /* In worldcup-mode (white page) — translucent dark glass */
-    body.worldcup-mode .mini-card { background: rgba(14,15,17,0.05); border-color: rgba(14,15,17,0.1); color: #0e0f11; }
-    body.worldcup-mode .mini-card:hover { background: rgba(14,15,17,0.08); }
-    body.worldcup-mode .mini-card .mini-card-venue { color: #0e0f11; }
-    body.worldcup-mode .mini-card .mini-card-meta { color: #4a4d54; }
-    body.worldcup-mode .mini-card .mini-card-price { background: rgba(14,15,17,0.06); color: #0e0f11; }
+    /* Dark venue tiles on the World Cup page (match the Where to Watch dark cards) */
+    body.worldcup-mode .mini-card {
+        background: #14151a;
+        border-color: rgba(255,255,255,0.10);
+        color: #ffffff;
+    }
+    body.worldcup-mode .mini-card:hover { background: #1a1c22; }
+    body.worldcup-mode .mini-card .mini-card-venue { color: #ffffff; }
+    body.worldcup-mode .mini-card .mini-card-meta { color: rgba(255,255,255,0.65); }
+    body.worldcup-mode .mini-card .mini-card-meta .sep { color: rgba(255,255,255,0.35); }
+    body.worldcup-mode .mini-card .mini-card-price { background: rgba(255,255,255,0.10); color: #ffffff; }
+    body.worldcup-mode .mini-card .mini-card-stars { color: #f9d423; }
+    body.worldcup-mode .mini-card .mini-card-rating { color: #ffffff; }
+    body.worldcup-mode .mini-card .mini-card-mini-label { color: rgba(255,255,255,0.55); }
+    /* Same dark treatment for basic-tier rows */
+    body.worldcup-mode .mini-basic {
+        background: #14151a;
+        border-color: rgba(255,255,255,0.10);
+        color: #ffffff;
+    }
+    body.worldcup-mode .mini-basic:hover { background: #1a1c22; border-color: rgba(255,255,255,0.25); }
+    body.worldcup-mode .mini-basic .mini-basic-name { color: #ffffff; }
+    body.worldcup-mode .mini-basic .mini-basic-meta { color: rgba(255,255,255,0.65); }
+    body.worldcup-mode .mini-basic .mini-basic-rating { color: rgba(255,255,255,0.85); }
+    body.worldcup-mode .mini-basic .mini-basic-expand-body { color: rgba(255,255,255,0.75); }
+    body.worldcup-mode .mini-basic .mini-basic-expand-body strong { color: #ffffff; }
+    body.worldcup-mode .mini-basic .mini-basic-expand-perks span { background: rgba(255,255,255,0.10); color: #ffffff; }
+    /* List background a touch darker so the cards pop */
+    body.worldcup-mode .split-list { background: #0c0d10; }
+    body.worldcup-mode .split-list-head h2 { color: #ffffff; }
     .mini-card::after {
         content: ''; position: absolute;
         left: 0; top: 0; bottom: 0;
@@ -5820,7 +5845,7 @@ function renderVenues() {
         (v.neighborhood && v.neighborhood.toLowerCase().includes(q)) ||
         (v.address && v.address.toLowerCase().includes(q)));
 
-    countEl.textContent = `${list.length} venue${list.length === 1 ? '' : 's'}`;
+    // (real shown total is computed after the 6-per-hood cap below)
 
     if (!list.length) {
         groupsEl.innerHTML = `<div class="venues-empty">No venues match. Try clearing a filter.</div>`;
@@ -5836,9 +5861,11 @@ function renderVenues() {
     }
 
     const PER_HOOD = 6;
+    let totalShown = 0;
     const html = [...groups.entries()].map(([name, items]) => {
         const boroLabel = items[0].borough ? `<span class="boro">${escHtml(items[0].borough)}</span>` : '';
         const shown = items.slice(0, PER_HOOD);
+        totalShown += shown.length;
         const countLabel = `${shown.length} spot${shown.length === 1 ? '' : 's'}`;
         return `
         <div class="venues-group">
@@ -5852,6 +5879,7 @@ function renderVenues() {
         </div>`;
     }).join('');
     groupsEl.innerHTML = html;
+    countEl.textContent = `${totalShown} venue${totalShown === 1 ? '' : 's'}`;
 }
 
 function venueCardHTML(v) {
