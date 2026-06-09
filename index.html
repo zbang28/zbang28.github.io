@@ -5773,6 +5773,9 @@ function route(name) {
     window.scrollTo(0, 0);
     if (name === 'fanhub') renderFanHub();
     if (name === 'venues') loadVenues();
+    // Also pre-load venues when entering the World Cup view so the map
+    // gets populated with every bar from Where to Watch.
+    if (name === 'worldcup') loadVenues();
     if (name === 'events' || name === 'worldcup') {
         renderSportChip();
         renderBoroughFilter();
@@ -5806,6 +5809,155 @@ function escHtml(s) {
         ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
+// NYC neighborhood centroids — used to place scraped venues (no lat/lng) on the map.
+const NYC_HOOD_CENTROIDS = {
+    // Manhattan
+    'Alphabet City|Manhattan': [40.7253, -73.9776],
+    'Battery Park City|Manhattan': [40.7115, -74.0157],
+    'Carnegie Hill|Manhattan': [40.7826, -73.9554],
+    'Chelsea|Manhattan': [40.7465, -74.0014],
+    'Chinatown|Manhattan': [40.7158, -73.9970],
+    'Columbus Circle|Manhattan': [40.7681, -73.9819],
+    'East Harlem|Manhattan': [40.7957, -73.9389],
+    'East Village|Manhattan': [40.7265, -73.9815],
+    'Financial District|Manhattan': [40.7074, -74.0113],
+    'Flatiron|Manhattan': [40.7411, -73.9897],
+    'Garment District|Manhattan': [40.7530, -73.9905],
+    'Gramercy Park|Manhattan': [40.7368, -73.9845],
+    'Gramercy|Manhattan': [40.7368, -73.9845],
+    'Greenwich Village|Manhattan': [40.7336, -74.0027],
+    'Hamilton Heights|Manhattan': [40.8242, -73.9489],
+    'Harlem|Manhattan': [40.8116, -73.9465],
+    "Hell's Kitchen|Manhattan": [40.7638, -73.9918],
+    'Hudson Yards|Manhattan': [40.7540, -74.0008],
+    'Inwood|Manhattan': [40.8677, -73.9212],
+    'Kips Bay|Manhattan': [40.7421, -73.9787],
+    'Koreatown|Manhattan': [40.7482, -73.9879],
+    'Lenox Hill|Manhattan': [40.7679, -73.9612],
+    'Lincoln Square|Manhattan': [40.7740, -73.9854],
+    'Little Italy|Manhattan': [40.7193, -73.9968],
+    'Lower East Side|Manhattan': [40.7150, -73.9843],
+    'Midtown|Manhattan': [40.7549, -73.9840],
+    'Morningside Heights|Manhattan': [40.8089, -73.9626],
+    'Murray Hill|Manhattan': [40.7479, -73.9759],
+    'NoHo|Manhattan': [40.7286, -73.9925],
+    'NoLita|Manhattan': [40.7227, -73.9952],
+    'NoMad|Manhattan': [40.7448, -73.9876],
+    'Rose Hill|Manhattan': [40.7400, -73.9826],
+    'Soho|Manhattan': [40.7233, -74.0030],
+    'SoHo|Manhattan': [40.7233, -74.0030],
+    'Spanish Harlem|Manhattan': [40.7957, -73.9389],
+    'Stuyvesant Town|Manhattan': [40.7325, -73.9787],
+    'Sutton Place|Manhattan': [40.7585, -73.9612],
+    'Theater District|Manhattan': [40.7590, -73.9845],
+    'Tribeca|Manhattan': [40.7163, -74.0086],
+    'Two Bridges|Manhattan': [40.7113, -73.9933],
+    'Union Square|Manhattan': [40.7359, -73.9911],
+    'Upper East Side|Manhattan': [40.7736, -73.9566],
+    'Upper West Side|Manhattan': [40.7870, -73.9754],
+    'Washington Heights|Manhattan': [40.8403, -73.9395],
+    'West Village|Manhattan': [40.7358, -74.0036],
+    'Yorkville|Manhattan': [40.7765, -73.9525],
+
+    // Brooklyn
+    'Bay Ridge|Brooklyn': [40.6233, -74.0292],
+    'Bedford-Stuyvesant|Brooklyn': [40.6872, -73.9418],
+    'Bensonhurst|Brooklyn': [40.6055, -73.9966],
+    'Boerum Hill|Brooklyn': [40.6849, -73.9866],
+    'Brighton Beach|Brooklyn': [40.5781, -73.9615],
+    'Brooklyn Heights|Brooklyn': [40.6960, -73.9962],
+    'Brownsville|Brooklyn': [40.6628, -73.9097],
+    'Bushwick|Brooklyn': [40.6944, -73.9213],
+    'Canarsie|Brooklyn': [40.6404, -73.9007],
+    'Carroll Gardens|Brooklyn': [40.6789, -73.9990],
+    'Clinton Hill|Brooklyn': [40.6884, -73.9646],
+    'Cobble Hill|Brooklyn': [40.6852, -73.9999],
+    'Coney Island|Brooklyn': [40.5755, -73.9707],
+    'Crown Heights|Brooklyn': [40.6694, -73.9442],
+    'Ditmas Park|Brooklyn': [40.6363, -73.9633],
+    'DUMBO|Brooklyn': [40.7033, -73.9893],
+    'Downtown Brooklyn|Brooklyn': [40.6929, -73.9881],
+    'East Flatbush|Brooklyn': [40.6485, -73.9269],
+    'East New York|Brooklyn': [40.6663, -73.8825],
+    'Flatbush|Brooklyn': [40.6404, -73.9620],
+    'Fort Greene|Brooklyn': [40.6892, -73.9740],
+    'Gowanus|Brooklyn': [40.6720, -73.9870],
+    'Greenpoint|Brooklyn': [40.7290, -73.9544],
+    'Marine Park|Brooklyn': [40.6062, -73.9320],
+    'Midwood|Brooklyn': [40.6219, -73.9627],
+    'Park Slope|Brooklyn': [40.6710, -73.9810],
+    'Prospect Heights|Brooklyn': [40.6772, -73.9686],
+    'Prospect Lefferts Gardens|Brooklyn': [40.6610, -73.9540],
+    'Red Hook|Brooklyn': [40.6743, -74.0099],
+    'Sheepshead Bay|Brooklyn': [40.5887, -73.9437],
+    'Sunset Park|Brooklyn': [40.6557, -74.0123],
+    'Williamsburg|Brooklyn': [40.7142, -73.9572],
+    'Windsor Terrace|Brooklyn': [40.6587, -73.9789],
+
+    // Queens
+    'Astoria|Queens': [40.7644, -73.9235],
+    'Bayside|Queens': [40.7686, -73.7714],
+    'Bellerose|Queens': [40.7233, -73.7172],
+    'College Point|Queens': [40.7895, -73.8430],
+    'Corona|Queens': [40.7460, -73.8580],
+    'Elmhurst|Queens': [40.7372, -73.8784],
+    'Flushing|Queens': [40.7673, -73.8331],
+    'Forest Hills|Queens': [40.7188, -73.8448],
+    'Jackson Heights|Queens': [40.7470, -73.8915],
+    'Jamaica|Queens': [40.7029, -73.7889],
+    'Long Island City|Queens': [40.7447, -73.9485],
+    'Maspeth|Queens': [40.7301, -73.9050],
+    'Middle Village|Queens': [40.7141, -73.8757],
+    'Ozone Park|Queens': [40.6802, -73.8443],
+    'Rego Park|Queens': [40.7270, -73.8587],
+    'Richmond Hill|Queens': [40.6963, -73.8316],
+    'Ridgewood|Queens': [40.7000, -73.8990],
+    'Rockaway Beach|Queens': [40.5829, -73.8203],
+    'Sunnyside|Queens': [40.7432, -73.9196],
+    'Whitestone|Queens': [40.7918, -73.8146],
+    'Woodside|Queens': [40.7456, -73.9054],
+
+    // Bronx
+    'Bedford Park|Bronx': [40.8702, -73.8859],
+    'Belmont|Bronx': [40.8541, -73.8882],
+    'Bronx Little Italy|Bronx': [40.8541, -73.8882],
+    'Eastchester|Bronx': [40.8891, -73.8276],
+    'Fordham|Bronx': [40.8616, -73.8979],
+    'Highbridge|Bronx': [40.8330, -73.9270],
+    'Hunts Point|Bronx': [40.8113, -73.8842],
+    'Kingsbridge|Bronx': [40.8806, -73.9027],
+    'Mott Haven|Bronx': [40.8090, -73.9220],
+    'Norwood|Bronx': [40.8786, -73.8779],
+    'Parkchester|Bronx': [40.8378, -73.8606],
+    'Pelham Bay|Bronx': [40.8504, -73.8385],
+    'Riverdale|Bronx': [40.8957, -73.9128],
+    'South Bronx|Bronx': [40.8138, -73.9255],
+    'Throgs Neck|Bronx': [40.8225, -73.8200],
+    'Williamsbridge|Bronx': [40.8807, -73.8638],
+
+    // Staten Island
+    'New Brighton|Staten Island': [40.6430, -74.0850],
+    'St. George|Staten Island': [40.6435, -74.0775],
+    'Stapleton|Staten Island': [40.6280, -74.0760],
+    'Tompkinsville|Staten Island': [40.6395, -74.0820],
+    'West Brighton|Staten Island': [40.6332, -74.1095],
+};
+const BOROUGH_CENTROIDS = {
+    Manhattan: [40.7831, -73.9712],
+    Brooklyn:  [40.6782, -73.9442],
+    Queens:    [40.7282, -73.7949],
+    Bronx:     [40.8448, -73.8648],
+    'Staten Island': [40.5795, -74.1502],
+    'SF Bay':  [37.7800, -122.4300],
+};
+function coordsForVenue(v) {
+    if (v.lat && v.lng) return [v.lat, v.lng];
+    const key = (v.neighborhood || '') + '|' + (v.borough || '');
+    if (NYC_HOOD_CENTROIDS[key]) return NYC_HOOD_CENTROIDS[key];
+    if (BOROUGH_CENTROIDS[v.borough]) return BOROUGH_CENTROIDS[v.borough];
+    return [40.7128, -73.97]; // NYC fallback
+}
+
 async function loadVenues() {
     if (venuesLoaded) { renderVenues(); return; }
     const groups = document.getElementById('venues-groups');
@@ -5835,6 +5987,46 @@ async function loadVenues() {
         venuesAll = venuesAll.concat(sfDirectory);
     } catch (e) { /* ignore */ }
     venuesLoaded = true;
+
+    // Push every Where-to-Watch venue into `parties` so they also pin on the
+    // WC map. Skip the SF ones we already added via sfVenues100 (dedupe by name).
+    const existingNames = new Set(parties.map(p => (p.venue || '').toLowerCase()));
+    let nextId = 10000;
+    for (const v of venuesAll) {
+        if (!v.name) continue;
+        const key = v.name.toLowerCase();
+        if (existingNames.has(key)) continue;
+        existingNames.add(key);
+        const [lat, lng] = coordsForVenue(v);
+        const isSf = v.borough === 'SF Bay';
+        parties.push({
+            id: nextId++,
+            sport: 'Soccer',
+            country: isSf ? 'US' : 'US',
+            match: 'Every Nation Welcome',
+            venue: v.name,
+            vtype: v.vtype || 'Bar',
+            neighborhood: v.neighborhood || '',
+            borough: v.borough || '',
+            distance: 0,
+            time: 'Every match day',
+            perks: (v.tags || []).slice(0, 3),
+            live: false,
+            when: 'This weekend',
+            lat, lng,
+            eventType: 'watch-party',
+            price: 'No cover',
+            neutral: true,
+            theme: 'Neutral',
+            tier: 'basic',
+            city: isSf ? 'SF' : 'NYC',
+            address: v.address || '',
+            website: v.website || '',
+            instagram: v.instagram || '',
+            phone: v.phone || '',
+        });
+    }
+
     // Populate the neighborhood dropdown from the merged data.
     const sel = document.getElementById('venues-neighborhood');
     const nbhds = [...new Set(venuesAll.map(v => v.neighborhood).filter(Boolean))].sort();
@@ -5844,6 +6036,8 @@ async function loadVenues() {
         sel.appendChild(opt);
     }
     renderVenues();
+    // If the WC view is currently open, re-render its map/list with the new pins.
+    if (activeRoute === 'worldcup') applyFilters();
 }
 
 function onVenuesSearch() {
