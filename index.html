@@ -1946,23 +1946,13 @@
     .wc-date-strip::-webkit-scrollbar-thumb { background: var(--border-2); border-radius:3px; }
     .wc-date-pill {
         flex: 0 0 auto; scroll-snap-align: start;
-        background: linear-gradient(180deg, #1c1d22 0%, #131418 100%);
-        border:1px solid rgba(255,255,255,0.10);
+        background: var(--surface); border:1px solid var(--border);
         border-radius: 14px; padding: 12px 18px; cursor: pointer;
         display:flex; flex-direction:column; align-items:center;
         min-width: 82px; gap: 4px;
-        box-shadow: 0 4px 14px rgba(0,0,0,0.18);
-        color: #ffffff;
         transition: border-color .15s, transform .15s, background .15s;
     }
-    .wc-date-pill:hover {
-        background: linear-gradient(180deg, #23252b 0%, #181a1f 100%);
-        border-color: rgba(255,255,255,0.22);
-        transform: translateY(-1px);
-    }
-    .wc-date-pill .wc-date-dow { color: rgba(255,255,255,0.65); }
-    .wc-date-pill .wc-date-day { color: #ffffff; }
-    .wc-date-pill .wc-date-mo  { color: rgba(255,255,255,0.55); }
+    .wc-date-pill:hover { border-color: var(--text); transform: translateY(-1px); }
     .wc-date-pill.active {
         background: linear-gradient(135deg, #ff2e2e, #ffd400);
         border-color: transparent;
@@ -1982,21 +1972,11 @@
     .wc-match-row::-webkit-scrollbar { height:4px; }
     .wc-match-card {
         flex: 0 0 auto; min-width: 200px; max-width: 240px;
-        background: linear-gradient(180deg, #1c1d22 0%, #131418 100%);
-        border:1px solid rgba(255,255,255,0.10);
+        background: var(--surface); border:1px solid var(--border);
         border-radius: 14px; padding: 12px 14px; cursor:pointer;
-        color: #ffffff;
-        box-shadow: 0 4px 14px rgba(0,0,0,0.18);
         transition: all .15s; position:relative;
     }
-    .wc-match-card:hover {
-        background: linear-gradient(180deg, #23252b 0%, #181a1f 100%);
-        border-color: rgba(255,255,255,0.22);
-        transform: translateY(-1px);
-    }
-    .wc-match-card .wc-match-teams { color: #ffffff; }
-    .wc-match-card .wc-match-time { color: rgba(255,255,255,0.65); }
-    .wc-match-card .wc-match-meta { color: rgba(255,255,255,0.55); }
+    .wc-match-card:hover { border-color: var(--text); transform: translateY(-1px); }
     .wc-match-card.active {
         border-color: transparent;
         background: linear-gradient(135deg, #ff2e2e, #ffd400);
@@ -2680,42 +2660,11 @@
     .mini-card .mini-card-going { color: var(--red) !important; font-weight: 800; }
     .mini-card .mini-card-going::before { background: var(--red) !important; box-shadow: 0 0 6px var(--red) !important; }
     /* In worldcup-mode (white page) — translucent dark glass */
-    /* Dark gradient venue tiles on the World Cup page (copy of Where to Watch
-       card look) — page background stays light, only the tiles go dark. */
-    body.worldcup-mode .mini-card {
-        background: linear-gradient(180deg, #1c1d22 0%, #131418 100%);
-        border-color: rgba(255,255,255,0.10);
-        color: #ffffff;
-        box-shadow: 0 4px 14px rgba(0,0,0,0.18);
-    }
-    body.worldcup-mode .mini-card:hover {
-        background: linear-gradient(180deg, #23252b 0%, #181a1f 100%);
-        border-color: rgba(255,255,255,0.22);
-    }
-    body.worldcup-mode .mini-card .mini-card-venue { color: #ffffff; }
-    body.worldcup-mode .mini-card .mini-card-meta { color: rgba(255,255,255,0.65); }
-    body.worldcup-mode .mini-card .mini-card-meta .sep { color: rgba(255,255,255,0.35); }
-    body.worldcup-mode .mini-card .mini-card-price { background: rgba(255,255,255,0.10); color: #ffffff; }
-    body.worldcup-mode .mini-card .mini-card-stars { color: #f9d423; }
-    body.worldcup-mode .mini-card .mini-card-rating { color: #ffffff; }
-    body.worldcup-mode .mini-card .mini-card-mini-label { color: rgba(255,255,255,0.55); }
-    /* Same dark gradient treatment for basic-tier rows */
-    body.worldcup-mode .mini-basic {
-        background: linear-gradient(180deg, #1c1d22 0%, #131418 100%);
-        border-color: rgba(255,255,255,0.10);
-        color: #ffffff;
-        box-shadow: 0 4px 14px rgba(0,0,0,0.18);
-    }
-    body.worldcup-mode .mini-basic:hover {
-        background: linear-gradient(180deg, #23252b 0%, #181a1f 100%);
-        border-color: rgba(255,255,255,0.25);
-    }
-    body.worldcup-mode .mini-basic .mini-basic-name { color: #ffffff; }
-    body.worldcup-mode .mini-basic .mini-basic-meta { color: rgba(255,255,255,0.65); }
-    body.worldcup-mode .mini-basic .mini-basic-rating { color: rgba(255,255,255,0.85); }
-    body.worldcup-mode .mini-basic .mini-basic-expand-body { color: rgba(255,255,255,0.75); }
-    body.worldcup-mode .mini-basic .mini-basic-expand-body strong { color: #ffffff; }
-    body.worldcup-mode .mini-basic .mini-basic-expand-perks span { background: rgba(255,255,255,0.10); color: #ffffff; }
+    body.worldcup-mode .mini-card { background: rgba(14,15,17,0.05); border-color: rgba(14,15,17,0.1); color: #0e0f11; }
+    body.worldcup-mode .mini-card:hover { background: rgba(14,15,17,0.08); }
+    body.worldcup-mode .mini-card .mini-card-venue { color: #0e0f11; }
+    body.worldcup-mode .mini-card .mini-card-meta { color: #4a4d54; }
+    body.worldcup-mode .mini-card .mini-card-price { background: rgba(14,15,17,0.06); color: #0e0f11; }
     .mini-card::after {
         content: ''; position: absolute;
         left: 0; top: 0; bottom: 0;
