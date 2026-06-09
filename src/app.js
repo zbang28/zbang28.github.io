@@ -10,6 +10,7 @@ import pollRoutes from './routes/polls.js';
 import contentRoutes from './routes/content.js';
 import chatRoutes from './routes/chat.js';
 import scoresRoutes from './routes/scores.js';
+import venuesRoutes from './routes/venues.js';
 import billingRoutes, { webhookHandler } from './routes/billing.js';
 
 // The API as an Express app. No app.listen / static / WebSocket here so it can
@@ -33,6 +34,7 @@ app.use('/api/polls', pollRoutes);
 app.use('/api', contentRoutes); // /api/countries, /api/schedule, /api/lineups
 app.use('/api/chat', chatRoutes);
 app.use('/api/scores', scoresRoutes);
+app.use('/api/venues', venuesRoutes);
 app.use('/api/billing', billingRoutes);
 
 app.use('/api', (_req, res) => res.status(404).json({ error: 'Not found' }));

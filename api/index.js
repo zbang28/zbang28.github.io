@@ -654,15 +654,66 @@ router7.get("/", async (req, res) => {
 });
 var scores_default = router7;
 
-// src/routes/billing.js
+// src/routes/venues.js
 import { Router as Router8 } from "express";
-import Stripe from "stripe";
 var router8 = Router8();
+function serialize2(row) {
+  return {
+    id: row.id,
+    slug: row.slug,
+    name: row.name,
+    neighborhood: row.neighborhood,
+    borough: row.borough,
+    address: row.address,
+    website: row.website,
+    instagram: row.instagram,
+    phone: row.phone,
+    vtype: row.vtype,
+    tags: JSON.parse(row.tags || "[]"),
+    sourceUrl: row.source_url
+  };
+}
+router8.get("/", async (req, res) => {
+  const { neighborhood, borough, q } = req.query;
+  const where = [];
+  const params = [];
+  const add = (clause, val) => {
+    params.push(val);
+    where.push(clause.replace("?", "$" + params.length));
+  };
+  if (neighborhood) add("neighborhood = ?", neighborhood);
+  if (borough) add("borough = ?", borough);
+  if (q) {
+    const like = `%${q}%`;
+    params.push(like);
+    const p = "$" + params.length;
+    where.push(`(name ILIKE ${p} OR neighborhood ILIKE ${p} OR address ILIKE ${p})`);
+  }
+  let sql = `SELECT * FROM venues ${where.length ? "WHERE " + where.join(" AND ") : ""} ORDER BY neighborhood ASC, name ASC`;
+  const limit = Number(req.query.limit);
+  if (Number.isFinite(limit) && limit > 0) {
+    params.push(Math.floor(limit));
+    sql += " LIMIT $" + params.length;
+  }
+  const rows = await all(sql, params);
+  res.json({ venues: rows.map(serialize2) });
+});
+router8.get("/:slug", async (req, res) => {
+  const row = await get("SELECT * FROM venues WHERE slug = $1", [req.params.slug]);
+  if (!row) return res.status(404).json({ error: "Venue not found" });
+  res.json({ venue: serialize2(row) });
+});
+var venues_default = router8;
+
+// src/routes/billing.js
+import { Router as Router9 } from "express";
+import Stripe from "stripe";
+var router9 = Router9();
 var stripe = stripeEnabled ? new Stripe(config.stripeSecretKey) : null;
-router8.get("/config", (_req, res) => {
+router9.get("/config", (_req, res) => {
   res.json({ stripeEnabled, priceCents: config.unlockPriceCents });
 });
-router8.post("/checkout", requireAuth, async (req, res) => {
+router9.post("/checkout", requireAuth, async (req, res) => {
   if (!stripeEnabled) return res.json({ devMode: true });
   try {
     const session = await stripe.checkout.sessions.create({
@@ -686,7 +737,7 @@ router8.post("/checkout", requireAuth, async (req, res) => {
     res.status(502).json({ error: "Could not start checkout" });
   }
 });
-router8.post("/dev-unlock", requireAuth, async (req, res) => {
+router9.post("/dev-unlock", requireAuth, async (req, res) => {
   if (stripeEnabled) return res.status(403).json({ error: "Use the real checkout flow" });
   await activateSubscription(req.user.id, { source: "dev" });
   res.json({ entitlements: await getEntitlements(req.user.id) });
@@ -714,7 +765,7 @@ async function webhookHandler(req, res) {
   }
   res.json({ received: true });
 }
-var billing_default = router8;
+var billing_default = router9;
 
 // src/app.js
 var app = express();
@@ -730,6 +781,7 @@ app.use("/api/polls", polls_default);
 app.use("/api", content_default);
 app.use("/api/chat", chat_default);
 app.use("/api/scores", scores_default);
+app.use("/api/venues", venues_default);
 app.use("/api/billing", billing_default);
 app.use("/api", (_req, res) => res.status(404).json({ error: "Not found" }));
 var app_default = app;

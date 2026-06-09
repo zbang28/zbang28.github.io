@@ -150,9 +150,27 @@ export async function migrate() {
       created_at TIMESTAMPTZ NOT NULL DEFAULT now()
     );
 
+    CREATE TABLE IF NOT EXISTS venues (
+      id           SERIAL PRIMARY KEY,
+      slug         TEXT UNIQUE NOT NULL,
+      name         TEXT NOT NULL,
+      neighborhood TEXT,
+      borough      TEXT,
+      address      TEXT,
+      website      TEXT,
+      instagram    TEXT,
+      phone        TEXT,
+      vtype        TEXT,
+      tags         TEXT NOT NULL DEFAULT '[]',  -- JSON array string, like events.perks
+      source_url   TEXT,
+      created_at   TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
+
     CREATE INDEX IF NOT EXISTS idx_events_type ON events(event_type);
     CREATE INDEX IF NOT EXISTS idx_events_borough ON events(borough);
     CREATE INDEX IF NOT EXISTS idx_chat_country ON chat_messages(country, created_at);
     CREATE INDEX IF NOT EXISTS idx_poll_options_poll ON poll_options(poll_id);
+    CREATE INDEX IF NOT EXISTS idx_venues_neighborhood ON venues(neighborhood);
+    CREATE INDEX IF NOT EXISTS idx_venues_borough ON venues(borough);
   `);
 }
