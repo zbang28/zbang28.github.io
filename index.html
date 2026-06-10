@@ -6796,7 +6796,8 @@ function renderMap(filtered) {
     filtered.forEach(p => {
         const locked = isLocked(p);
         // Tiered: featured/standard = green pin, basic = small black dot
-        const isBasic = p.tier === 'basic';
+        // Render every pin as a small basic dot — no more big red featured pins
+        const isBasic = true;
         // Red for all big pins (tiered gold/silver + untiered legacy parties),
         // green only for small basic dots
         const color = locked ? '#8a8d94'
