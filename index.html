@@ -6525,7 +6525,8 @@ function renderMiniList(filtered) {
 
     filtered.forEach(p => {
         // BASIC tier → name-only row that expands on hover into a card preview
-        if (p.tier === 'basic' && !isLocked(p)) {
+        // Treat every venue as a slim basic row (no big featured/standard tiles)
+        if (!isLocked(p)) {
             const row = document.createElement('div');
             row.className = 'mini-basic';
             row.dataset.id = p.id;
