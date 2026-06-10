@@ -7216,8 +7216,11 @@ function optionIndexFromId(poll, optionId) {
 const VERCEL_API_BASE = 'https://zbang28githubio.vercel.app/api';
 const API_BASE = (() => {
     const host = location.hostname;
+    // Local dev only — call the backend running on the same host.
     if (host === 'localhost' || host === '127.0.0.1') return location.origin + '/api';
-    if (host.endsWith('.vercel.app')) return location.origin + '/api';
+    // The API only lives at zbang28githubio.vercel.app. Even if the static
+    // frontend is served from homecrowd.vercel.app or findhomecrowd.com,
+    // always cross-origin call the working API there.
     return VERCEL_API_BASE;
 })();
 
