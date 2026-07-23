@@ -1,7 +1,7 @@
 # Lineup / FanHub
 
-NYC fan-event finder — watch parties, parades, and pickup games, with live sports
-scores, community polls, and real-time fan chat.
+World Cup Watch Party Platform for NYC & SF
+- 300~400+ people signed up on waitlist pre-launch
 
 **Live:** https://findhomecrowd.com
 
