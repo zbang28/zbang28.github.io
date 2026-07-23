@@ -3,7 +3,7 @@
 NYC fan-event finder — watch parties, parades, and pickup games, with live sports
 scores, community polls, and real-time fan chat.
 
-**Live:** https://zbang28githubio.vercel.app
+**Live:** https://findhomecrowd.com
 
 ## Stack
 
